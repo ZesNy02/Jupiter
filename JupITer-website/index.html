@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JupITer</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="src/Logo_JupITer.png">
+    </div>
+    <div class="container">
+        <input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+        <label for="openSidebarMenu" class="sidebarIconToggle">
+            <div class="spinner diagonal part-1"></div>
+            <div class="spinner horizontal"></div>
+            <div class="spinner diagonal part-2"></div>
+        </label>
+        <div id="sidebarMenu">
+            <ul class="sidebarMenuInner">
+                <li style="visibility: hidden;">Cedric Hermann<span>Web Developer</span></li>
+                <li><a href="#" onclick="uncheckCheckbox()">Startseite</a></li>
+                <li><a href="#about-us" onclick="uncheckCheckbox()">Über uns</a></li>
+                <li><a href="#contact" onclick="uncheckCheckbox()">Kontakt</a></li>
+                <li><p style="width: 80%; position: absolute; bottom: 100px; left: 10px">Kontakt:<br><br>Tele:<br>+49 123 1238435<br>Email:<br>jupITer@gmail.com</li>
+            </ul>
+            <script>
+                function uncheckCheckbox() {
+                    var checkbox = document.getElementById("openSidebarMenu");
+                    checkbox.checked = false;
+                }
+            </script>
+        </div>
+
+    </div>
+</header>
+
+<div class="page-start" id="start">
+    <div><h1 style="margin-bottom: 5px">Team JupITer</h1><hr style="width: 220px; margin: 0;border: 1px solid #ffa500;">
+    <h2>und hier<br>so 3-4 Zeilen Text über das Programm<br>oder coole features</h2></div>
+    <img src="src/ueber-uns.png">
+</div>
+<hr style="margin: 5% 4.5% 0 4.5%; width: 91%;">
+<div class="about-us-content" id="about-us">
+    <h1 style="margin-bottom: 5px">Das ist unser Team</h1><hr style="width: 300px; margin: 0 0 5% 0;border: 1px solid #ffa500;">
+    <div class="person-row">
+        <img src="src/ueber-uns.png">
+        <p>Noah Schneymann<br>
+            Fak. IB, 4 Semester<br></p>
+    </div>
+    <div class="person-row">
+        <img src="src/ueber-uns.png">
+        <p>Cécile Hilsenbek<br>
+            Fak. D, 7 Semester</p></div>
+    <div class="person-row">
+        <img src="src/ueber-uns.png">
+        <p>Lenny Zesewitz<br>
+            Fak. IB, 4 Semester</p></div>
+    <div class="person-row">
+    <img src="src/cedric.png">
+        <p>Cedric Hermann<br>
+            Fak. IB, 5 Semester</p></div>
+    <div class="person-row">
+    <img src="src/ueber-uns.png">
+        <p>Vincent Reinhold<br>
+            Fak. IB, 4 Semester<br>
+            </p>
+</div><div class="person-row">
+    <img src="src/ueber-uns.png">
+        <p>Paul Waßmuth<br>
+            Fak. IB, 4 Semester</p></div>
+    <div class="person-row">
+        <img src="src/ueber-uns.png">
+        <p>Mustafa Dal<br>
+            Fak. IB, 5 Semester</p>
+    </div>
+</div>
+<hr style="margin: 5% 4.5% 0 4.5%; width: 91%;">
+<div class="contact-content" id="contact">
+    <h1 style="margin-bottom: 5px">Unsere Kontaktdaten</h1>
+    <hr style="margin: 0; width: 320px; border: 1px solid #ffa500;">
+    <p>Tele: +49 231 123342</p>
+    <p>Email: jupITer@gmail.com</p>
+</div>
+</body>
+</html>
