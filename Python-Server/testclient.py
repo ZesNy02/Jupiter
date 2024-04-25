@@ -13,9 +13,3 @@ response = requests.post(url, json=message)
 
 # Print the response from the server
 print(response.text)
-
-# Send a POST request to the server with the message as form data
-response = requests.post(url, data={'message': message})
-
-# Print the response from the server
-print(response.text)
