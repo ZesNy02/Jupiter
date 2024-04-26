@@ -16,3 +16,16 @@
 - Es wird auf http://localhost:3000/ ein JSON Object gesendet mit dem "message" Attribut
 - Es wird auf eine response gewartet
 - Response wird auf der Console ausgegeben
+
+# LLM
+
+## Installieren
+
+- Installiere Python
+- pip install llm
+- llm install llm-gpt4all
+
+## Run LLM
+
+- llm -m orca-mini-3b-gguf2-q4_0
+- Der Befehl läuft in der Shell vom System.
