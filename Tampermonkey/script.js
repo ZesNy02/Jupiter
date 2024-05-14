@@ -70,7 +70,7 @@ const makeChatWindow = () => {
   chatWindow.style.width = "40vw";
   chatWindow.style.height = "60vh";
   chatWindow.style.zIndex = "100";
-  chatWindow.style.display = "flex";
+  chatWindow.style.display = "none";
   chatWindow.style.flexDirection = "column";
   chatWindow.style.backgroundColor = "orange";
   chatWindow.style.borderRadius = "10px";
