@@ -5,7 +5,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use rusqlite::{Connection, Result};
-use std::process::Command;
+use std:: process::Command;
 
 #[tokio::main]
 async fn main() {
@@ -34,30 +34,16 @@ async fn handle_ai(
     let conn = open_db("./prompts.db".to_string());
     match conn {
         Ok(conn) => {
-            let response = Command::new("java")
-            .arg("--version")
-            .output();
-            match response {
-                Ok(response) => {
-                    let response = String::from_utf8_lossy(&response.stdout);
-                    let res = insert_prompt(&conn, PromptDB {
-                        prompt: payload.message.clone(),
-                        response: response.to_string(),
-                    });
-                    match res {
-                        Ok(_) => {
-                            (StatusCode::OK, response.to_string())
-                        }
-                        Err(e) => {
-                            println!("Error: {}", e);
-                            (StatusCode::INTERNAL_SERVER_ERROR, "Error".to_string())
-                        }
-                    }
+            let result = get_result(&conn, payload.message.clone());
+            match result {
+                Ok(result) => {
+                    (StatusCode::OK, result.response)
                 }
                 Err(e) => {
-                    println!("Error: {}", e);
+                    println!("Error: {}", e.message);
                     (StatusCode::INTERNAL_SERVER_ERROR, "Error".to_string())
                 }
+
             }
         }
         Err(e) => {
@@ -144,4 +130,82 @@ fn fetch_prompts(conn: &Connection) -> Result<Vec<PromptDB>> {
         prompts.push(prompt?);
     }
     Ok(prompts)
+}
+
+struct ResultError {
+    message: String,
+}
+
+fn get_result(conn: &Connection, prompt: String) -> Result<PromptDB, ResultError> {
+    // find entries in db with prompt
+    // then return the result of the prompt if a entry is found
+    // otherwise return the result of the ai
+    println!("Trying to find prompt: {}", prompt.clone());
+    let stmt = conn.prepare("SELECT id, prompt, response FROM prompts WHERE prompt = ?1");
+    match stmt {
+        Ok(mut stmt) => {
+            let rows = stmt.query([prompt.clone()]);
+            match rows {
+                Ok(mut rows) => {
+                    while let Ok(row) = rows.next() {
+                        match (row.unwrap().get(1), row.unwrap().get(2)) {
+                            (Ok(prompt), Ok(response)) => {
+                                return Ok(PromptDB {
+                                    prompt,
+                                    response,
+                                });
+                            }
+                            _ => {
+                                println!("Info: Could not find prompt in db");
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    println!("Error: {}", e);
+                }
+            }
+        }
+        Err(e) => {
+            println!("Error: {}", e);
+
+        }
+    }
+    println!("Running ollama");
+    println!("Prompt: {}", prompt.clone());
+    let response = Command::new("ollama")
+        .arg("run")
+        .arg("llama3")
+        .arg(prompt.clone())
+        .output();
+            match response {
+                Ok(response) => {
+                    let response = String::from_utf8_lossy(&response.stdout);
+                    println!("Inserting prompt and response into db");
+                    let res = insert_prompt(&conn, PromptDB {
+                        prompt: prompt.clone(),
+                        response: response.to_string(),
+                    });
+                    match res {
+                        Ok(_) => {
+                            return Ok(PromptDB {
+                                prompt: prompt.clone(),
+                                response: response.to_string(),
+                            });
+                        }
+                        Err(e) => {
+                            println!("Error: {}", e);
+                            return Err(ResultError {
+                                message: format!("Error: {}", e),
+                            });
+                        }
+                    }
+                }
+                Err(e) => {
+                    println!("Error: {}", e);
+                    return Err(ResultError {
+                        message: format!("Error: {}", e),
+                    });
+                }
+            }
 }

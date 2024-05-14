@@ -5,7 +5,7 @@ url = "http://localhost:3000/ai"
 
 # Define the message you want to send as a JSON object
 message = {
-    "message": "from the database"
+    "message": "What is the capital of France?"
 }
 
 # Send a POST request to the server with the message as JSON data
