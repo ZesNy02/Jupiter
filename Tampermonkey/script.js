@@ -9,8 +9,17 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
+// --------------------------------------------------------------------
+
+// most of the code is just creating an HTML Element and styling it
+
+// --------------------------------------------------------------------
+
+// Server URL where the server runs
 const serverUrl = "http://localhost:3000/ai";
 
+// The Chat button is the orange button that appears on the bottom left of the screen
+// When clicked, it opens the chat window
 const makeChatButton = () => {
   const chatButton = document.createElement("button");
   chatButton.id = "chat-button";
@@ -36,6 +45,7 @@ const makeChatButton = () => {
   return chatButton;
 };
 
+// A User Message is a message on the right of the Chat that the User Typed
 const makeUserMessage = (text) => {
   const userMessage = document.createElement("div");
   userMessage.style.backgroundColor = "lightblue";
@@ -48,6 +58,7 @@ const makeUserMessage = (text) => {
   return userMessage;
 };
 
+// A Response Message is a message on the left of the Chat that the AI Typed
 const makeResponseMessage = (text) => {
   const responseMessage = document.createElement("div");
   responseMessage.style.backgroundColor = "lightgreen";
@@ -60,6 +71,7 @@ const makeResponseMessage = (text) => {
   return responseMessage;
 };
 
+// The Chat Window is the window that appears when the Chat button is clicked
 const makeChatWindow = () => {
   // -------------------------- Chat Window --------------------------
   const chatWindow = document.createElement("div");
@@ -70,7 +82,7 @@ const makeChatWindow = () => {
   chatWindow.style.width = "40vw";
   chatWindow.style.height = "60vh";
   chatWindow.style.zIndex = "100";
-  chatWindow.style.display = "flex";
+  chatWindow.style.display = "none";
   chatWindow.style.flexDirection = "column";
   chatWindow.style.backgroundColor = "orange";
   chatWindow.style.borderRadius = "10px";
@@ -149,6 +161,9 @@ const makeChatWindow = () => {
   chatInputDiv.style.borderRadius = "10px";
 
   // -------------------------- Send Prompt --------------------------
+  // Function to send the prompt to the server
+  // The server will respond with a message
+  // The message and response will be displayed in the chat window
   const sendPrompt = () => {
     const message = chatInput.value;
     const chatWindow = document.getElementById("prompts-container");
@@ -156,9 +171,13 @@ const makeChatWindow = () => {
       "wrapper-prompts-container"
     );
     chatInput.value = "";
+    // Add message to the chat window
     chatWindow.appendChild(makeUserMessage(message));
+    // Scroll to the bottom of the chat window (UX)
     wrapperPromptsContainer.scrollTop = wrapperPromptsContainer.scrollHeight;
 
+    // Send the message to the server
+    // When Server responds, add the response to the chat window
     GM_xmlhttpRequest({
       method: "POST",
       url: serverUrl,
@@ -212,6 +231,7 @@ const makeChatWindow = () => {
   return chatWindow;
 };
 
+// Add the Chat Button and Chat Window to the page when the window loads
 window.onload = () => {
   ("use strict");
   console.log("-------------------------------");
