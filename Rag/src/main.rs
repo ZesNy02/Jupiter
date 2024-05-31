@@ -40,6 +40,7 @@ struct Prompt {
     message: String,
 }
 
+
 /// HTTP POST handler for /ai
 ///
 /// Run the get_result() function and return the response as String
@@ -135,7 +136,7 @@ fn open_db(path: String) -> Result<Connection> {
             println!("Error: {}", e);
             Err(e)
         }
-    }
+    } 
 }
 
 /// Insert a prompt into the db
