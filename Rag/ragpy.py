@@ -51,7 +51,7 @@ docs = [WebBaseLoader(url).load() for url in urls]
 docs_list = [item for sublist in docs for item in sublist]
 
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-    chunk_size=100  , chunk_overlap=0
+    chunk_size=50 , chunk_overlap=0
 )
 doc_splits = text_splitter.split_documents(docs_list)
 
@@ -72,16 +72,16 @@ from langchain_community.chat_models import ChatOllama
 
 # Prompt
 prompt = PromptTemplate(
-    template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an assistant for question-answering tasks. 
-    Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. 
-    Use three sentences maximum and keep the answer concise <|eot_id|><|start_header_id|>user<|end_header_id|>
+    template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are helping navigate the Proophboard. 
+    Use the following pieces of retrieved context to enhance your answer. 
+    Keep the answer concise <|eot_id|><|start_header_id|>user<|end_header_id|>
     Question: {question} 
     Context: {context} 
     Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
     input_variables=["question", "document"],
 )
 
-# llm = ChatOllama(model=local_llm, temperature=0)
+llm = ChatOllama(model=local_llm, temperature=0)
 
 
 # Post-processing
@@ -90,7 +90,7 @@ prompt = PromptTemplate(
 
 
 # Chain
-# rag_chain = prompt | llm | StrOutputParser()
+rag_chain = prompt | llm | StrOutputParser()
 
 # Run
 # Check if command line argument is provided
@@ -102,27 +102,27 @@ else:
 # Rest of the code
 # ...
 docs = retriever.invoke(question)
-# generation = rag_chain.invoke({"context": docs, "question": question})
-# print(generation)
+generation = rag_chain.invoke({"context": docs, "question": question})
+print(generation)
 
 # %%
 
 
-from openai import OpenAI
+#from openai import OpenAI
 
 
-client = OpenAI(
-    api_key="<RAG>",
-    base_url="https://aiforcause.deepnight.tech/openai/"
-)
+#client = OpenAI(
+#    api_key="<RAG>",
+#    base_url="https://aiforcause.deepnight.tech/openai/"
+#)
 
-response = client.chat.completions.create(
-    model="gpt-4-turbo",   # gpt-35-turbo (GPT-3.5 Turbo - 4k) || gpt-35-turbo-16k (GPT-3.5 Turbo 16k) || gpt-4-turbo (GPT-4 Turbo)
-    messages=[
-        {"role": "system", "content": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context if needed to answer the question, if u have additional Knowldege use it. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise"},
-        {"role": "user", "content": question + ' '.join(str(doc) for doc in docs)}
-    ],
-    stream=False # or True
-)
+# response = client.chat.completions.create(
+#     model="gpt-4-turbo",   # gpt-35-turbo (GPT-3.5 Turbo - 4k) || gpt-35-turbo-16k (GPT-3.5 Turbo 16k) || gpt-4-turbo (GPT-4 Turbo)
+#     messages=[
+#         {"role": "system", "content": "Try do be as helpful as possible. Use the most relevant pieces of retrieved context to enhance your answer.  Keep the answer concise in two sentences. Repeat the Question to yourself for a better answer"},
+#         {"role": "user", "content": question + ' '.join(str(doc) for doc in docs)}
+#     ],
+#     stream=False # or True
+# )
 
-print(response.choices[0].message.content)
+# print(response.choices[0].message.content)
