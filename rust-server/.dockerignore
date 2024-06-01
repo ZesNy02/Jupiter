@@ -1,0 +1,10 @@
+target
+Dockerfile
+.git
+.gitignore
+.env
+.dockerignore
+chroma
+Cargo.lock
+prompts.db
+tests
