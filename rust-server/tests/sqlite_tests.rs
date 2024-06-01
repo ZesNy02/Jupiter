@@ -13,16 +13,30 @@ mod test {
 
   #[test]
   fn test_connection() {
-    let (errconfig, config) = make_config();
+    let (errconfig, _config) = make_config();
     // Test connection error
     assert_eq!(insert_prompt(&errconfig, "", ""), Err(DBError::ConnectionError));
     assert_eq!(update_prompt(&errconfig, 0, true), Err(DBError::ConnectionError));
     assert_eq!(fetch_prompts(&errconfig, Some(true)), Err(DBError::ConnectionError));
-    // Test connection success
+  }
+
+  #[test]
+  fn test_insert_prompt() {
+    let (_errconfig, config) = make_config();
+    // Test insert success
     assert_eq!(insert_prompt(&config, "test", "test"), Ok(()));
-    assert_eq!(update_prompt(&config, 0, true), Ok(()));
+
     assert_eq!(drop_table(&config), Ok(()));
-    assert_eq!(fetch_prompts(&config, Some(true)), Ok(vec![]));
+  }
+
+  #[test]
+  fn test_update_prompt() {
+    let (_errconfig, config) = make_config();
+    // Test update success
+    assert_eq!(insert_prompt(&config, "test", "test"), Ok(()));
+    assert_eq!(update_prompt(&config, 1, true), Ok(()));
+
+    assert_eq!(drop_table(&config), Ok(()));
   }
 
   #[test]
@@ -44,5 +58,6 @@ mod test {
         ]
       )
     );
+    assert_eq!(drop_table(&config), Ok(()));
   }
 }

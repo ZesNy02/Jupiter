@@ -1,4 +1,5 @@
 use dotenv::dotenv;
+use tracing::{ error, info };
 use std::env;
 
 #[derive(PartialEq)]
@@ -10,9 +11,29 @@ pub enum Mode {
 
 pub fn get_config(mode: Mode, docker: bool) -> Config {
   if docker {
-    Config::load_from_docker(mode).unwrap_or(Config::default_config())
+    let config = Config::load_from_docker(mode);
+    match config {
+      Some(config) => {
+        info!("Loaded docker configuration.");
+        return config;
+      }
+      None => {
+        error!("Failed to load docker configuration. Using default configuration instead.");
+        return Config::default_config();
+      }
+    }
   } else {
-    Config::load_from_env(mode).unwrap_or(Config::default_config())
+    let config = Config::load_from_env(mode);
+    match config {
+      Some(config) => {
+        info!("Loaded env configuration.");
+        return config;
+      }
+      None => {
+        error!("Failed to load env configuration. Using default configuration instead.");
+        return Config::default_config();
+      }
+    }
   }
 }
 
@@ -29,8 +50,10 @@ pub struct Config {
 impl Config {
   fn load_from_env(mode: Mode) -> Option<Config> {
     dotenv().ok();
-    let ip = env::var("IP").ok()?;
-    let port = env::var("PORT").ok()?.parse::<u16>().ok()?;
+    let ip = env::var("IP").ok().unwrap_or("127.0.0.1".to_string());
+    let port = env::var("PORT").ok().unwrap_or("8080".to_string()).parse::<u16>().unwrap_or(8080);
+
+    // TODO: Remove Option, make debug lines here
 
     Some(Config {
       ip,
@@ -52,13 +75,13 @@ impl Config {
   }
 
   fn default_config() -> Config {
-    Config {
+    return Config {
       ip: "127.0.0.1".to_string(),
       port: 8080,
       mode: Mode::Dev,
       db_path: "./db.db".to_string(),
       script: "rag.py".to_string(),
-    }
+    };
   }
 
   pub fn get_db_path(&self) -> String {
