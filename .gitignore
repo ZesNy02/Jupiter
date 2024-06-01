@@ -10,3 +10,4 @@ __pycache__/
 # Other git ignores
 .idea/*
 !.idea/.gitignore
+*.db
