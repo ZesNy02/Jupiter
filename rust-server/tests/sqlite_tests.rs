@@ -4,16 +4,9 @@ mod test {
   use rust_server::models::database::{ DBError, Prompt };
   use rust_server::utils::sqlite::*;
 
-  fn make_config() -> (Config, Config) {
-    return (
-      Config::_dummy_sqlite("/.,&/)()".to_string()),
-      Config::_dummy_sqlite("./tests.db".to_string()),
-    );
-  }
-
   #[test]
   fn test_connection() {
-    let (errconfig, _config) = make_config();
+    let errconfig = Config::_dummy_sqlite("/.,&/)()".to_string());
     // Test connection error
     assert_eq!(insert_prompt(&errconfig, "", ""), Err(DBError::ConnectionError));
     assert_eq!(update_prompt(&errconfig, 0, true), Err(DBError::ConnectionError));
@@ -22,30 +15,36 @@ mod test {
 
   #[test]
   fn test_insert_prompt() {
-    let (_errconfig, config) = make_config();
+    let config = Config::_dummy_sqlite("tests_insert.db".to_string());
     // Test insert success
-    assert_eq!(insert_prompt(&config, "test", "test"), Ok(()));
+    assert_eq!(drop_table(&config), Ok(()));
+
+    assert_eq!(insert_prompt(&config, "test", "test"), Ok(1));
 
     assert_eq!(drop_table(&config), Ok(()));
   }
 
   #[test]
   fn test_update_prompt() {
-    let (_errconfig, config) = make_config();
+    let config = Config::_dummy_sqlite("tests_update.db".to_string());
     // Test update success
-    assert_eq!(insert_prompt(&config, "test", "test"), Ok(()));
+    assert_eq!(drop_table(&config), Ok(()));
+
+    assert_eq!(insert_prompt(&config, "test", "test"), Ok(1));
     assert_eq!(update_prompt(&config, 1, true), Ok(()));
+    assert_ne!(update_prompt(&config, 999, true), Ok(()));
 
     assert_eq!(drop_table(&config), Ok(()));
   }
 
   #[test]
   fn test_fetch_prompts() {
-    let (_errconfig, config) = make_config();
+    let config = Config::_dummy_sqlite("tests_fetch.db".to_string());
     // Test insert success
     assert_eq!(drop_table(&config), Ok(()));
-    assert_eq!(insert_prompt(&config, "test1", "test1"), Ok(()));
-    assert_eq!(insert_prompt(&config, "test2", "test2"), Ok(()));
+
+    assert_eq!(insert_prompt(&config, "test1", "test1"), Ok(1));
+    assert_eq!(insert_prompt(&config, "test2", "test2"), Ok(2));
     assert_eq!(update_prompt(&config, 1, true), Ok(()));
     assert_eq!(update_prompt(&config, 2, false), Ok(()));
     let prompts = fetch_prompts(&config, None);
@@ -58,6 +57,7 @@ mod test {
         ]
       )
     );
+
     assert_eq!(drop_table(&config), Ok(()));
   }
 }

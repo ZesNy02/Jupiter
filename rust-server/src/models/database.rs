@@ -1,3 +1,5 @@
+use serde::{ Deserialize, Serialize };
+
 #[derive(PartialEq)]
 #[derive(Debug)]
 pub enum DBError {
@@ -6,22 +8,23 @@ pub enum DBError {
   QueryError,
   InsertError,
   UpdateError,
-  DeleteError,
 }
 
 pub type Result<T> = std::result::Result<T, DBError>;
 
 #[derive(PartialEq)]
 #[derive(Debug)]
+#[derive(Deserialize)]
+#[derive(Serialize)]
 pub struct Prompt {
-  id: u32,
-  prompt: String,
-  response: String,
-  usefull: bool,
+  pub id: i64,
+  pub prompt: String,
+  pub response: String,
+  pub usefull: bool,
 }
 
 impl Prompt {
-  pub fn new(id: u32, prompt: String, response: String, usefull: bool) -> Prompt {
+  pub fn new(id: i64, prompt: String, response: String, usefull: bool) -> Prompt {
     Prompt {
       id,
       prompt,

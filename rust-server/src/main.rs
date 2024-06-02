@@ -1,6 +1,6 @@
-use rust_server::config::{ Mode, get_config };
+use rust_server::{ config::{ get_config, Mode }, handlers::router::get_router };
+use tokio::signal;
 use tracing::info;
-use rust_server::utils::python::run_ai;
 
 #[tokio::main]
 async fn main() {
@@ -9,14 +9,45 @@ async fn main() {
 
   // Set mode: "development" or "production"
   let mode = Mode::Dev;
-  let _ = Mode::Prod;
+  let docker = false;
 
   // Get the configuration
   info!("Loading configuration...");
-  let config = get_config(mode, false);
-  let _ = config.get_db_path();
-  let _ = run_ai(&config, "Hello".to_string());
+  let config = get_config(mode, docker);
 
-  // TODO: Graveful shutdown, Start Server...
+  // Start the server
   info!("Starting server...");
+  let ip = config.ip.clone();
+  let port = config.port.clone();
+  let addr = format!("{}:{}", ip, port);
+  let app = get_router(config);
+
+  // Bind the server to the address
+  let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+  info!("Server listining on: {}", listener.local_addr().unwrap());
+
+  // Serve the app with graceful shutdown
+  axum::serve(listener, app).with_graceful_shutdown(shutdown_signal()).await.unwrap();
+}
+
+async fn shutdown_signal() {
+  let ctrl_c = async {
+    signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
+  };
+
+  #[cfg(unix)]
+  let terminate = async {
+    signal::unix
+      ::signal(signal::unix::SignalKind::terminate())
+      .expect("failed to install signal handler")
+      .recv().await;
+  };
+
+  #[cfg(not(unix))]
+  let terminate = std::future::pending::<()>();
+
+  tokio::select! {
+      _ = ctrl_c => {},
+      _ = terminate => {},
+  }
 }

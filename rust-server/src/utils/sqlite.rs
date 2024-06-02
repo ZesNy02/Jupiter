@@ -1,106 +1,69 @@
 use rusqlite::Connection;
-use crate::config::Config;
+use crate::config::{ Config, Mode };
 
+use tracing::{ error, info };
 use super::super::models::database::{ DBError, Prompt, Result };
-
-fn get_connection(config: &Config) -> Result<Connection> {
-  let conn = rusqlite::Connection::open(config.get_db_path());
-  match conn {
-    Ok(conn) => {
-      let res = conn.execute(
-        "CREATE TABLE IF NOT EXISTS prompts (
-                    id INTEGER PRIMARY KEY,
-                    prompt TEXT NOT NULL,
-                    response TEXT NOT NULL,
-                    usefull INTEGER DEFAULT 0
-                )",
-        ()
-      );
-      match res {
-        Ok(_) => {
-          return Ok(conn);
-        }
-        Err(_e) => {
-          return Err(DBError::TableCreationError);
-        }
-      }
-    }
-    Err(_e) => Err(DBError::ConnectionError),
-  }
-}
-
-fn execute_sql(
-  config: &Config,
-  sql: &str,
-  params: &[&dyn rusqlite::ToSql],
-  err: DBError
-) -> Result<()> {
-  let conn = get_connection(&config);
-  match conn {
-    Ok(conn) => {
-      let res = conn.execute(sql, params);
-      match res {
-        Ok(_) => Ok(()),
-        Err(_e) => Err(err),
-      }
-    }
-    Err(_e) => Err(DBError::ConnectionError),
-  }
-}
 
 // NOTE: This function is only used in the tests
 pub fn drop_table(config: &Config) -> Result<()> {
-  return execute_sql(
-    &config,
-    "DROP TABLE prompts",
-    rusqlite::params![],
-    DBError::TableCreationError
-  );
+  let conn = get_connection(&config)?;
+  let res = conn.execute("DROP TABLE IF EXISTS prompts", []);
+  if let Ok(_) = res {
+    return Ok(());
+  }
+  return Err(DBError::TableCreationError);
 }
 
-pub fn insert_prompt(config: &Config, prompt: &str, response: &str) -> Result<()> {
-  return execute_sql(
-    &config,
-    "INSERT INTO prompts (prompt, response) VALUES (?1, ?2)",
-    rusqlite::params![prompt, response],
-    DBError::InsertError
-  );
+pub fn insert_prompt(config: &Config, prompt: &str, response: &str) -> Result<i64> {
+  let conn = get_connection(&config)?;
+  let sql = "INSERT INTO prompts (prompt, response) VALUES (?1, ?2)";
+  let res = conn.execute(sql, rusqlite::params![prompt, response]);
+  match res {
+    Ok(_) => {
+      let sql = "SELECT id FROM prompts WHERE prompt = ?1 AND response = ?2";
+      let stmt = conn.prepare(sql);
+      let id = get_latest(stmt, prompt.to_string(), response.to_string())?;
+
+      return Ok(id);
+    }
+    Err(_e) => {
+      return Err(DBError::InsertError);
+    }
+  }
 }
 
-pub fn update_prompt(config: &Config, id: u32, usefull: bool) -> Result<()> {
+pub fn update_prompt(config: &Config, id: i64, usefull: bool) -> Result<()> {
   let usefull = if usefull { 1 } else { 0 };
-  return execute_sql(
-    &config,
-    "UPDATE prompts SET usefull = ?1 WHERE id = ?2",
-    rusqlite::params![usefull, id],
-    DBError::UpdateError
-  );
+
+  let conn = get_connection(&config)?;
+
+  let sql = "UPDATE prompts SET usefull = ?1 WHERE id = ?2";
+  let res = conn.execute(sql, rusqlite::params![usefull, id]);
+  match res {
+    Ok(res) => {
+      if res == 0 {
+        return Err(DBError::UpdateError);
+      }
+      return Ok(());
+    }
+    Err(_e) => {
+      return Err(DBError::UpdateError);
+    }
+  }
 }
 
 pub fn fetch_prompts(config: &Config, usefull: Option<bool>) -> Result<Vec<Prompt>> {
-  let conn = get_connection(&config);
-  match conn {
-    Ok(conn) => {
-      let sql = match usefull {
-        Some(true) => "SELECT * FROM prompts WHERE usefull = 1",
-        Some(false) => "SELECT * FROM prompts WHERE usefull = 0",
-        None => "SELECT * FROM prompts",
-      };
-      let stmt = conn.prepare(sql);
-      let list = get_list(stmt);
-      match list {
-        Ok(list) => {
-          return Ok(list);
-        }
-        Err(_e) => {
-          return Err(DBError::QueryError);
-        }
-      }
-    }
-    Err(_e) => {
-      return Err(DBError::ConnectionError);
-    }
-  }
+  let conn = get_connection(&config)?;
+
+  let sql = match usefull {
+    Some(true) => "SELECT * FROM prompts WHERE usefull = 1",
+    Some(false) => "SELECT * FROM prompts WHERE usefull = 0",
+    None => "SELECT * FROM prompts",
+  };
+  let stmt = conn.prepare(sql);
+  let list = get_list(stmt)?;
+
+  return Ok(list);
 }
 
 fn get_list(stmt: rusqlite::Result<rusqlite::Statement>) -> Result<Vec<Prompt>> {
@@ -127,6 +90,76 @@ fn get_list(stmt: rusqlite::Result<rusqlite::Statement>) -> Result<Vec<Prompt>> 
     }
     Err(_e) => {
       return Err(DBError::QueryError);
+    }
+  }
+}
+
+fn get_latest(
+  stmt: rusqlite::Result<rusqlite::Statement>,
+  prompt: String,
+  response: String
+) -> Result<i64> {
+  match stmt {
+    Ok(mut stmt) => {
+      let iter = stmt.query_map(rusqlite::params![prompt, response], |row| { Ok(row.get(0)?) });
+
+      match iter {
+        Ok(iter) => {
+          let mut id: i64 = -1;
+          for item in iter {
+            if let Ok(item) = item {
+              id = item;
+            }
+          }
+          if id != -1 {
+            return Ok(id);
+          }
+          return Err(DBError::QueryError);
+        }
+        Err(_e) => {
+          return Err(DBError::QueryError);
+        }
+      }
+    }
+    Err(_e) => {
+      return Err(DBError::QueryError);
+    }
+  }
+}
+
+fn get_connection(config: &Config) -> Result<Connection> {
+  let mode = config.mode.clone();
+  let conn = rusqlite::Connection::open(config.get_db_path());
+  match conn {
+    Ok(conn) => {
+      let res = conn.execute(
+        "CREATE TABLE IF NOT EXISTS prompts (
+                    id INTEGER PRIMARY KEY,
+                    prompt TEXT NOT NULL,
+                    response TEXT NOT NULL,
+                    usefull INTEGER DEFAULT 0
+                )",
+        ()
+      );
+      match res {
+        Ok(_) => {
+          return Ok(conn);
+        }
+        Err(e) => {
+          error!("Could not execute create table sql.");
+          if mode == Mode::Dev {
+            info!("Error provided: {:?}", e);
+          }
+          return Err(DBError::TableCreationError);
+        }
+      }
+    }
+    Err(e) => {
+      error!("Could not open Database");
+      if mode == Mode::Dev {
+        info!("Error provided: {:?}", e);
+      }
+      return Err(DBError::ConnectionError);
     }
   }
 }
