@@ -27,22 +27,22 @@ def main():
     chunks = split_documents(documents)
     add_to_chroma(chunks)
 
-
+#retrieves the data from a pdf in the data folder
 def load_documents():
     document_loader = PyPDFDirectoryLoader(DATA_PATH)
     return document_loader.load()
 
-
+#splits the documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=800,
-        chunk_overlap=80,
+        chunk_size=257,
+        chunk_overlap=0,
         length_function=len,
         is_separator_regex=False,
     )
     return text_splitter.split_documents(documents)
 
-
+#adds the chunks to the database
 def add_to_chroma(chunks: list[Document]):
     # Load the existing database.
     db = Chroma(
@@ -74,7 +74,7 @@ def add_to_chroma(chunks: list[Document]):
 
 def calculate_chunk_ids(chunks):
 
-    # This will create IDs like "data/monopoly.pdf:6:2"
+    # Creates a unique ID for each chunk in the format:
     # Page Source : Page Number : Chunk Index
 
     last_page_id = None
@@ -107,4 +107,4 @@ def clear_database():
 
 
 if __name__ == "__main__":
-    main()
+    main()      
