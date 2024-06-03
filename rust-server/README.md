@@ -2,6 +2,10 @@
 
 ## Install depencies
 
+### Python
+
+- install from website, version 3.10 is needed
+
 ### Ollama
 
 - install from website
