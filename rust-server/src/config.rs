@@ -57,7 +57,7 @@ impl Config {
       port,
       mode,
       db_path: "./db.db".to_string(),
-      script: "rag.py".to_string(),
+      script: "rag_query.py".to_string(),
     }
   }
 

@@ -10,7 +10,7 @@ pub fn run_ai(config: &Config, prompt: String) -> Result<String> {
     return Err(AIError::PathError);
   }
 
-  let response = Command::new("py").arg(path).arg(prompt).output();
+  let response = Command::new("python3").arg(path).arg(prompt).output();
 
   match response {
     Ok(response) => {

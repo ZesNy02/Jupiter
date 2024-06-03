@@ -5,6 +5,9 @@ Dockerfile
 .env
 .dockerignore
 chroma
-Cargo.lock
-prompts.db
+**/Cargo.lock
 tests
+dbs
+**/*.db
+**/*.md
+call_test.py
