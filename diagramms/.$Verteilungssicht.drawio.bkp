@@ -1,9 +1,26 @@
-<mxfile host="Electron" modified="2024-06-03T17:52:47.471Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.13 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="Hlj-jzTNkSgxKUZBGrr9" version="24.4.13" type="device">
+<mxfile host="Electron" modified="2024-06-03T21:06:36.941Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.13 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="iTd0HuLOFpHCKAtfu58t" version="24.4.13" type="device">
   <diagram name="Page-1" id="4P_HGf3xtErdbJd8V0NP">
-    <mxGraphModel dx="1097" dy="988" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1675" dy="1029" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="gs30a6w9YwNVY0AWe2B8-1" value="Client" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="35" y="50" width="395" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="gs30a6w9YwNVY0AWe2B8-2" value="Browser" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="340" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="gs30a6w9YwNVY0AWe2B8-3" value="&lt;div&gt;Tampermonkey&lt;/div&gt;" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="90" y="135" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="gs30a6w9YwNVY0AWe2B8-4" value="«JavaScript»&lt;br&gt;ChatUI" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="140" y="180" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="gs30a6w9YwNVY0AWe2B8-5" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="gs30a6w9YwNVY0AWe2B8-4">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

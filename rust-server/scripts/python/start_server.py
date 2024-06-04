@@ -41,6 +41,9 @@ def get_embeddings():
     if os.path.exists(chroma_folder):
         return
     else:
+        # Create Chroma folder
+        os.mkdir(chroma_folder)
+
         # Change the current working directory
         os.chdir(chroma_folder)
 
