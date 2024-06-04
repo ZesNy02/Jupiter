@@ -7,8 +7,8 @@ from langchain.schema.document import Document
 from embedding import get_embedding_function
 from langchain_community.vectorstores import Chroma
 
-CHROMA_PATH = "chroma"
-DATA_PATH = "data"
+CHROMA_PATH = os.path.join(os.path.dirname(__file__), "./chroma")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "./data")
 
 
 def main():
@@ -34,7 +34,6 @@ def load_documents():
 # splits the documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=257,
         chunk_size=500,
         chunk_overlap=0,
         length_function=len,

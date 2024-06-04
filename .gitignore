@@ -7,6 +7,7 @@ Cargo.lock
 # Python git ignores
 __pycache__/
 chroma/
+value.txt
 
 # Other git ignores
 .idea/*
