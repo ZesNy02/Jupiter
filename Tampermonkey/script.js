@@ -20,7 +20,6 @@ const serverUrl = "http://localhost:3000/ai";
 
 // The Chat button is the orange button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
-
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
@@ -82,15 +81,8 @@ const makeResponseMessage = (text) => {
     responseMessage.style.borderRadius = "10px";
     responseMessage.style.padding = "10px";
 
-    // HTML-Strings aus den DOM-Elementen erstellen
-    const responseMessageHTML = responseMessage.outerHTML;
-    const wrapperResponseMessageButtonsHTML = wrapperResponseMessageButtons.outerHTML;
-
-    // HTML der Nachricht und der Buttons zusammenfügen
-    const combinedHTML = responseMessageHTML + wrapperResponseMessageButtonsHTML;
-
-    // HTML in den wrapperResponseMessage einfügen
-    wrapperResponseMessage.innerHTML = combinedHTML;
+    wrapperResponseMessage.appendChild(responseMessage);
+    wrapperResponseMessage.appendChild(wrapperResponseMessageButtons);
 
     return wrapperResponseMessage;
 };
@@ -100,9 +92,12 @@ const makeWrapperResponseMessageButtons = () => {
     const thumbsUpButton = createThumbsUpButton();
     const thumbsDownButton = createThumbsDownButton();
     responseMessageButtons.id="wrapperResponseMessageButtons"
-
+    responseMessageButtons.style.height="40px";
+    responseMessageButtons.style.paddingTop="10px";
     //combines the html strings of the different buttons
-    responseMessageButtons.innerHTML=reloadButton.outerHTML+thumbsUpButton.outerHTML+thumbsDownButton.outerHTML;
+    responseMessageButtons.appendChild(reloadButton);
+    responseMessageButtons.appendChild(thumbsUpButton);
+    responseMessageButtons.appendChild(thumbsDownButton);
     return responseMessageButtons;
 }
 //creates the reload button to put under the response message
@@ -110,13 +105,30 @@ const createReloadButton = () => {
     //TODO: implement
     const reloadButton=document.createElement("button");
     reloadButton.id="reloadButton";
-    reloadButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+    reloadButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
     reloadButton.style.backgroundColor="transparent";
     reloadButton.style.border="none";
+    reloadButton.style.cursor="pointer";
     reloadButton.addEventListener("click",()=>{
-        //TODO: implement
+        if(reloadButton.style.cursor!=="cursor") {
+            reloadPrompt();
+        }
     });
+    //darkens the button if hovered
+    reloadButton.addEventListener("mouseover", () => {
+        reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#000000"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+    });
+
+    //lightens the button if not hovered
+    reloadButton.addEventListener("mouseout", () => {
+        reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+    });
+
     return reloadButton;
+}
+//reloads the promp and lets the ai generate a new response
+const reloadPrompt=()=>{
+//TODO
 }
 //creates the thumbs up button to put under the response message
 const createThumbsUpButton = () => {
@@ -126,10 +138,24 @@ const createThumbsUpButton = () => {
     thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
     thumbsUpButton.style.backgroundColor="transparent";
     thumbsUpButton.style.border="none";
+    thumbsUpButton.style.cursor="pointer";
     thumbsUpButton.addEventListener("click",()=>{
-        //TODO: implement
+        thumbsUp();
+    });
+    //darkens the button if hovered
+    thumbsUpButton.addEventListener("mouseover", () => {
+        thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
+    });
+
+    //lightens the button if not hovered
+    thumbsUpButton.addEventListener("mouseout", () => {
+        thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
     });
     return thumbsUpButton;
+}
+//Thumbs up gives the server a positive respond to the answer of the coresponding prompt
+const thumbsUp=()=>{
+    //TODO
 }
 //creates the thumbs down button to put under the response message
 const createThumbsDownButton = () => {
@@ -139,10 +165,24 @@ const createThumbsDownButton = () => {
     thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
     thumbsDownButton.style.backgroundColor="transparent";
     thumbsDownButton.style.border="none";
+    thumbsDownButton.style.cursor="pointer";
     thumbsDownButton.addEventListener("click",()=>{
-        //TODO: implement
+        thumbsDown();
+    });
+    //darkens the button if hovered
+    thumbsDownButton.addEventListener("mouseover", () => {
+        thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
+    });
+
+    //lightens the button up if not hovered
+    thumbsDownButton.addEventListener("mouseout", () => {
+        thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
     });
     return thumbsDownButton;
+}
+//Thumbs up gives the server a negative respond to the answer of the coresponding prompt
+const thumbsDown=()=>{
+    //TODO
 }
 
 // The Chat Window is the window that appears when the Chat button is clicked
@@ -301,8 +341,6 @@ const makeChatWindow = () => {
         //TODO: loading animation
         const loadingMessage = makeLoadMessage();
         chatWindow.appendChild(loadingMessage);
-        //TODO: Remove before shipping
-        chatWindow.appendChild(makeResponseMessage("test"));
         GM_xmlhttpRequest({
             method: "POST",
             url: serverUrl,
@@ -317,7 +355,7 @@ const makeChatWindow = () => {
                 wrapperPromptsContainer.scrollTop =
                     wrapperPromptsContainer.scrollHeight;
                 //after loading the message remove loading message
-               chatWindow.removeChild(loadingMessage);
+                chatWindow.removeChild(loadingMessage);
             },
         });
     };
