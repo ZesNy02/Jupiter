@@ -17,6 +17,15 @@
 
 // Server URL where the server runs
 const serverUrl = "http://localhost:3000/ai";
+//Sever URL where the server receives ratings
+const ratingURL = "http://localhost:3000/rating";
+//cached prompt map mapped from UUID(string) -> Message content(string)
+//this is important so that you can reload or give thumbs up or down so that you can find the specific message quickly
+const prompts = new Map();
+
+// a map connecting the prompts sent by the user to the received messages by the server
+// responseUUID(string) -> promptUUID(string)
+const responseToPrompt = new Map();
 
 // The Chat button is the orange button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
@@ -47,7 +56,8 @@ const makeChatButton = () => {
 // A User Message is a message on the right of the Chat that the User Typed
 const makeUserMessage = (text) => {
     const userMessage = document.createElement("div");
-    userMessage.id = "userMessage";
+    userMessage.className = "userMessage";
+    userMessage.id = generateUUID();
     userMessage.style.backgroundColor = "#A4A4AC";
     userMessage.innerHTML = text;
     userMessage.style.textOverflow = "wrap";
@@ -62,17 +72,100 @@ const makeUserMessage = (text) => {
 };
 
 // A Response Message is a message on the left of the Chat that the AI Typed
-//TODO: reload option and thumbs up and down
-const makeResponseMessage = (text) => {
-    // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
-    const wrapperResponseMessage = document.createElement("div");
-    wrapperResponseMessage.id = "wrapperResponseMessage";
+const makeResponseMessage = (responseUUID, text) => {
 
-    // Der wrapperResponseMessageButtons wird mit den 3 Buttons gefüllt
-    const wrapperResponseMessageButtons = makeWrapperResponseMessageButtons();
+    //gets the promptUUID to give it to the buttons, so they can do their stuff
+    const promptUUID = responseToPrompt.get(responseUUID);
+
+    //creates the wrapper for the 3 buttons under the response
+    const makeWrapperResponseMessageButtons = () => {
+        //creates the reload button to put under the response message
+        const createReloadButton = () => {
+            const reloadButton = document.createElement("button");
+            reloadButton.className = "reloadButton";
+            reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+            reloadButton.style.backgroundColor = "transparent";
+            reloadButton.style.border = "none";
+            reloadButton.style.cursor = "pointer";
+            //when clicked give the reloadPrompt function the UUID of the answer so that it can find the coresponding prompt
+            reloadButton.addEventListener("click", () => {
+                if (reloadButton.style.cursor !== "cursor") {
+                    reloadPrompt(promptUUID);
+                }
+            });
+            //darkens the button if hovered
+            reloadButton.addEventListener("mouseover", () => {
+                reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#000000"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+            });
+
+            //lightens the button if not hovered
+            reloadButton.addEventListener("mouseout", () => {
+                reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+            });
+
+            return reloadButton;
+        }
+        //creates the thumbs up button to put under the response message
+        const createThumbsUpButton = () => {
+            const thumbsUpButton = document.createElement("button");
+            thumbsUpButton.className = "thumbsUpButton";
+            thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
+            thumbsUpButton.style.backgroundColor = "transparent";
+            thumbsUpButton.style.border = "none";
+            thumbsUpButton.style.cursor = "pointer";
+            thumbsUpButton.addEventListener("click", () => {
+                thumbsUp(responseUUID);
+            });
+            //darkens the button if hovered
+            thumbsUpButton.addEventListener("mouseover", () => {
+                thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
+            });
+
+            //lightens the button if not hovered
+            thumbsUpButton.addEventListener("mouseout", () => {
+                thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
+            });
+            return thumbsUpButton;
+        }
+        //creates the thumbs down button to put under the response message
+        const createThumbsDownButton = () => {
+            const thumbsDownButton = document.createElement("button");
+            thumbsDownButton.className = "thumbsDownButton";
+            thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
+            thumbsDownButton.style.backgroundColor = "transparent";
+            thumbsDownButton.style.border = "none";
+            thumbsDownButton.style.cursor = "pointer";
+            thumbsDownButton.addEventListener("click", () => {
+                thumbsDown(responseUUID);
+            });
+            //darkens the button if hovered
+            thumbsDownButton.addEventListener("mouseover", () => {
+                thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
+            });
+
+            //lightens the button up if not hovered
+            thumbsDownButton.addEventListener("mouseout", () => {
+                thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
+            });
+            return thumbsDownButton;
+        }
+
+        const wrapperResponseMessageButtons = document.createElement("div");
+
+        wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
+        wrapperResponseMessageButtons.style.height = "40px";
+        wrapperResponseMessageButtons.style.paddingTop = "10px";
+        //attaches the buttons into the div
+        wrapperResponseMessageButtons.appendChild(createReloadButton());
+        wrapperResponseMessageButtons.appendChild(createThumbsUpButton());
+        wrapperResponseMessageButtons.appendChild(createThumbsDownButton());
+
+        return wrapperResponseMessageButtons;
+    }
 
     const responseMessage = document.createElement("div");
-    responseMessage.id = "responseMessage";
+    responseMessage.className = "responseMessage";
+    responseMessage.id = responseUUID;
     responseMessage.style.backgroundColor = "#A4A4AC";
     responseMessage.innerHTML = text;
     responseMessage.style.alignSelf = "flex-start";
@@ -81,107 +174,34 @@ const makeResponseMessage = (text) => {
     responseMessage.style.borderRadius = "10px";
     responseMessage.style.padding = "10px";
 
+    // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
+    const wrapperResponseMessage = document.createElement("div");
+
     wrapperResponseMessage.appendChild(responseMessage);
-    wrapperResponseMessage.appendChild(wrapperResponseMessageButtons);
+    wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
 
     return wrapperResponseMessage;
 };
-const makeWrapperResponseMessageButtons = () => {
-    const responseMessageButtons = document.createElement("div");
-    const reloadButton = createReloadButton();
-    const thumbsUpButton = createThumbsUpButton();
-    const thumbsDownButton = createThumbsDownButton();
-    responseMessageButtons.id="wrapperResponseMessageButtons"
-    responseMessageButtons.style.height="40px";
-    responseMessageButtons.style.paddingTop="10px";
-    //combines the html strings of the different buttons
-    responseMessageButtons.appendChild(reloadButton);
-    responseMessageButtons.appendChild(thumbsUpButton);
-    responseMessageButtons.appendChild(thumbsDownButton);
-    return responseMessageButtons;
-}
-//creates the reload button to put under the response message
-const createReloadButton = () => {
-    //TODO: implement
-    const reloadButton=document.createElement("button");
-    reloadButton.id="reloadButton";
-    reloadButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
-    reloadButton.style.backgroundColor="transparent";
-    reloadButton.style.border="none";
-    reloadButton.style.cursor="pointer";
-    reloadButton.addEventListener("click",()=>{
-        if(reloadButton.style.cursor!=="cursor") {
-            reloadPrompt();
-        }
-    });
-    //darkens the button if hovered
-    reloadButton.addEventListener("mouseover", () => {
-        reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#000000"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
-    });
 
-    //lightens the button if not hovered
-    reloadButton.addEventListener("mouseout", () => {
-        reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
-    });
-
-    return reloadButton;
-}
 //reloads the promp and lets the ai generate a new response
-const reloadPrompt=()=>{
-//TODO
-}
-//creates the thumbs up button to put under the response message
-const createThumbsUpButton = () => {
-    //TODO: implement
-    const thumbsUpButton=document.createElement("button");
-    thumbsUpButton.id="thumbsUpButton";
-    thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-    thumbsUpButton.style.backgroundColor="transparent";
-    thumbsUpButton.style.border="none";
-    thumbsUpButton.style.cursor="pointer";
-    thumbsUpButton.addEventListener("click",()=>{
-        thumbsUp();
-    });
-    //darkens the button if hovered
-    thumbsUpButton.addEventListener("mouseover", () => {
-        thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-    });
+function reloadPrompt(promptUUID) {
 
-    //lightens the button if not hovered
-    thumbsUpButton.addEventListener("mouseout", () => {
-        thumbsUpButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-    });
-    return thumbsUpButton;
+    //search the cached prompts to find the corresponding message
+    const prompt = prompts.get(promptUUID);
+    //sends the prompt to the server again to reload it
+    sendMessageAndFormat(promptUUID,prompt,serverUrl);
+
 }
+
 //Thumbs up gives the server a positive respond to the answer of the coresponding prompt
-const thumbsUp=()=>{
+//TODO:implement
+function thumbsUp(responseUUID) {
     //TODO
 }
-//creates the thumbs down button to put under the response message
-const createThumbsDownButton = () => {
-    //TODO: implement
-    const thumbsDownButton=document.createElement("button");
-    thumbsDownButton.id="thumbsDownButton";
-    thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
-    thumbsDownButton.style.backgroundColor="transparent";
-    thumbsDownButton.style.border="none";
-    thumbsDownButton.style.cursor="pointer";
-    thumbsDownButton.addEventListener("click",()=>{
-        thumbsDown();
-    });
-    //darkens the button if hovered
-    thumbsDownButton.addEventListener("mouseover", () => {
-        thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
-    });
 
-    //lightens the button up if not hovered
-    thumbsDownButton.addEventListener("mouseout", () => {
-        thumbsDownButton.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
-    });
-    return thumbsDownButton;
-}
 //Thumbs up gives the server a negative respond to the answer of the coresponding prompt
-const thumbsDown=()=>{
+//TODO:implement
+function thumbsDown(responseUUID) {
     //TODO
 }
 
@@ -208,6 +228,8 @@ const makeLoadMessage = () => {
     return loadMessage
 }
 
+
+//this whole method makes the chat window so every design choice
 const makeChatWindow = () => {
     // -------------------------- Chat Window --------------------------
     const chatWindow = document.createElement("div");
@@ -330,34 +352,17 @@ const makeChatWindow = () => {
         const wrapperPromptsContainer = document.getElementById(
             "wrapper-prompts-container"
         );
+        //clears chat
         chatInput.value = "";
-        // Add message to the chat window
-        chatWindow.appendChild(makeUserMessage(message));
-        // Scroll to the bottom of the chat window (UX)
-        wrapperPromptsContainer.scrollTop = wrapperPromptsContainer.scrollHeight;
 
-        // Send the message to the server
-        // When Server responds, add the response to the chat window
-        //TODO: loading animation
-        const loadingMessage = makeLoadMessage();
-        chatWindow.appendChild(loadingMessage);
-        GM_xmlhttpRequest({
-            method: "POST",
-            url: serverUrl,
-            data: JSON.stringify({message: message}), // Send data as JSON
-            headers: {
-                "Content-Type": "application/json",
-            },
-            onload: function (response) {
-                // Handle the response from the server
-                //TODO: cleanup on responseText to remove unnecessary json text
-                chatWindow.appendChild(makeResponseMessage(response.responseText));
-                wrapperPromptsContainer.scrollTop =
-                    wrapperPromptsContainer.scrollHeight;
-                //after loading the message remove loading message
-                chatWindow.removeChild(loadingMessage);
-            },
-        });
+        // Add message to the chat window
+        const userMessage = makeUserMessage(message);
+        chatWindow.appendChild(userMessage);
+
+        //add message to the cached prompts
+        prompts.set(userMessage.id, message);
+        //sends the message to the server
+        sendMessageAndFormat(userMessage.id, message,serverUrl);
     };
 
     // -------------------------- Chat Input Button --------------------------
@@ -396,6 +401,54 @@ const makeChatWindow = () => {
     return chatWindow;
 };
 
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+//sends the message to the correct server and formats the chat window
+function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo){
+
+    const chatWindow = document.getElementById("prompts-container");
+    const wrapperPromptsContainer=document.getElementById("wrapper-prompts-container");
+
+    // Scroll to the bottom of the chat window (UX)
+    wrapperPromptsContainer.scrollTop = wrapperPromptsContainer.scrollHeight;
+
+    // loading animation until response
+    const loadingMessage = makeLoadMessage();
+    chatWindow.appendChild(loadingMessage);
+
+    // Send the message to the server
+    // When Server responds, add the response to the chat window
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: serverUrlToSendTo,
+        data: JSON.stringify({messageId: promptUIID, message: prompt}), // Send data as JSON
+        headers: {
+            "Content-Type": "application/json",
+        },
+        onload: function (response) {
+
+            //generate a UUID for the response and link it to the prompt
+            const responseUUID = generateUUID();
+            responseToPrompt.set(responseUUID, promptUIID);
+
+            //TODO: cleanup on responseText to remove unnecessary json text
+            chatWindow.appendChild(makeResponseMessage(responseUUID, response.responseText));
+            chatWindow.removeChild(loadingMessage);
+
+            //scroll to the top
+            wrapperPromptsContainer.scrollTop =
+                wrapperPromptsContainer.scrollHeight;
+
+            //after loading the message remove loading message
+            chatWindow.removeChild(loadingMessage);
+        },
+    });
+}
 // Add the Chat Button and Chat Window to the page when the window loads
 window.onload = () => {
     document.body.appendChild(makeChatButton());
