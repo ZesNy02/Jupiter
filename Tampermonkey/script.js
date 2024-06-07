@@ -228,7 +228,6 @@ const makeLoadMessage = () => {
     return loadMessage
 }
 
-
 //this whole method makes the chat window so every design choice
 const makeChatWindow = () => {
     // -------------------------- Chat Window --------------------------
