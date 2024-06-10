@@ -1,4 +1,4 @@
-import {makeChatButton} from './button.js'; // Importiere die JavaScript-Funktion
+import {makeChatButton} from './button.mjs'; // Importiere die JavaScript-Funktion
 import './style.css'; // Importiere die CSS-Datei
 
 console.log("main.js"); // Gebe eine Nachricht in der Konsole aus
