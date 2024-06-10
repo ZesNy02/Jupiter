@@ -26,5 +26,5 @@
         }
     });
 
-    loadCSS('https://zesny02.github.io/Jupiter/chatbox.css');
+    loadCSS('https://zesny02.github.io/Jupiter/style.css');
 })();
