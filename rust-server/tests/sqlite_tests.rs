@@ -1,12 +1,22 @@
 #[cfg(test)]
 mod test {
-  use rust_server::config::Config;
+  use rust_server::config::{ Config, Mode };
   use rust_server::models::database::{ DBError, Prompt };
   use rust_server::utils::sqlite::*;
 
+  fn dummy_sqlite(path: String) -> Config {
+    return Config {
+      ip: "".to_string(),
+      port: 0,
+      mode: Mode::Dev,
+      db_path: path,
+      script: "".to_string(),
+    };
+  }
+
   #[test]
   fn test_connection() {
-    let errconfig = Config::_dummy_sqlite("/.,&/)()".to_string());
+    let errconfig = dummy_sqlite("/.,&/)()".to_string());
     // Test connection error
     assert_eq!(insert_prompt(&errconfig, "", ""), Err(DBError::ConnectionError));
     assert_eq!(update_prompt(&errconfig, 0, true), Err(DBError::ConnectionError));
@@ -15,7 +25,7 @@ mod test {
 
   #[test]
   fn test_insert_prompt() {
-    let config = Config::_dummy_sqlite("tests_insert.db".to_string());
+    let config = dummy_sqlite("tests_insert.db".to_string());
     // Test insert success
     assert_eq!(drop_table(&config), Ok(()));
 
@@ -26,7 +36,7 @@ mod test {
 
   #[test]
   fn test_update_prompt() {
-    let config = Config::_dummy_sqlite("tests_update.db".to_string());
+    let config = dummy_sqlite("tests_update.db".to_string());
     // Test update success
     assert_eq!(drop_table(&config), Ok(()));
 
@@ -39,7 +49,7 @@ mod test {
 
   #[test]
   fn test_fetch_prompts() {
-    let config = Config::_dummy_sqlite("tests_fetch.db".to_string());
+    let config = dummy_sqlite("tests_fetch.db".to_string());
     // Test insert success
     assert_eq!(drop_table(&config), Ok(()));
 

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test {
   use axum::http::StatusCode;
-  use rust_server::config::Config;
+  use rust_server::config::{ Config, Mode };
   use rust_server::handlers::db::*;
   use rust_server::models::database::Prompt;
   use rust_server::models::routes_data::{ DBEditRequest, DBFetchResponse, PromptList };
@@ -13,9 +13,19 @@ mod test {
     let _ = insert_prompt(&config, "test2", "test2");
   }
 
+  fn dummy_sqlite(path: String) -> Config {
+    return Config {
+      ip: "".to_string(),
+      port: 0,
+      mode: Mode::Dev,
+      db_path: path,
+      script: "".to_string(),
+    };
+  }
+
   #[test]
   fn test_db_update() {
-    let config = Config::_dummy_sqlite("tests_update_handler.db".to_string());
+    let config = dummy_sqlite("tests_update_handler.db".to_string());
     make_dummy_entries(&config);
 
     let (code, _) = handle_edit(&config, DBEditRequest { id: 1, usefull: true });
@@ -27,7 +37,7 @@ mod test {
 
   #[test]
   fn test_db_fetch_all() {
-    let config = Config::_dummy_sqlite("tests_all_handler.db".to_string());
+    let config = dummy_sqlite("tests_all_handler.db".to_string());
     make_dummy_entries(&config);
 
     let (code, list) = handle_fetch(&config, None);
@@ -51,7 +61,7 @@ mod test {
 
   #[test]
   fn test_db_fetch_usefull() {
-    let config = Config::_dummy_sqlite("tests_usefull_handler.db".to_string());
+    let config = dummy_sqlite("tests_usefull_handler.db".to_string());
     make_dummy_entries(&config);
     let _ = update_prompt(&config, 1, true);
 
@@ -70,7 +80,7 @@ mod test {
 
   #[test]
   fn test_db_fetch_not_usefull() {
-    let config = Config::_dummy_sqlite("tests_not_usefull_handler.db".to_string());
+    let config = dummy_sqlite("tests_not_usefull_handler.db".to_string());
     make_dummy_entries(&config);
     let _ = update_prompt(&config, 1, true);
 

@@ -7,6 +7,20 @@ use crate::{
 };
 
 // --- Start of Edit routes handlers: ---
+/// Function to handle the **POST** request to edit a prompt in the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration. Automatically received by Axum.
+/// * `payload` - The request payload containing the prompt ID and the new usefullness value.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a message indicating the success or failure of the operation.
+///
+/// # Route
+///
+/// * **POST** `/db/edit`
 pub async fn handle_db_post_edit(
   State(config): State<Config>,
   Json(payload): Json<DBEditRequest>
@@ -16,6 +30,15 @@ pub async fn handle_db_post_edit(
 // --- End of Edit routes handlers ---
 
 // --- Start of Fetch routes handlers: ---
+/// Function to handle the **GET** request to fetch all prompts from the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration. Automatically received by Axum.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of all prompts.
 pub async fn handle_db_post_fetch_all(State(config): State<Config>) -> (
   StatusCode,
   Json<DBFetchResponse>,
@@ -24,6 +47,15 @@ pub async fn handle_db_post_fetch_all(State(config): State<Config>) -> (
   return (status, Json(list));
 }
 
+/// Function to handle the **GET** request to fetch all usefull prompts from the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration. Automatically received by Axum.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of usefull prompts.
 pub async fn handle_db_post_fetch_usefull(State(config): State<Config>) -> (
   StatusCode,
   Json<DBFetchResponse>,
@@ -32,6 +64,15 @@ pub async fn handle_db_post_fetch_usefull(State(config): State<Config>) -> (
   return (status, Json(list));
 }
 
+/// Function to handle the **GET** request to fetch all not usefull prompts from the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration. Automatically received by Axum.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of not usefull prompts.
 pub async fn handle_db_post_fetch_not_usefull(State(config): State<Config>) -> (
   StatusCode,
   Json<DBFetchResponse>,
@@ -42,6 +83,16 @@ pub async fn handle_db_post_fetch_not_usefull(State(config): State<Config>) -> (
 // --- End of Fetch routes handlers ---
 
 //--- Start of Testable handler functions: ---
+/// Handles the fetch request by fetching prompts from the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration.
+/// * `usefull` - An optional boolean value to filter prompts by usefullness.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a [DBFetchResponse] containing the list of prompts or an error message.
 pub fn handle_fetch(config: &Config, usefull: Option<bool>) -> (StatusCode, DBFetchResponse) {
   let prompts = fetch_prompts(&config, usefull);
   match prompts {
@@ -79,6 +130,16 @@ pub fn handle_fetch(config: &Config, usefull: Option<bool>) -> (StatusCode, DBFe
   }
 }
 
+/// Handles the edit request by updating a prompt in the database.
+///
+/// # Arguments
+///
+/// * `config` - The server configuration.
+/// * `payload` - The request payload as a [DBEditRequest].
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and a message indicating the success or failure of the operation.
 pub fn handle_edit(config: &Config, payload: DBEditRequest) -> (StatusCode, String) {
   let res = update_prompt(&config, payload.id, payload.usefull);
   match res {
