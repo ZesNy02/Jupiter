@@ -33,7 +33,7 @@ const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
     chatButton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
+        '<svg xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%" fill="#D9D9D9"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
     chatButton.style.position = "fixed";
     chatButton.style.bottom = "10px";
     chatButton.style.left = "270px";
@@ -65,6 +65,7 @@ const makeUserMessage = (text) => {
     userMessage.style.width = "80%";
     userMessage.style.border = "1px solid black";
     userMessage.style.borderRadius = "10px";
+    userMessage.style.borderColor = "transparent";
     userMessage.style.padding = "10px";
     userMessage.style.wordWrap = "break-word"; // Zeilenumbruch bei langen Wörtern
     userMessage.style.whiteSpace = "pre-wrap"; // Zeilenumbrüche bei normalen Leerzeichen
@@ -173,7 +174,7 @@ const makeResponseMessage = (responseUUID, text) => {
     responseMessage.style.border = "1px solid black";
     responseMessage.style.borderRadius = "10px";
     responseMessage.style.padding = "10px";
-
+    responseMessage.style.borderColor = "transparent";
     // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
     const wrapperResponseMessage = document.createElement("div");
 
@@ -189,7 +190,7 @@ function reloadPrompt(promptUUID) {
     //search the cached prompts to find the corresponding message
     const prompt = prompts.get(promptUUID);
     //sends the prompt to the server again to reload it
-    sendMessageAndFormat(promptUUID,prompt,serverUrl);
+    sendMessageAndFormat(promptUUID, prompt, serverUrl);
 
 }
 
@@ -209,21 +210,13 @@ function thumbsDown(responseUUID) {
 const makeLoadMessage = () => {
     const loadMessage = document.createElement("div");
     loadMessage.id = "loadMessage von https://www.svgbackgrounds.com/elements/animated-svg-preloaders/";
-    loadMessage.innerHTML =
-        "<div style=\"display: flex; justify-content: center; align-items: center; height: 100%;\">" +
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" alignment-baseline='central' height='30%' width='30%' viewBox=\"0 0 200 200\">" +
-        "<circle fill=\"#448CEB\" stroke=\"#448CEB\" stroke-width=\"10\" r=\"15\" cx=\"40\" cy=\"100\">" +
-        "<animate attributeName=\"opacity\" calcMode=\"spline\" dur=\"2\" values=\"1;0;1;\" keySplines=\".5 0 .5 1;.5 0 .5 1\" repeatCount=\"indefinite\" begin=\"-.4\"></animate></circle>" +
-        "<circle fill=\"#448CEB\" stroke=\"#448CEB\" stroke-width=\"10\" r=\"15\" cx=\"100\" cy=\"100\">" +
-        "<animate attributeName=\"opacity\" calcMode=\"spline\" dur=\"2\" values=\"1;0;1;\" keySplines=\".5 0 .5 1;.5 0 .5 1\" repeatCount=\"indefinite\" begin=\"-.2\"></animate></circle>" +
-        "<circle fill=\"#448CEB\" stroke=\"#448CEB\" stroke-width=\"10\" r=\"15\" cx=\"160\" cy=\"100\">" +
-        "<animate attributeName=\"opacity\" calcMode=\"spline\" dur=\"2\" values=\"1;0;1;\" keySplines=\".5 0 .5 1;.5 0 .5 1\" repeatCount=\"indefinite\" begin=\"0\"></animate></circle></svg>" +
-        "</div>";
+    loadMessage.innerHTML = '<div style=\"display: flex; justify-content: center; align-items: center;\"><svg id="ladebild" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480.52 471.13" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="80px" height="80px" style="background-color:transparent"><style><![CDATA[#ladebild-s-rect1_to {animation: ladebild-s-rect1_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_to__to { 0% {transform: translate(227.413141px,149.305825px)} 16.666667% {transform: translate(370.355789px,193.355788px)} 33.333333% {transform: translate(368.868828px,348.324813px)} 50% {transform: translate(257.471827px,426.72455px)} 66.666667% {transform: translate(138.314166px,348.365767px)} 83.333333% {transform: translate(114.307582px,223.307575px)} 100% {transform: translate(227.413141px,149.305825px)}} #ladebild-s-rect1_tr {animation: ladebild-s-rect1_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_tr__tr { 0% {transform: rotate(19deg)} 100% {transform: rotate(199deg)}} #ladebild-s-rect2_to {animation: ladebild-s-rect2_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_to__to { 0% {transform: translate(138.314161px,340.808123px)} 16.666667% {transform: translate(118.32111px,218.634813px)} 33.333333% {transform: translate(232.838032px,147.075828px)} 50% {transform: translate(380.784682px,192.220096px)} 66.666667% {transform: translate(373.817032px,352.248921px)} 83.333333% {transform: translate(255.000893px,441.149087px)} 100% {transform: translate(128.311303px,333.636613px)}} #ladebild-s-rect2_tr {animation: ladebild-s-rect2_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_tr__tr { 0% {transform: rotate(85deg)} 100% {transform: rotate(265deg)}} #ladebild-s-rect3_to {animation: ladebild-s-rect3_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_to__to { 0% {transform: translate(368.868823px,353.579698px)} 16.666667% {transform: translate(254.489853px,432.334834px)} 33.333333% {transform: translate(132.975658px,351.953105px)} 50% {transform: translate(107.954129px,224.242905px)} 66.666667% {transform: translate(221.785778px,147.965968px)} 83.333333% {transform: translate(380.78px,192.22px)} 100% {transform: translate(381.639179px,353.408155px)}} #ladebild-s-rect3_tr {animation: ladebild-s-rect3_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_tr__tr { 0% {transform: rotate(84deg)} 100% {transform: rotate(264deg)}}]]></style><g id="ladebild-s-g1" transform="translate(0-48.445569)"><g id="ladebild-s-rect1_to" transform="translate(227.413141,149.305825)"><g id="ladebild-s-rect1_tr" transform="rotate(19)"><rect id="ladebild-s-rect1" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-70.055,-70.055)" fill="#f8ca2e" stroke-width="0"/></g></g><g id="ladebild-s-rect2_to" transform="translate(138.314161,340.808123)"><g id="ladebild-s-rect2_tr" transform="rotate(85)"><rect id="ladebild-s-rect2" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-74.089278,-65.104962)" fill="#f5a051" stroke-width="0"/></g></g><g id="ladebild-s-rect3_to" transform="translate(368.868823,353.579698)"><g id="ladebild-s-rect3_tr" transform="rotate(84)"><rect id="ladebild-s-rect3" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-69.472912,-76.414198)" fill="#9ec6eb" stroke-width="0"/></g></g></g></svg></div>';
     loadMessage.style.backgroundColor = "#A4A4AC";
     loadMessage.style.alignSelf = "flex-start";
     loadMessage.style.width = "80%";
     loadMessage.style.border = "1px solid black";
     loadMessage.style.borderRadius = "10px";
+    loadMessage.style.borderColor = "transparent";
     loadMessage.style.padding = "10px";
     return loadMessage
 }
@@ -236,8 +229,8 @@ const makeChatWindow = () => {
     chatWindow.style.position = "fixed";
     chatWindow.style.bottom = "10px";
     chatWindow.style.left = "270px";
-    chatWindow.style.width = "40vw";
-    chatWindow.style.height = "60vh";
+    chatWindow.style.width = "30vw";
+    chatWindow.style.height = "50vh";
     chatWindow.style.zIndex = "100";
     chatWindow.style.display = "none";
     chatWindow.style.flexDirection = "column";
@@ -269,9 +262,9 @@ const makeChatWindow = () => {
 // Chat Close Button
     const closeButton = document.createElement("button");
     closeButton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#000000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+        '<svg xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#D9D9D9"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
     closeButton.id = "closeButton";
-    closeButton.style.color = "grey";
+    closeButton.style.color = "#D9D9D9";
     closeButton.style.height = "40px";
     closeButton.style.width = "40px";
     closeButton.style.border = "none";
@@ -361,7 +354,7 @@ const makeChatWindow = () => {
         //add message to the cached prompts
         prompts.set(userMessage.id, message);
         //sends the message to the server
-        sendMessageAndFormat(userMessage.id, message,serverUrl);
+        sendMessageAndFormat(userMessage.id, message, serverUrl);
     };
 
     // -------------------------- Chat Input Button --------------------------
@@ -408,10 +401,10 @@ function generateUUID() {
 }
 
 //sends the message to the correct server and formats the chat window
-function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo){
+function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo) {
 
     const chatWindow = document.getElementById("prompts-container");
-    const wrapperPromptsContainer=document.getElementById("wrapper-prompts-container");
+    const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
 
     // Scroll to the bottom of the chat window (UX)
     wrapperPromptsContainer.scrollTop = wrapperPromptsContainer.scrollHeight;
@@ -448,6 +441,7 @@ function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo){
         },
     });
 }
+
 // Add the Chat Button and Chat Window to the page when the window loads
 window.onload = () => {
     document.body.appendChild(makeChatButton());
