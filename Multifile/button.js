@@ -1,5 +1,5 @@
 // Erstelle einen Button 
-const makeChatButton = () => {
+export const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
     chatButton.innerHTML =
@@ -12,5 +12,3 @@ const makeChatButton = () => {
     });
     return chatButton;
 };
-
-export default makeChatButton;
