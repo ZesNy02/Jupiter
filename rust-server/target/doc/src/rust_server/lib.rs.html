@@ -24,18 +24,28 @@
 <a href="#22" id="22">22</a>
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The Rust Axum AI Server for the Prooph-Board Chatbot **Chaty**.
 //!
 //! This server is used to run the AI model for the chatbot and handle requests from the chatbot frontend.
 //!
 //! The server is built using the `Axum` web framework and uses the `Tokio` runtime for asynchronous tasks.
 //!
-//! The server is configured using the [`Config`][crate::config::Config] struct
-//! and the server routes are defined in the [`router`][crate::handlers::router] module.
-//!
 //! The server uses the `SQLite` database for storing prompts and responses and the `Python AI` model for generating responses.
 //!
 //! The server is tested using Rust's built-in testing framework.
+//!
+//! # Routes
+//!
+//! The routes are defined in the [`router`][crate::handlers::router] module.
+//!
+//! # Configuration
+//!
+//! The server configuration is defined in the [`config`][crate::config::Config] Struct.
 
 /// This module contains the configuration settings for the server.
 </span><span class="kw">pub mod </span>config;

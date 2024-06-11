@@ -1,21 +1,30 @@
-# How to run the Server and AI:
+# What to install to run the Server
 
-## Install depencies
+## Python
 
-### Python
+- Install `Python` and `pip` from the offical site.
+- Make sure it's `Python 3.10` or above.
 
-- install from website, version 3.10 is needed
+## Rust
 
-### Ollama
+- Install rustup from `rust-lang.org` and follow the instructions there.
+- cargo needs to be able to run without problem.
 
-- install from website
-- Model llama3 required, install via: ollama pull llama3
+# How to run the Server
 
-### Rust
+## Install dependencies
 
-- install rustup from official site
+TODO
 
-## Run
+- To automatically install the required dependencies, run the `start_server.py` script in `rust-server/scripts/python`.
 
-- To run the Server, execute the python script "start_server.py" found in "rust-server/scripts/python/start_server.py"
-- The script will setup everything that is required and run the Server.
+## Run the Server
+
+- To run the Server, go to the `rust-server` directory.
+- Then execute `cargo run`
+  TODO
+- Or do `cargo build` and run the executable build in the `rust-server/target` folder.
+
+## See the Rust Documentation
+
+- To see the documentation of the Rust Server, click [here](./target/doc/rust_server/index.html)
