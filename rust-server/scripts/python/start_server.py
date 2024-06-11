@@ -105,5 +105,5 @@ if __name__ == "__main__":
     install_dependencies()
     print("Dependencies installed.")
     get_embeddings()
-    print("Starting server...")
-    start_server()
+    # print("Starting server...")
+    # start_server()
