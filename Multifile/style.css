@@ -1,3 +1,4 @@
+/* Styles for the chat button */
 .chat-button {
     position: fixed;
     bottom: 10px;
@@ -10,4 +11,53 @@
     z-index: 80;
     cursor: pointer;
     padding: 4px;
+}
+
+/* Styles for user messages */
+.userMessage {
+    background-color: #A4A4AC;
+    align-self: flex-end;
+    width: 80%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    word-wrap: break-word; /* Zeilenumbruch bei langen Wörtern */
+    white-space: pre-wrap; /* Zeilenumbrüche bei normalen Leerzeichen */
+}
+
+/* Styles for AI response messages */
+.responseMessage {
+    align-self: flex-start;
+    width: 80%;
+    background-color: #EFEFEF;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* Styles for the reload button */
+.reloadButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* Wrapper for response message buttons */
+.responseButtonsWrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Darkens the button if hovered */
+.reloadButton:hover svg {
+    fill: #000000;
+}
+
+/* Lightens the button if not hovered */
+.reloadButton svg {
+    fill: #A4A4AC;
 }
