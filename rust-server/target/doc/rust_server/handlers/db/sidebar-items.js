@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["handle_db_post_edit","handle_db_post_fetch_all","handle_db_post_fetch_not_usefull","handle_db_post_fetch_usefull","handle_edit","handle_fetch"]};

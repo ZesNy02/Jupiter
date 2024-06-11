@@ -1,5 +1,6 @@
 # Rust git ignores
-target/
+**/target/*
+!doc/
 Cargo.lock
 **/*.rs.bk
 .env

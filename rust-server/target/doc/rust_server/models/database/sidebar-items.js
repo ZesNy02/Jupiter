@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DBError"],"struct":["Prompt"],"type":["Result"]};

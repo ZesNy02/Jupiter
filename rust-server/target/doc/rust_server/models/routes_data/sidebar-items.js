@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AIResponse","DBFetchResponse"],"struct":["DBEditRequest","PromptList","PromptRequest","PromptResponse"]};
