@@ -27,6 +27,63 @@ const prompts = new Map();
 // responseUUID(string) -> promptUUID(string)
 const responseToPrompt = new Map();
 
+//a map connecting the answers UUID and marks them if they have been rated before
+// responseUUID(string) -> boolean
+const hasBeenRated = new Map();
+const styleSheet=()=> {
+    const style = document.createElement('style');
+    style.innerHTML = `
+.reloadButton svg {
+    fill: #A4A4AC; /* Default color */
+}
+.reloadButton:hover svg {
+    fill: #1A73E8; /* Hover color */
+}
+.reloadButton:active svg {
+    fill: #0A47A1; /* Active color */
+}
+.reloadButton.selected svg {
+    fill: #FF0000; /* Toggled color */
+}
+.thumbsUpButton svg {
+    fill: #A4A4AC; /* Default color */
+}
+.thumbsUpButton:hover svg {
+    fill: #1A73E8; /* Hover color */
+}
+.thumbsUpButton:active svg {
+    fill: #0A47A1; /* Active color */
+}
+.thumbsUpButton.selected svg {
+    fill: #FF0000; /* Toggled color */
+}
+.thumbsDownButton svg {
+    fill: #A4A4AC; /* Default color */
+}
+.thumbsDownButton:hover svg {
+    fill: #1A73E8; /* Hover color */
+}
+.thumbsDownButton:active svg {
+    fill: #0A47A1; /* Active color */
+}
+.thumbsDownButton.selected svg {
+    fill: #FF0000; /* Toggled color */
+}
+.chatInputButton svg {
+    fill: #000000;
+}
+ .chatInputButton:hover svg {
+    fill: #1A73E8; /* Hover color */
+}
+.chatInputButton:active svg {
+    fill: #0A47A1; /* Active color */
+}
+.chatInputButton.selected svg {
+    fill: #FF0000; /* Toggled color */
+}
+`;
+return style;
+}
 // The Chat button is the orange button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
 const makeChatButton = () => {
@@ -84,26 +141,15 @@ const makeResponseMessage = (responseUUID, text) => {
         const createReloadButton = () => {
             const reloadButton = document.createElement("button");
             reloadButton.className = "reloadButton";
-            reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+            reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px" width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
             reloadButton.style.backgroundColor = "transparent";
             reloadButton.style.border = "none";
             reloadButton.style.cursor = "pointer";
             //when clicked give the reloadPrompt function the UUID of the answer so that it can find the coresponding prompt
             reloadButton.addEventListener("click", () => {
-                if (reloadButton.style.cursor !== "cursor") {
-                    reloadPrompt(promptUUID);
-                }
-            });
-            //darkens the button if hovered
-            reloadButton.addEventListener("mouseover", () => {
-                reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#000000"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
-            });
+                reloadPrompt(promptUUID);
 
-            //lightens the button if not hovered
-            reloadButton.addEventListener("mouseout", () => {
-                reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px"  width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
             });
-
             return reloadButton;
         }
         //creates the thumbs up button to put under the response message
@@ -117,15 +163,6 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsUpButton.addEventListener("click", () => {
                 thumbsUp(responseUUID);
             });
-            //darkens the button if hovered
-            thumbsUpButton.addEventListener("mouseover", () => {
-                thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-            });
-
-            //lightens the button if not hovered
-            thumbsUpButton.addEventListener("mouseout", () => {
-                thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-            });
             return thumbsUpButton;
         }
         //creates the thumbs down button to put under the response message
@@ -138,15 +175,6 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsDownButton.style.cursor = "pointer";
             thumbsDownButton.addEventListener("click", () => {
                 thumbsDown(responseUUID);
-            });
-            //darkens the button if hovered
-            thumbsDownButton.addEventListener("mouseover", () => {
-                thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
-            });
-
-            //lightens the button up if not hovered
-            thumbsDownButton.addEventListener("mouseout", () => {
-                thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
             });
             return thumbsDownButton;
         }
@@ -194,22 +222,49 @@ function reloadPrompt(promptUUID) {
 
 }
 
-//Thumbs up gives the server a positive respond to the answer of the coresponding prompt
-//TODO:implement
+//sends the rating to the corresponding server, the rating is a whole number from -1 to 1
+function sendRatingToServer(responseUUID, rating) {
+
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: ratingURL,
+        data: JSON.stringify({messageId: responseUUID, rating: rating}), // Send data as JSON
+        headers: {
+            "Content-Type": "application/json",
+        },
+        onload: function (response) {
+            //Stub not used
+        },
+    });
+}
+
+//Thumbs up gives the server a positive respond to the answer of the coresponding prompt and adds them to hasBeenRated
 function thumbsUp(responseUUID) {
-    //TODO
+    //if not present or true you can give it a rating, else you remove the rating
+    if (hasBeenRated.get(responseUUID) == false) {
+        hasBeenRated.set(responseUUID, true);
+        sendRatingToServer(responseUUID, 1);
+    } else {
+        sendRatingToServer(responseUUID, 0);
+    }
 }
 
 //Thumbs up gives the server a negative respond to the answer of the coresponding prompt
-//TODO:implement
 function thumbsDown(responseUUID) {
-    //TODO
+    //if not present or true you can give it a rating, else you remove the rating
+    if (hasBeenRated.get(responseUUID) === undefined || hasBeenRated.get(responseUUID) === true) {
+        hasBeenRated.set(responseUUID, true);
+        sendRatingToServer(responseUUID, 1);
+    } else {
+        sendRatingToServer(responseUUID, 0);
+    }
 }
 
 // The Chat Window is the window that appears when the Chat button is clicked
 const makeLoadMessage = () => {
     const loadMessage = document.createElement("div");
-    loadMessage.id = "loadMessage von https://www.svgbackgrounds.com/elements/animated-svg-preloaders/";
+    loadMessage.id = generateUUID();
+    loadMessage.className = "loadMessage";
     loadMessage.innerHTML = '<div style=\"display: flex; justify-content: center; align-items: center;\"><svg id="ladebild" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480.52 471.13" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="80px" height="80px" style="background-color:transparent"><style><![CDATA[#ladebild-s-rect1_to {animation: ladebild-s-rect1_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_to__to { 0% {transform: translate(227.413141px,149.305825px)} 16.666667% {transform: translate(370.355789px,193.355788px)} 33.333333% {transform: translate(368.868828px,348.324813px)} 50% {transform: translate(257.471827px,426.72455px)} 66.666667% {transform: translate(138.314166px,348.365767px)} 83.333333% {transform: translate(114.307582px,223.307575px)} 100% {transform: translate(227.413141px,149.305825px)}} #ladebild-s-rect1_tr {animation: ladebild-s-rect1_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_tr__tr { 0% {transform: rotate(19deg)} 100% {transform: rotate(199deg)}} #ladebild-s-rect2_to {animation: ladebild-s-rect2_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_to__to { 0% {transform: translate(138.314161px,340.808123px)} 16.666667% {transform: translate(118.32111px,218.634813px)} 33.333333% {transform: translate(232.838032px,147.075828px)} 50% {transform: translate(380.784682px,192.220096px)} 66.666667% {transform: translate(373.817032px,352.248921px)} 83.333333% {transform: translate(255.000893px,441.149087px)} 100% {transform: translate(128.311303px,333.636613px)}} #ladebild-s-rect2_tr {animation: ladebild-s-rect2_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_tr__tr { 0% {transform: rotate(85deg)} 100% {transform: rotate(265deg)}} #ladebild-s-rect3_to {animation: ladebild-s-rect3_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_to__to { 0% {transform: translate(368.868823px,353.579698px)} 16.666667% {transform: translate(254.489853px,432.334834px)} 33.333333% {transform: translate(132.975658px,351.953105px)} 50% {transform: translate(107.954129px,224.242905px)} 66.666667% {transform: translate(221.785778px,147.965968px)} 83.333333% {transform: translate(380.78px,192.22px)} 100% {transform: translate(381.639179px,353.408155px)}} #ladebild-s-rect3_tr {animation: ladebild-s-rect3_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_tr__tr { 0% {transform: rotate(84deg)} 100% {transform: rotate(264deg)}}]]></style><g id="ladebild-s-g1" transform="translate(0-48.445569)"><g id="ladebild-s-rect1_to" transform="translate(227.413141,149.305825)"><g id="ladebild-s-rect1_tr" transform="rotate(19)"><rect id="ladebild-s-rect1" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-70.055,-70.055)" fill="#f8ca2e" stroke-width="0"/></g></g><g id="ladebild-s-rect2_to" transform="translate(138.314161,340.808123)"><g id="ladebild-s-rect2_tr" transform="rotate(85)"><rect id="ladebild-s-rect2" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-74.089278,-65.104962)" fill="#f5a051" stroke-width="0"/></g></g><g id="ladebild-s-rect3_to" transform="translate(368.868823,353.579698)"><g id="ladebild-s-rect3_tr" transform="rotate(84)"><rect id="ladebild-s-rect3" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-69.472912,-76.414198)" fill="#9ec6eb" stroke-width="0"/></g></g></g></svg></div>';
     loadMessage.style.backgroundColor = "#A4A4AC";
     loadMessage.style.alignSelf = "flex-start";
@@ -362,6 +417,7 @@ const makeChatWindow = () => {
     chatInputButton.innerHTML =
         '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>';
     chatInputButton.id = "chatInputButton";
+    chatInputButton.class = "chatInputButton";
     chatInputButton.style.alignSelf = "center";
     chatInputButton.style.border = "none";
     chatInputButton.style.order = "1";
@@ -430,20 +486,19 @@ function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo) {
 
             //TODO: cleanup on responseText to remove unnecessary json text
             chatWindow.appendChild(makeResponseMessage(responseUUID, response.responseText));
+            //after loading the message remove loading message
             chatWindow.removeChild(loadingMessage);
 
             //scroll to the top
             wrapperPromptsContainer.scrollTop =
                 wrapperPromptsContainer.scrollHeight;
-
-            //after loading the message remove loading message
-            chatWindow.removeChild(loadingMessage);
         },
     });
 }
 
 // Add the Chat Button and Chat Window to the page when the window loads
 window.onload = () => {
+    document.head.appendChild(styleSheet());
     document.body.appendChild(makeChatButton());
     document.body.appendChild(makeChatWindow());
 };
