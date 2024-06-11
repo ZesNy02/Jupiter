@@ -3,4 +3,6 @@
 - Edit Docs accordingly
 - Maybe make Errors better with messages inside
 
-#
+# Generate docs
+
+- cargo doc --no-deps

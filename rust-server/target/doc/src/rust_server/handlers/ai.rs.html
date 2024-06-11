@@ -163,6 +163,10 @@
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
 <a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// This module contains the AI routes handlers and testable handler functions.
 /// The AI routes handlers handle incoming HTTP requests related to AI operations,
 /// while the testable handler functions provide the core logic for handling AI requests.
@@ -171,13 +175,13 @@
 </span><span class="kw">use </span>axum::{ extract::State, http::StatusCode, Json };
 <span class="kw">use </span>tracing::{ error, info };
 <span class="kw">use crate</span>::{
-  config::{ Config, Mode },
-  models::{
-    database::DBError,
-    python_ai::AIError,
-    routes_data::{ AIResponse, PromptRequest, PromptResponse },
-  },
-  utils::{ python::run_ai, sqlite::insert_prompt },
+    config::{ Config, Mode },
+    models::{
+        database::DBError,
+        python_ai::AIError,
+        routes_data::{ AIResponse, AIPromptRequest, AIPromptResponse },
+    },
+    utils::{ python::run_ai, sqlite::insert_prompt },
 };
 
 <span class="comment">// --- Start of AI routes handlers: ---
@@ -187,37 +191,38 @@
 /// and the request payload from the JSON body.
 /// Returns the HTTP status code and the AI response as JSON.
 </span><span class="kw">pub async fn </span>handle_ai_post(
-  State(config): State&lt;Config&gt;,
-  Json(payload): Json&lt;PromptRequest&gt;
+    State(config): State&lt;Config&gt;,
+    Json(payload): Json&lt;AIPromptRequest&gt;
 ) -&gt; (StatusCode, Json&lt;AIResponse&gt;) {
-  <span class="kw">let </span>(status, response) = handle_ai(<span class="kw-2">&amp;</span>config, payload);
-  <span class="kw">return </span>(status, Json(response));
+    <span class="kw">let </span>(status, response) = handle_ai(<span class="kw-2">&amp;</span>config, payload);
+    <span class="kw">return </span>(status, Json(response));
 }
 
 <span class="doccomment">/// A dummy handler for testing purposes.
 /// Returns a successful response with a modified version of the request message.
-</span><span class="kw">pub async fn </span>handle_ai_dummy_ok(Json(payload): Json&lt;PromptRequest&gt;) -&gt; (
-  StatusCode,
-  Json&lt;AIResponse&gt;,
+</span><span class="kw">pub async fn </span>handle_ai_dummy_ok(Json(payload): Json&lt;AIPromptRequest&gt;) -&gt; (
+    StatusCode,
+    Json&lt;AIResponse&gt;,
 ) {
-  <span class="kw">let </span>(status, response) = (
-    StatusCode::OK,
-    AIResponse::Success(PromptResponse {
-      id: <span class="number">0</span>,
-      response: <span class="string">"The Response text which is **incredible** will be:"</span>.to_string() + <span class="kw-2">&amp;</span>payload.message,
-    }),
-  );
-  <span class="kw">return </span>(status, Json(response));
+    <span class="kw">let </span>(status, response) = (
+        StatusCode::OK,
+        AIResponse::Success(AIPromptResponse {
+            id: <span class="number">0</span>,
+            response: <span class="string">"The Response text which is **incredible** will be:"</span>.to_string() +
+            <span class="kw-2">&amp;</span>payload.message,
+        }),
+    );
+    <span class="kw">return </span>(status, Json(response));
 }
 
 <span class="doccomment">/// A dummy handler for testing purposes.
 /// Returns an internal server error response with a dummy error message.
 </span><span class="kw">pub async fn </span>handle_ai_dummy_err() -&gt; (StatusCode, Json&lt;AIResponse&gt;) {
-  <span class="kw">let </span>(status, response) = (
-    StatusCode::INTERNAL_SERVER_ERROR,
-    AIResponse::Error(<span class="string">"This is a dummy error message"</span>.to_string()),
-  );
-  <span class="kw">return </span>(status, Json(response));
+    <span class="kw">let </span>(status, response) = (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        AIResponse::Error(<span class="string">"This is a dummy error message"</span>.to_string()),
+    );
+    <span class="kw">return </span>(status, Json(response));
 }
 <span class="comment">// --- End of AI routes handlers ---
 
@@ -226,104 +231,107 @@
 </span><span class="doccomment">/// Handles the AI request by running the AI model with the given prompt.
 /// Takes the AI configuration and the request payload as parameters.
 /// Returns the HTTP status code and the AI response.
-</span><span class="kw">pub fn </span>handle_ai(config: <span class="kw-2">&amp;</span>Config, payload: PromptRequest) -&gt; (StatusCode, AIResponse) {
-  <span class="kw">let </span>mode = config.mode.clone();
-  <span class="kw">let </span>message = payload.message.clone();
-  <span class="kw">if </span>mode == Mode::Dev {
-    <span class="macro">info!</span>(<span class="string">"Running AI with prompt: {}"</span>, message);
-  }
-  <span class="kw">let </span>response = run_ai(<span class="kw-2">&amp;</span>config, message.clone());
-  <span class="kw">match </span>response {
-    <span class="prelude-val">Ok</span>(response) =&gt; {
-      <span class="kw">if </span>mode == Mode::Dev {
-        <span class="macro">info!</span>(<span class="string">"AI response: {}"</span>, response);
-      }
-      <span class="kw">let </span>res = add_to_db(config, message.clone(), response.clone());
-      <span class="kw">match </span>res {
-        <span class="prelude-val">Ok</span>(id) =&gt; {
-          <span class="kw">if </span>mode == Mode::Dev {
-            <span class="macro">info!</span>(
-              <span class="string">"Added prompt and response to database.\nPrompt: {}\nResponse: {}"</span>,
-              message,
-              response
-            );
-          }
-          <span class="kw">return </span>(StatusCode::OK, AIResponse::Success(PromptResponse { id, response }));
+</span><span class="kw">pub fn </span>handle_ai(config: <span class="kw-2">&amp;</span>Config, payload: AIPromptRequest) -&gt; (StatusCode, AIResponse) {
+    <span class="kw">let </span>mode = config.mode.clone();
+    <span class="kw">let </span>message = payload.message.clone();
+    <span class="kw">if </span>mode == Mode::Dev {
+        <span class="macro">info!</span>(<span class="string">"Running AI with prompt: {}"</span>, message);
+    }
+    <span class="kw">let </span>response = run_ai(<span class="kw-2">&amp;</span>config, message.clone());
+    <span class="kw">match </span>response {
+        <span class="prelude-val">Ok</span>(response) =&gt; {
+            <span class="kw">if </span>mode == Mode::Dev {
+                <span class="macro">info!</span>(<span class="string">"AI response: {}"</span>, response);
+            }
+            <span class="kw">let </span>res = add_to_db(config, message.clone(), response.clone());
+            <span class="kw">match </span>res {
+                <span class="prelude-val">Ok</span>(id) =&gt; {
+                    <span class="kw">if </span>mode == Mode::Dev {
+                        <span class="macro">info!</span>(
+                            <span class="string">"Added prompt and response to database.\nPrompt: {}\nResponse: {}"</span>,
+                            message,
+                            response
+                        );
+                    }
+                    <span class="kw">return </span>(StatusCode::OK, AIResponse::Success(AIPromptResponse { id, response }));
+                }
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">"Error while attempting Database operation: {}"</span>, e);
+                    <span class="kw">if </span>mode == Mode::Dev {
+                        <span class="macro">info!</span>(
+                            <span class="string">"Could not add prompt and response to database:\nPrompt: {}\nResponse: {}"</span>,
+                            message,
+                            response
+                        );
+                    }
+                    <span class="kw">return </span>(
+                        StatusCode::OK,
+                        AIResponse::Success(AIPromptResponse { id: -<span class="number">1</span>, response }),
+                    );
+                }
+            }
         }
         <span class="prelude-val">Err</span>(e) =&gt; {
-          <span class="macro">error!</span>(<span class="string">"Error while attempting Database operation: {}"</span>, e);
-          <span class="kw">if </span>mode == Mode::Dev {
-            <span class="macro">info!</span>(
-              <span class="string">"Could not add prompt and response to database:\nPrompt: {}\nResponse: {}"</span>,
-              message,
-              response
-            );
-          }
-          <span class="kw">return </span>(StatusCode::OK, AIResponse::Success(PromptResponse { id: -<span class="number">1</span>, response }));
+            <span class="kw">match </span>e {
+                AIError::PathError =&gt; {
+                    <span class="macro">error!</span>(<span class="string">"Could not find the python script"</span>);
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        AIResponse::Error(<span class="string">"Could not find the python script"</span>.to_string()),
+                    );
+                }
+                AIError::ScriptError =&gt; {
+                    <span class="macro">error!</span>(<span class="string">"Error while running the python script"</span>);
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        AIResponse::Error(<span class="string">"Error while running the python script"</span>.to_string()),
+                    );
+                }
+                AIError::IOError =&gt; {
+                    <span class="macro">error!</span>(<span class="string">"Error while reading the python script"</span>);
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        AIResponse::Error(<span class="string">"Error while reading the python script"</span>.to_string()),
+                    );
+                }
+                AIError::EmptyResponse =&gt; {
+                    <span class="macro">error!</span>(<span class="string">"Empty response from the python script"</span>);
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        AIResponse::Error(<span class="string">"Empty response from the python script"</span>.to_string()),
+                    );
+                }
+            }
         }
-      }
     }
-    <span class="prelude-val">Err</span>(e) =&gt; {
-      <span class="kw">match </span>e {
-        AIError::PathError =&gt; {
-          <span class="macro">error!</span>(<span class="string">"Could not find the python script"</span>);
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            AIResponse::Error(<span class="string">"Could not find the python script"</span>.to_string()),
-          );
-        }
-        AIError::ScriptError =&gt; {
-          <span class="macro">error!</span>(<span class="string">"Error while running the python script"</span>);
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            AIResponse::Error(<span class="string">"Error while running the python script"</span>.to_string()),
-          );
-        }
-        AIError::IOError =&gt; {
-          <span class="macro">error!</span>(<span class="string">"Error while reading the python script"</span>);
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            AIResponse::Error(<span class="string">"Error while reading the python script"</span>.to_string()),
-          );
-        }
-        AIError::EmptyResponse =&gt; {
-          <span class="macro">error!</span>(<span class="string">"Empty response from the python script"</span>);
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            AIResponse::Error(<span class="string">"Empty response from the python script"</span>.to_string()),
-          );
-        }
-      }
-    }
-  }
 }
 
 <span class="doccomment">/// Adds the prompt and response to the database.
 /// Takes the AI configuration, prompt message, and AI response as parameters.
 /// Returns the ID of the inserted prompt if successful, or an error message if unsuccessful.
 </span><span class="kw">fn </span>add_to_db(config: <span class="kw-2">&amp;</span>Config, message: String, response: String) -&gt; <span class="prelude-ty">Result</span>&lt;i64, String&gt; {
-  <span class="kw">let </span>res = insert_prompt(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>message, <span class="kw-2">&amp;</span>response);
-  <span class="kw">match </span>res {
-    <span class="prelude-val">Ok</span>(id) =&gt; {
-      <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
+    <span class="kw">let </span>res = insert_prompt(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>message, <span class="kw-2">&amp;</span>response);
+    <span class="kw">match </span>res {
+        <span class="prelude-val">Ok</span>(id) =&gt; {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
+        }
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">match </span>e {
+                DBError::ConnectionError =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not open Database"</span>.to_string());
+                }
+                DBError::TableCreationError =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not create table"</span>.to_string());
+                }
+                DBError::InsertError =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not insert prompt"</span>.to_string());
+                }
+                <span class="kw">_ </span>=&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Something that should never happen."</span>.to_string());
+                }
+            }
+        }
     }
-    <span class="prelude-val">Err</span>(e) =&gt; {
-      <span class="kw">match </span>e {
-        DBError::ConnectionError =&gt; {
-          <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not open Database"</span>.to_string());
-        }
-        DBError::TableCreationError =&gt; {
-          <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not create table"</span>.to_string());
-        }
-        DBError::InsertError =&gt; {
-          <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Could not insert prompt"</span>.to_string());
-        }
-        <span class="kw">_ </span>=&gt; {
-          <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">"Something that should never happen."</span>.to_string());
-        }
-      }
-    }
-  }
 }
 <span class="comment">//--- End of Testable handler functions ---
 </span></code></pre></div></section></main></body></html>

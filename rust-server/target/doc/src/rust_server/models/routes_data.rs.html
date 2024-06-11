@@ -53,57 +53,69 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{ Deserialize, Serialize };
 
-<span class="kw">use </span><span class="kw">super</span>::database::Prompt;
+<span class="kw">use </span><span class="kw">super</span>::database::DBEntry;
 
 <span class="doccomment">/// Represents a list of prompts.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
-</span><span class="kw">pub struct </span>PromptList {
-  <span class="kw">pub </span>prompts: Vec&lt;Prompt&gt;,
+</span><span class="kw">pub struct </span>EntryList {
+    <span class="doccomment">/// The list of [DBEntry].
+    </span><span class="kw">pub </span>prompts: Vec&lt;DBEntry&gt;,
 }
 
 <span class="doccomment">/// Represents a response to a prompt from the AI.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
-</span><span class="kw">pub struct </span>PromptResponse {
-  <span class="kw">pub </span>id: i64,
-  <span class="kw">pub </span>response: String,
+</span><span class="kw">pub struct </span>AIPromptResponse {
+    <span class="doccomment">/// The id of the prompt.
+    </span><span class="kw">pub </span>id: i64,
+    <span class="doccomment">/// The response from the AI.
+    </span><span class="kw">pub </span>response: String,
 }
 
 <span class="doccomment">/// Represents a request for a prompt.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
-</span><span class="kw">pub struct </span>PromptRequest {
-  <span class="kw">pub </span>message: String,
+</span><span class="kw">pub struct </span>AIPromptRequest {
+    <span class="doccomment">/// The prompt to send to the AI.
+    </span><span class="kw">pub </span>message: String,
 }
 
 <span class="doccomment">/// Represents a request to edit a prompt in the database.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
-</span><span class="kw">pub struct </span>DBEditRequest {
-  <span class="kw">pub </span>id: i64,
-  <span class="kw">pub </span>usefull: bool,
+</span><span class="kw">pub struct </span>DBRatingEditRequest {
+    <span class="doccomment">/// The id of the prompt to edit.
+    </span><span class="kw">pub </span>id: i64,
+    <span class="doccomment">/// The new rating of the prompt.
+    </span><span class="kw">pub </span>usefull: bool,
 }
 
 <span class="doccomment">/// Represents the response when fetching prompts from the database.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
 </span><span class="kw">pub enum </span>DBFetchResponse {
-  <span class="doccomment">/// Represents an error response.
-  </span>Error(String),
-  <span class="doccomment">/// Represents a successful response with a list of prompts.
-  </span>Success(PromptList),
+    <span class="doccomment">/// Represents an error response.
+    </span>Error(String),
+    <span class="doccomment">/// Represents a successful response with a list of prompts.
+    </span>Success(EntryList),
 }
 
 <span class="doccomment">/// Represents the response from the AI model.
 </span><span class="attr">#[derive(Deserialize)]
 #[derive(Serialize)]
 </span><span class="kw">pub enum </span>AIResponse {
-  <span class="doccomment">/// Represents an error response.
-  </span>Error(String),
-  <span class="doccomment">/// Represents a successful response with a prompt response.
-  </span>Success(PromptResponse),
+    <span class="doccomment">/// Represents an error response.
+    </span>Error(String),
+    <span class="doccomment">/// Represents a successful response with a prompt response.
+    </span>Success(AIPromptResponse),
 }
 </code></pre></div></section></main></body></html>

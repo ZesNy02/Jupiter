@@ -4,12 +4,17 @@
 //!
 //! The server is built using the `Axum` web framework and uses the `Tokio` runtime for asynchronous tasks.
 //!
-//! The server is configured using the [`Config`][crate::config::Config] struct
-//! and the server routes are defined in the [`router`][crate::handlers::router] module.
-//!
 //! The server uses the `SQLite` database for storing prompts and responses and the `Python AI` model for generating responses.
 //!
 //! The server is tested using Rust's built-in testing framework.
+//!
+//! # Routes
+//!
+//! The routes are defined in the [`router`][crate::handlers::router] module.
+//!
+//! # Configuration
+//!
+//! The server configuration is defined in the [`config`][crate::config::Config] Struct.
 
 /// This module contains the configuration settings for the server.
 pub mod config;

@@ -170,12 +170,21 @@
 <a href="#168" id="168">168</a>
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>axum::{ extract::State, http::StatusCode, Json };
 
 <span class="kw">use crate</span>::{
-  config::Config,
-  models::{ database::DBError, routes_data::{ DBEditRequest, DBFetchResponse, PromptList } },
-  utils::sqlite::{ fetch_prompts, update_prompt },
+    config::Config,
+    models::{ database::DBError, routes_data::{ DBRatingEditRequest, DBFetchResponse, EntryList } },
+    utils::sqlite::{ fetch_prompts, update_prompt },
 };
 
 <span class="comment">// --- Start of Edit routes handlers: ---
@@ -194,10 +203,10 @@
 ///
 /// * **POST** `/db/edit`
 </span><span class="kw">pub async fn </span>handle_db_post_edit(
-  State(config): State&lt;Config&gt;,
-  Json(payload): Json&lt;DBEditRequest&gt;
+    State(config): State&lt;Config&gt;,
+    Json(payload): Json&lt;DBRatingEditRequest&gt;
 ) -&gt; (StatusCode, String) {
-  <span class="kw">return </span>handle_edit(<span class="kw-2">&amp;</span>config, payload);
+    <span class="kw">return </span>handle_edit(<span class="kw-2">&amp;</span>config, payload);
 }
 <span class="comment">// --- End of Edit routes handlers ---
 
@@ -212,11 +221,11 @@
 ///
 /// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of all prompts.
 </span><span class="kw">pub async fn </span>handle_db_post_fetch_all(State(config): State&lt;Config&gt;) -&gt; (
-  StatusCode,
-  Json&lt;DBFetchResponse&gt;,
+    StatusCode,
+    Json&lt;DBFetchResponse&gt;,
 ) {
-  <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">None</span>);
-  <span class="kw">return </span>(status, Json(list));
+    <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">None</span>);
+    <span class="kw">return </span>(status, Json(list));
 }
 
 <span class="doccomment">/// Function to handle the **GET** request to fetch all usefull prompts from the database.
@@ -229,11 +238,11 @@
 ///
 /// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of usefull prompts.
 </span><span class="kw">pub async fn </span>handle_db_post_fetch_usefull(State(config): State&lt;Config&gt;) -&gt; (
-  StatusCode,
-  Json&lt;DBFetchResponse&gt;,
+    StatusCode,
+    Json&lt;DBFetchResponse&gt;,
 ) {
-  <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">Some</span>(<span class="bool-val">true</span>));
-  <span class="kw">return </span>(status, Json(list));
+    <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">Some</span>(<span class="bool-val">true</span>));
+    <span class="kw">return </span>(status, Json(list));
 }
 
 <span class="doccomment">/// Function to handle the **GET** request to fetch all not usefull prompts from the database.
@@ -246,11 +255,11 @@
 ///
 /// A tuple containing the HTTP status code and a JSON response containing a [DBFetchResponse] of not usefull prompts.
 </span><span class="kw">pub async fn </span>handle_db_post_fetch_not_usefull(State(config): State&lt;Config&gt;) -&gt; (
-  StatusCode,
-  Json&lt;DBFetchResponse&gt;,
+    StatusCode,
+    Json&lt;DBFetchResponse&gt;,
 ) {
-  <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">Some</span>(<span class="bool-val">false</span>));
-  <span class="kw">return </span>(status, Json(list));
+    <span class="kw">let </span>(status, list) = handle_fetch(<span class="kw-2">&amp;</span>config, <span class="prelude-val">Some</span>(<span class="bool-val">false</span>));
+    <span class="kw">return </span>(status, Json(list));
 }
 <span class="comment">// --- End of Fetch routes handlers ---
 
@@ -266,40 +275,40 @@
 ///
 /// A tuple containing the HTTP status code and a [DBFetchResponse] containing the list of prompts or an error message.
 </span><span class="kw">pub fn </span>handle_fetch(config: <span class="kw-2">&amp;</span>Config, usefull: <span class="prelude-ty">Option</span>&lt;bool&gt;) -&gt; (StatusCode, DBFetchResponse) {
-  <span class="kw">let </span>prompts = fetch_prompts(<span class="kw-2">&amp;</span>config, usefull);
-  <span class="kw">match </span>prompts {
-    <span class="prelude-val">Ok</span>(prompts) =&gt; {
-      <span class="kw">return </span>(StatusCode::OK, DBFetchResponse::Success(PromptList { prompts }));
+    <span class="kw">let </span>prompts = fetch_prompts(<span class="kw-2">&amp;</span>config, usefull);
+    <span class="kw">match </span>prompts {
+        <span class="prelude-val">Ok</span>(prompts) =&gt; {
+            <span class="kw">return </span>(StatusCode::OK, DBFetchResponse::Success(EntryList { prompts }));
+        }
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">match </span>e {
+                DBError::ConnectionError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        DBFetchResponse::Error(<span class="string">"Could not open Database"</span>.to_string()),
+                    );
+                }
+                DBError::TableCreationError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        DBFetchResponse::Error(<span class="string">"Could not create table"</span>.to_string()),
+                    );
+                }
+                DBError::QueryError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        DBFetchResponse::Error(<span class="string">"Could not fetch prompts"</span>.to_string()),
+                    );
+                }
+                <span class="kw">_ </span>=&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        DBFetchResponse::Error(<span class="string">"Something that should never happen."</span>.to_string()),
+                    );
+                }
+            }
+        }
     }
-    <span class="prelude-val">Err</span>(e) =&gt; {
-      <span class="kw">match </span>e {
-        DBError::ConnectionError =&gt; {
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            DBFetchResponse::Error(<span class="string">"Could not open Database"</span>.to_string()),
-          );
-        }
-        DBError::TableCreationError =&gt; {
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            DBFetchResponse::Error(<span class="string">"Could not create table"</span>.to_string()),
-          );
-        }
-        DBError::QueryError =&gt; {
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            DBFetchResponse::Error(<span class="string">"Could not fetch prompts"</span>.to_string()),
-          );
-        }
-        <span class="kw">_ </span>=&gt; {
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            DBFetchResponse::Error(<span class="string">"Something that should never happen."</span>.to_string()),
-          );
-        }
-      }
-    }
-  }
 }
 
 <span class="doccomment">/// Handles the edit request by updating a prompt in the database.
@@ -307,37 +316,46 @@
 /// # Arguments
 ///
 /// * `config` - The server configuration.
-/// * `payload` - The request payload as a [DBEditRequest].
+/// * `payload` - The request payload as a [DBRatingEditRequest].
 ///
 /// # Returns
 ///
 /// A tuple containing the HTTP status code and a message indicating the success or failure of the operation.
-</span><span class="kw">pub fn </span>handle_edit(config: <span class="kw-2">&amp;</span>Config, payload: DBEditRequest) -&gt; (StatusCode, String) {
-  <span class="kw">let </span>res = update_prompt(<span class="kw-2">&amp;</span>config, payload.id, payload.usefull);
-  <span class="kw">match </span>res {
-    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-      <span class="kw">return </span>(StatusCode::OK, <span class="string">"Success"</span>.to_string());
+</span><span class="kw">pub fn </span>handle_edit(config: <span class="kw-2">&amp;</span>Config, payload: DBRatingEditRequest) -&gt; (StatusCode, String) {
+    <span class="kw">let </span>res = update_prompt(<span class="kw-2">&amp;</span>config, payload.id, payload.usefull);
+    <span class="kw">match </span>res {
+        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
+            <span class="kw">return </span>(StatusCode::OK, <span class="string">"Success"</span>.to_string());
+        }
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">match </span>e {
+                DBError::ConnectionError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        <span class="string">"Could not open Database"</span>.to_string(),
+                    );
+                }
+                DBError::TableCreationError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        <span class="string">"Could not create table"</span>.to_string(),
+                    );
+                }
+                DBError::UpdateError =&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        <span class="string">"Could not update prompt"</span>.to_string(),
+                    );
+                }
+                <span class="kw">_ </span>=&gt; {
+                    <span class="kw">return </span>(
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        <span class="string">"Something that should never happen."</span>.to_string(),
+                    );
+                }
+            }
+        }
     }
-    <span class="prelude-val">Err</span>(e) =&gt; {
-      <span class="kw">match </span>e {
-        DBError::ConnectionError =&gt; {
-          <span class="kw">return </span>(StatusCode::INTERNAL_SERVER_ERROR, <span class="string">"Could not open Database"</span>.to_string());
-        }
-        DBError::TableCreationError =&gt; {
-          <span class="kw">return </span>(StatusCode::INTERNAL_SERVER_ERROR, <span class="string">"Could not create table"</span>.to_string());
-        }
-        DBError::UpdateError =&gt; {
-          <span class="kw">return </span>(StatusCode::INTERNAL_SERVER_ERROR, <span class="string">"Could not update prompt"</span>.to_string());
-        }
-        <span class="kw">_ </span>=&gt; {
-          <span class="kw">return </span>(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            <span class="string">"Something that should never happen."</span>.to_string(),
-          );
-        }
-      }
-    }
-  }
 }
 <span class="comment">//--- End of Testable handler functions: ---
 </span></code></pre></div></section></main></body></html>
