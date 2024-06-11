@@ -2,21 +2,9 @@ import argparse
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
-
+import setup
 from embedding import get_embedding_function
-
-CHROMA_PATH = "chroma"
-
-PROMPT_TEMPLATE = """
-You are supposed to act as a teacher on how to use the Proophboard Software and explain everything relevant associated with it and how it works in Detail:
-
-{context}
-
-
-
-Repeat the question to yourself. Answer the question based on the above context and think step by step. Stick to relevenat information to the Questions in your answer: {question}
-"""
-
+from call_ai import ask_ai
 
 def main():
     #Cli, Handles the input through the command line, in our case its going to be the question asked by the user
@@ -30,20 +18,19 @@ def main():
 def query_rag(query_text: str):
     # Prepare the DB.
     embedding_function = get_embedding_function()
-    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+    db = Chroma(persist_directory=setup.CHROMA_PATH, embedding_function=embedding_function)
 
     # Search the DB.
     results = db.similarity_search_with_score(query_text, k=5)
 
     #merges the context from the documents in the db and the question asked by the user with a template
     context_text = "\n\n".join([doc.page_content for doc, _score in results]) 
-    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt_template = ChatPromptTemplate.from_template(setup.PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    print(prompt)
+    
 
     #invoke the model to generate a response based on the context and the question
-    model = Ollama(model="llama3")
-    response_text = model.invoke(prompt)
+    response_text = ask_ai(prompt)
 
     #prints the response and the sources of the context
     sources = [doc.metadata.get("id", None) for doc, _score in results]
