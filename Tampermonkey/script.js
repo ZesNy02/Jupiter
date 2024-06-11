@@ -27,10 +27,7 @@ const prompts = new Map();
 // responseUUID(string) -> promptUUID(string)
 const responseToPrompt = new Map();
 
-//a map connecting the answers UUID and marks them if they have been rated before
-// responseUUID(string) -> boolean
-const hasBeenRated = new Map();
-const styleSheet=()=> {
+const styleSheet = () => {
     const style = document.createElement('style');
     style.innerHTML = `
 .reloadButton svg {
@@ -55,7 +52,7 @@ const styleSheet=()=> {
     fill: #0A47A1; /* Active color */
 }
 .thumbsUpButton.selected svg {
-    fill: #FF0000; /* Toggled color */
+    fill: #14ba38; /* Toggled color */
 }
 .thumbsDownButton svg {
     fill: #A4A4AC; /* Default color */
@@ -67,7 +64,7 @@ const styleSheet=()=> {
     fill: #0A47A1; /* Active color */
 }
 .thumbsDownButton.selected svg {
-    fill: #FF0000; /* Toggled color */
+    fill: #a30709; /* Toggled color */
 }
 .chatInputButton svg {
     fill: #000000;
@@ -82,13 +79,14 @@ const styleSheet=()=> {
     fill: #FF0000; /* Toggled color */
 }
 `;
-return style;
+    return style;
 }
 // The Chat button is the orange button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
+    chatButton.className = "chatButton";
     chatButton.innerHTML =
         '<svg xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%" fill="#D9D9D9"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
     chatButton.style.position = "fixed";
@@ -148,7 +146,6 @@ const makeResponseMessage = (responseUUID, text) => {
             //when clicked give the reloadPrompt function the UUID of the answer so that it can find the coresponding prompt
             reloadButton.addEventListener("click", () => {
                 reloadPrompt(promptUUID);
-
             });
             return reloadButton;
         }
@@ -161,6 +158,11 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsUpButton.style.border = "none";
             thumbsUpButton.style.cursor = "pointer";
             thumbsUpButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
+                    switchSelectedButton()
+                } else {
+                    thumbsUpButton.classList.toggle("selected");
+                }
                 thumbsUp(responseUUID);
             });
             return thumbsUpButton;
@@ -174,9 +176,32 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsDownButton.style.border = "none";
             thumbsDownButton.style.cursor = "pointer";
             thumbsDownButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
+                    switchSelectedButton()
+                } else {
+                    thumbsDownButton.classList.toggle("selected");
+                }
                 thumbsDown(responseUUID);
             });
             return thumbsDownButton;
+        }
+
+        const thumbsUpButton = createThumbsUpButton();
+        const thumbsDownButton = createThumbsDownButton();
+        //checks if the other button has been pressed
+        //example: if positive was pressed and then you press negative it returns true
+        function checkIfOtherButtonHasBeenPressed(button) {
+            if (thumbsUpButton.className === button.className) {
+                //checks if the thumbsDownButton was selected
+                return thumbsDownButton.classList.contains("selected");
+            } else {
+                return thumbsUpButton.classList.contains("selected");
+            }
+        }
+
+        function switchSelectedButton() {
+            thumbsUpButton.classList.toggle("selected");
+            thumbsDownButton.classList.toggle("selected");
         }
 
         const wrapperResponseMessageButtons = document.createElement("div");
@@ -186,8 +211,8 @@ const makeResponseMessage = (responseUUID, text) => {
         wrapperResponseMessageButtons.style.paddingTop = "10px";
         //attaches the buttons into the div
         wrapperResponseMessageButtons.appendChild(createReloadButton());
-        wrapperResponseMessageButtons.appendChild(createThumbsUpButton());
-        wrapperResponseMessageButtons.appendChild(createThumbsDownButton());
+        wrapperResponseMessageButtons.appendChild(thumbsUpButton);
+        wrapperResponseMessageButtons.appendChild(thumbsDownButton);
 
         return wrapperResponseMessageButtons;
     }
@@ -457,24 +482,24 @@ function generateUUID() {
 }
 
 //sends the message to the correct server and formats the chat window
-function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo) {
+function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
 
     const chatWindow = document.getElementById("prompts-container");
     const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
 
-    // Scroll to the bottom of the chat window (UX)
-    wrapperPromptsContainer.scrollTop = wrapperPromptsContainer.scrollHeight;
-
     // loading animation until response
     const loadingMessage = makeLoadMessage();
-    chatWindow.appendChild(loadingMessage);
+    chatWindow.insertBefore(loadingMessage,document.getElementById(promptUUID).nextSibling);
+
+    //scrolls to the loading message
+    loadingMessage.scrollIntoView({behavior: "smooth"});
 
     // Send the message to the server
     // When Server responds, add the response to the chat window
     GM_xmlhttpRequest({
         method: "POST",
         url: serverUrlToSendTo,
-        data: JSON.stringify({messageId: promptUIID, message: prompt}), // Send data as JSON
+        data: JSON.stringify({messageId: promptUUID, message: prompt}), // Send data as JSON
         headers: {
             "Content-Type": "application/json",
         },
@@ -482,16 +507,16 @@ function sendMessageAndFormat(promptUIID, prompt, serverUrlToSendTo) {
 
             //generate a UUID for the response and link it to the prompt
             const responseUUID = generateUUID();
-            responseToPrompt.set(responseUUID, promptUIID);
+            responseToPrompt.set(responseUUID, promptUUID);
 
+            const responseMessage = makeResponseMessage(responseUUID, response.responseText);
             //TODO: cleanup on responseText to remove unnecessary json text
-            chatWindow.appendChild(makeResponseMessage(responseUUID, response.responseText));
+            //inserts the response in front of the loading message
+            chatWindow.insertBefore(responseMessage, loadingMessage);
             //after loading the message remove loading message
             chatWindow.removeChild(loadingMessage);
 
-            //scroll to the top
-            wrapperPromptsContainer.scrollTop =
-                wrapperPromptsContainer.scrollHeight;
+            responseMessage.scrollIntoView({behavior: "smooth"});
         },
     });
 }
