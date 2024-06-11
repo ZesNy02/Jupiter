@@ -9,7 +9,7 @@ token = setup.TOKEN_VALUE
 def ask_ai(prompt: str) -> str:
     try:
         data = {
-            'model': 'llama3',
+            'model': 'codestral',
             'prompt': prompt,
             'stream': False
         }
