@@ -35,11 +35,11 @@ const styleSheet = () => {
         }
         #prompts-container::-webkit-scrollbar-track {
             background: lightgray;
-            border-radius: 10px;
+            border-radius: 6px;
         }
         #prompts-container::-webkit-scrollbar-thumb {
             background-color: #A4A4AC;
-            border-radius: 10px;
+            border-radius: 6px;
             border: 2px solid lightgray;
              }
 .reloadButton svg {
@@ -99,16 +99,14 @@ const styleSheet = () => {
         background-color: transparent;
         cursor: nesw-resize;
     }
-    
+
     .responseMessage {
     width: fit-content;
-    min-width:30%;
-    max-width: 80%;
+    max-width: 70%;
     text-align:left;
     }
     .userMessage{
     width: fit-content;
-    min-width: 15%;
     max-width: 80%;
     text-align:left;
     }
@@ -283,7 +281,7 @@ const makeResponseMessage = (responseUUID, text, success) => {
     if (success) {
         responseMessage.style.backgroundColor = "#A4A4AC";
     } else {
-        responseMessage.style.backgroundColor = "#c13c4d";
+        responseMessage.style.backgroundColor = "#e37e8a";
     }
     // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
     const wrapperResponseMessage = document.createElement("div");
@@ -356,7 +354,7 @@ const makeChatWindow = () => {
         const resizeHandle = document.createElement("div");
         resizeHandle.className = "resize-handle";
         resizeHandle.id = "resizeHandle";
-        resizeHandle.innerHTML = '<svg viewBox="-1.92 -1.92 27.84 27.84" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path d="M21 15L15 21M21 8L8 21" stroke="#000000" stroke-width="1.6799999999999997" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
+        resizeHandle.innerHTML = '<svg viewBox="-1.92 -1.92 27.84 27.84" fill="#D9D9D9" xmlns="http://www.w3.org/2000/svg" transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#D9D9D9" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path d="M21 15L15 21M21 8L8 21" stroke="#D9D9D9" stroke-width="1.6799999999999997" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
         let isResizing = false;
         let startX, startY, startWidth, startHeight;
 
@@ -429,6 +427,7 @@ const makeChatWindow = () => {
     chatyName.id = "chatyName";
     chatyName.style.userSelect = "none";
     chatyName.innerText = "Chaty";
+    chatyName.style.color="#D9D9D9";
     chatyName.style.margin = "0"; // Margin entfernen, um die Positionierung zu erleichtern
     chatyName.style.flexGrow = "1"; // Lässt den Namen den verfügbaren Platz einnehmen
 
@@ -473,7 +472,7 @@ const makeChatWindow = () => {
     promptsContainer.style.overflowY = "auto"; // Scroll vertically
     promptsContainer.style.scrollBehavior = "smooth";
     promptsContainer.style.backgroundColor = "lightgray";
-    promptsContainer.style.borderRadius = "10px";
+    promptsContainer.style.borderRadius = "6px";
     promptsContainer.style.gap = "10px";
     promptsContainer.style.padding = "10px";
     wrapperPromptsContainer.appendChild(promptsContainer);
@@ -499,7 +498,7 @@ const makeChatWindow = () => {
     chatInputDiv.style.flexDirection = "row";
     chatInputDiv.style.width = "100%";
     chatInputDiv.style.backgroundColor = "lightgray";
-    chatInputDiv.style.borderRadius = "10px";
+    chatInputDiv.style.borderRadius = "15px";
 
     // -------------------------- Send Prompt --------------------------
     // Function to send the prompt to the server
