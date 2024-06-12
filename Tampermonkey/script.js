@@ -30,6 +30,18 @@ const responseToPrompt = new Map();
 const styleSheet = () => {
     const style = document.createElement('style');
     style.innerHTML = `
+     #prompts-container::-webkit-scrollbar {
+            width: 16px;
+        }
+        #prompts-container::-webkit-scrollbar-track {
+            background: lightgray;
+            border-radius: 10px;
+        }
+        #prompts-container::-webkit-scrollbar-thumb {
+            background-color: #A4A4AC;
+            border-radius: 10px;
+            border: 2px solid lightgray;
+             }
 .reloadButton svg {
     fill: #A4A4AC; /* Default color */
 }
@@ -78,6 +90,31 @@ const styleSheet = () => {
 .chatInputButton.selected svg {
     fill: #FF0000; /* Toggled color */
 }
+ .resize-handle {
+        position: absolute;
+        right:0px;
+        top:0px;
+        width: 20px;
+        height: 20px;
+        background-color: transparent;
+        cursor: nesw-resize;
+    }
+    
+    .responseMessage {
+    width: fit-content;
+    min-width:30%;
+    max-width: 80%;
+    text-align:left;
+    }
+    .userMessage{
+    width: fit-content;
+    min-width: 15%;
+    max-width: 80%;
+    text-align:left;
+    }
+    .loadMessage{
+    width: 50%;
+    }
 `;
     return style;
 }
@@ -117,7 +154,6 @@ const makeUserMessage = (text) => {
     userMessage.innerHTML = text;
     userMessage.style.textOverflow = "wrap";
     userMessage.style.alignSelf = "flex-end";
-    userMessage.style.width = "80%";
     userMessage.style.border = "1px solid black";
     userMessage.style.borderRadius = "10px";
     userMessage.style.borderColor = "transparent";
@@ -128,7 +164,7 @@ const makeUserMessage = (text) => {
 };
 
 // A Response Message is a message on the left of the Chat that the AI Typed
-const makeResponseMessage = (responseUUID, text) => {
+const makeResponseMessage = (responseUUID, text, success) => {
 
     //gets the promptUUID to give it to the buttons, so they can do their stuff
     const promptUUID = responseToPrompt.get(responseUUID);
@@ -160,7 +196,13 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsUpButton.addEventListener("click", () => {
                 if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
                     switchSelectedButton()
+                    thumbsUp(responseUUID)
                 } else {
+                    if (thumbsUpButton.classList.contains("selected")) {
+                        thumbsNeutral(responseUUID);
+                    } else {
+                        thumbsUp(responseUUID);
+                    }
                     thumbsUpButton.classList.toggle("selected");
                 }
                 thumbsUp(responseUUID);
@@ -178,10 +220,16 @@ const makeResponseMessage = (responseUUID, text) => {
             thumbsDownButton.addEventListener("click", () => {
                 if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
                     switchSelectedButton()
+                    thumbsDown(responseUUID);
                 } else {
+                    //tests if the button has been pressed alredy
+                    if (thumbsDownButton.classList.contains("selected")) {
+                        thumbsNeutral(responseUUID);
+                    } else {
+                        thumbsDown(responseUUID);
+                    }
                     thumbsDownButton.classList.toggle("selected");
                 }
-                thumbsDown(responseUUID);
             });
             return thumbsDownButton;
         }
@@ -209,10 +257,15 @@ const makeResponseMessage = (responseUUID, text) => {
         wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
         wrapperResponseMessageButtons.style.height = "40px";
         wrapperResponseMessageButtons.style.paddingTop = "10px";
+
         //attaches the buttons into the div
         wrapperResponseMessageButtons.appendChild(createReloadButton());
-        wrapperResponseMessageButtons.appendChild(thumbsUpButton);
-        wrapperResponseMessageButtons.appendChild(thumbsDownButton);
+
+        //checks if the answer was a success if not the thumbs up and down button will not be attached
+        if (success) {
+            wrapperResponseMessageButtons.appendChild(thumbsUpButton);
+            wrapperResponseMessageButtons.appendChild(thumbsDownButton);
+        }
 
         return wrapperResponseMessageButtons;
     }
@@ -220,14 +273,18 @@ const makeResponseMessage = (responseUUID, text) => {
     const responseMessage = document.createElement("div");
     responseMessage.className = "responseMessage";
     responseMessage.id = responseUUID;
-    responseMessage.style.backgroundColor = "#A4A4AC";
     responseMessage.innerHTML = text;
     responseMessage.style.alignSelf = "flex-start";
-    responseMessage.style.width = "80%";
     responseMessage.style.border = "1px solid black";
     responseMessage.style.borderRadius = "10px";
     responseMessage.style.padding = "10px";
     responseMessage.style.borderColor = "transparent";
+    //if the answer was successful the background color will be grey if not it will be red
+    if (success) {
+        responseMessage.style.backgroundColor = "#A4A4AC";
+    } else {
+        responseMessage.style.backgroundColor = "#c13c4d";
+    }
     // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
     const wrapperResponseMessage = document.createElement("div");
 
@@ -265,24 +322,16 @@ function sendRatingToServer(responseUUID, rating) {
 
 //Thumbs up gives the server a positive respond to the answer of the coresponding prompt and adds them to hasBeenRated
 function thumbsUp(responseUUID) {
-    //if not present or true you can give it a rating, else you remove the rating
-    if (hasBeenRated.get(responseUUID) == false) {
-        hasBeenRated.set(responseUUID, true);
-        sendRatingToServer(responseUUID, 1);
-    } else {
-        sendRatingToServer(responseUUID, 0);
-    }
+    sendRatingToServer(responseUUID, 1);
+}
+
+function thumbsNeutral(responseUUID) {
+    sendRatingToServer(responseUUID, 0);
 }
 
 //Thumbs up gives the server a negative respond to the answer of the coresponding prompt
 function thumbsDown(responseUUID) {
-    //if not present or true you can give it a rating, else you remove the rating
-    if (hasBeenRated.get(responseUUID) === undefined || hasBeenRated.get(responseUUID) === true) {
-        hasBeenRated.set(responseUUID, true);
-        sendRatingToServer(responseUUID, 1);
-    } else {
-        sendRatingToServer(responseUUID, 0);
-    }
+    sendRatingToServer(responseUUID, -1);
 }
 
 // The Chat Window is the window that appears when the Chat button is clicked
@@ -293,7 +342,6 @@ const makeLoadMessage = () => {
     loadMessage.innerHTML = '<div style=\"display: flex; justify-content: center; align-items: center;\"><svg id="ladebild" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480.52 471.13" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="80px" height="80px" style="background-color:transparent"><style><![CDATA[#ladebild-s-rect1_to {animation: ladebild-s-rect1_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_to__to { 0% {transform: translate(227.413141px,149.305825px)} 16.666667% {transform: translate(370.355789px,193.355788px)} 33.333333% {transform: translate(368.868828px,348.324813px)} 50% {transform: translate(257.471827px,426.72455px)} 66.666667% {transform: translate(138.314166px,348.365767px)} 83.333333% {transform: translate(114.307582px,223.307575px)} 100% {transform: translate(227.413141px,149.305825px)}} #ladebild-s-rect1_tr {animation: ladebild-s-rect1_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_tr__tr { 0% {transform: rotate(19deg)} 100% {transform: rotate(199deg)}} #ladebild-s-rect2_to {animation: ladebild-s-rect2_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_to__to { 0% {transform: translate(138.314161px,340.808123px)} 16.666667% {transform: translate(118.32111px,218.634813px)} 33.333333% {transform: translate(232.838032px,147.075828px)} 50% {transform: translate(380.784682px,192.220096px)} 66.666667% {transform: translate(373.817032px,352.248921px)} 83.333333% {transform: translate(255.000893px,441.149087px)} 100% {transform: translate(128.311303px,333.636613px)}} #ladebild-s-rect2_tr {animation: ladebild-s-rect2_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_tr__tr { 0% {transform: rotate(85deg)} 100% {transform: rotate(265deg)}} #ladebild-s-rect3_to {animation: ladebild-s-rect3_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_to__to { 0% {transform: translate(368.868823px,353.579698px)} 16.666667% {transform: translate(254.489853px,432.334834px)} 33.333333% {transform: translate(132.975658px,351.953105px)} 50% {transform: translate(107.954129px,224.242905px)} 66.666667% {transform: translate(221.785778px,147.965968px)} 83.333333% {transform: translate(380.78px,192.22px)} 100% {transform: translate(381.639179px,353.408155px)}} #ladebild-s-rect3_tr {animation: ladebild-s-rect3_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_tr__tr { 0% {transform: rotate(84deg)} 100% {transform: rotate(264deg)}}]]></style><g id="ladebild-s-g1" transform="translate(0-48.445569)"><g id="ladebild-s-rect1_to" transform="translate(227.413141,149.305825)"><g id="ladebild-s-rect1_tr" transform="rotate(19)"><rect id="ladebild-s-rect1" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-70.055,-70.055)" fill="#f8ca2e" stroke-width="0"/></g></g><g id="ladebild-s-rect2_to" transform="translate(138.314161,340.808123)"><g id="ladebild-s-rect2_tr" transform="rotate(85)"><rect id="ladebild-s-rect2" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-74.089278,-65.104962)" fill="#f5a051" stroke-width="0"/></g></g><g id="ladebild-s-rect3_to" transform="translate(368.868823,353.579698)"><g id="ladebild-s-rect3_tr" transform="rotate(84)"><rect id="ladebild-s-rect3" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-69.472912,-76.414198)" fill="#9ec6eb" stroke-width="0"/></g></g></g></svg></div>';
     loadMessage.style.backgroundColor = "#A4A4AC";
     loadMessage.style.alignSelf = "flex-start";
-    loadMessage.style.width = "80%";
     loadMessage.style.border = "1px solid black";
     loadMessage.style.borderRadius = "10px";
     loadMessage.style.borderColor = "transparent";
@@ -303,6 +351,45 @@ const makeLoadMessage = () => {
 
 //this whole method makes the chat window so every design choice
 const makeChatWindow = () => {
+
+    const makeResizeHandle = (container) => {
+        const resizeHandle = document.createElement("div");
+        resizeHandle.className = "resize-handle";
+        resizeHandle.id = "resizeHandle";
+        resizeHandle.innerHTML = '<svg viewBox="-1.92 -1.92 27.84 27.84" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path d="M21 15L15 21M21 8L8 21" stroke="#000000" stroke-width="1.6799999999999997" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = parseInt(getComputedStyle(container, null).getPropertyValue('width'));
+            startHeight = parseInt(getComputedStyle(container, null).getPropertyValue('height'));
+
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+        });
+
+        function resize(e) {
+            if (isResizing) {
+                const width = startWidth + (e.clientX - startX);
+                let height = startHeight + (startY - e.clientY);
+
+                container.style.width = `${width}px`;
+                container.style.height = `${height}px`;
+            }
+        }
+
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        return resizeHandle;
+    }
+
     // -------------------------- Chat Window --------------------------
     const chatWindow = document.createElement("div");
     chatWindow.id = "chat-window";
@@ -317,6 +404,11 @@ const makeChatWindow = () => {
     chatWindow.style.backgroundColor = "#448CEB";
     chatWindow.style.borderRadius = "10px";
     chatWindow.style.gap = "10px";
+    chatWindow.style.overflow = "auto"; // Ensure content is scrollable if the window is resized smaller
+    chatWindow.style.minWidth = "250px"; // Set minimum width
+    chatWindow.style.minHeight = "250px"; // Set minimum height
+    chatWindow.style.maxWidth = "80vw"; // Set maximum width
+    chatWindow.style.maxHeight = "80vh"; // Set maximum height
 
 // chatHeader is a the header of the chat window
     const chatHeader = document.createElement("div");
@@ -335,6 +427,7 @@ const makeChatWindow = () => {
 // Chaty Name on top of the chat window
     const chatyName = document.createElement("h2");
     chatyName.id = "chatyName";
+    chatyName.style.userSelect = "none";
     chatyName.innerText = "Chaty";
     chatyName.style.margin = "0"; // Margin entfernen, um die Positionierung zu erleichtern
     chatyName.style.flexGrow = "1"; // Lässt den Namen den verfügbaren Platz einnehmen
@@ -356,19 +449,19 @@ const makeChatWindow = () => {
     });
 
 // Append elements to the chat header
-    chatHeader.appendChild(chatyName); // Name zuerst einfügen
-    chatHeader.appendChild(closeButton); // Button danach einfügen
+    chatHeader.appendChild(chatyName);
+    chatHeader.appendChild(closeButton);
+    chatHeader.appendChild(makeResizeHandle(chatWindow));
     chatWindow.appendChild(chatHeader);
     // -------------------------- Wrapper Prompts Container --------------------------
     const wrapperPromptsContainer = document.createElement("div");
     wrapperPromptsContainer.id = "wrapper-prompts-container";
     wrapperPromptsContainer.style.width = "100%";
-    wrapperPromptsContainer.style.height = "100%";
+    wrapperPromptsContainer.style.flexGrow = "1"; // Allow it to grow and take available space
     wrapperPromptsContainer.style.order = "1";
-    wrapperPromptsContainer.style.maxHeight = "80vh"; // Setze eine maximale Höhe relativ zur Viewport-Höhe
-    wrapperPromptsContainer.style.overflow = "auto"; // Macht den Container scrollbar bei Überlauf
     wrapperPromptsContainer.style.zIndex = "100";
     wrapperPromptsContainer.style.padding = "10px";
+    wrapperPromptsContainer.style.overflow = "hidden"; // Hide overflow to ensure container stays within bounds
 
     // -------------------------- Prompts Container --------------------------
     const promptsContainer = document.createElement("div");
@@ -376,13 +469,12 @@ const makeChatWindow = () => {
     promptsContainer.style.display = "flex";
     promptsContainer.style.flexDirection = "column";
     promptsContainer.style.width = "100%";
-    promptsContainer.style.height = "";
-    promptsContainer.style.overflow = "auto";
+    promptsContainer.style.height = "100%";
+    promptsContainer.style.overflowY = "auto"; // Scroll vertically
     promptsContainer.style.scrollBehavior = "smooth";
-    promptsContainer.style.minHeight = "100%";
+    promptsContainer.style.backgroundColor = "lightgray";
     promptsContainer.style.borderRadius = "10px";
     promptsContainer.style.gap = "10px";
-    promptsContainer.style.backgroundColor = "lightgray";
     promptsContainer.style.padding = "10px";
     wrapperPromptsContainer.appendChild(promptsContainer);
     chatWindow.appendChild(wrapperPromptsContainer);
@@ -460,6 +552,7 @@ const makeChatWindow = () => {
     chatInput.style.width = "100%";
     chatInput.placeholder = "Type your message here";
     chatInput.style.border = "none";
+    chatInput.style.outline = "none";
     chatInput.style.backgroundColor = "transparent";
     chatInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -489,7 +582,7 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
 
     // loading animation until response
     const loadingMessage = makeLoadMessage();
-    chatWindow.insertBefore(loadingMessage,document.getElementById(promptUUID).nextSibling);
+    chatWindow.insertBefore(loadingMessage, document.getElementById(promptUUID).nextSibling);
 
     //scrolls to the loading message
     loadingMessage.scrollIntoView({behavior: "smooth"});
@@ -509,8 +602,13 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
             const responseUUID = generateUUID();
             responseToPrompt.set(responseUUID, promptUUID);
 
-            const responseMessage = makeResponseMessage(responseUUID, response.responseText);
-            //TODO: cleanup on responseText to remove unnecessary json text
+            var responseMessage = undefined;
+            //check if the operation was a success
+            if (JSON.parse(response.responseText).Success !== undefined) {
+                responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
+            } else {
+                responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Failure.response, false);
+            }
             //inserts the response in front of the loading message
             chatWindow.insertBefore(responseMessage, loadingMessage);
             //after loading the message remove loading message
@@ -526,4 +624,44 @@ window.onload = () => {
     document.head.appendChild(styleSheet());
     document.body.appendChild(makeChatButton());
     document.body.appendChild(makeChatWindow());
+    // Funktion, die aufgerufen wird, wenn sich das Padding-Left ändert
+    // Ein MutationObserver erstellen, um Änderungen im DOM zu überwachen
+    const domObserver = new MutationObserver(handleDOMChange);
+// Konfiguration für den Observer festlegen
+    const domConfig = { childList: true, subtree: true };
+// Den Observer starten und das Dokument beobachten
+    domObserver.observe(document.documentElement, domConfig);
+};
+
+// Funktion, die aufgerufen wird, wenn sich das DOM ändert
+const handleDOMChange = (mutationsList, observer) => {
+    for(const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            // Überprüfen, ob das Element mit der ID "topMenu" existiert
+            const topMenu = document.getElementById('topmenu');
+            if (topMenu) {
+                // Ein MutationObserver erstellen, um Änderungen am Padding-Left zu überwachen
+                const paddingLeftObserver = new MutationObserver(handlePaddingLeftChange);
+                // Konfiguration für den Observer festlegen
+                const config = { attributes: true, attributeFilter: ['style'] };
+                // Den Observer starten und das Element mit der ID "topMenu" beobachten
+                paddingLeftObserver.observe(topMenu, config);
+                // Observer beenden, sobald das Element gefunden wurde
+                observer.disconnect();
+            }
+        }
+    }
+};
+
+// function is getting called when the topmenu is found and the padding is changed
+const handlePaddingLeftChange = (mutationsList, observer) => {
+    const chatWindow=document.getElementById("chat-window");
+    const chatButton=document.getElementById("chat-button");
+    for(const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const paddingLeftValue = mutation.target.style.paddingLeft;
+            chatWindow.style.left=paddingLeftValue;
+            chatButton.style.left=paddingLeftValue;
+        }
+    }
 };
