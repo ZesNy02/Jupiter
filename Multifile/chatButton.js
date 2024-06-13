@@ -9,5 +9,5 @@
         chatWindow.style.display =
             chatWindow.style.display === "none" ? "flex" : "none";
     });
-    window.appendChild(chatButton);
+    document.body.appendChild(chatButton); 
 };
