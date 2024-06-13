@@ -1,5 +1,5 @@
 /* Styles for the chat button */
-.chat-button {
+#chat-button {
     position: fixed;
     bottom: 10px;
     left: 270px;
@@ -14,7 +14,7 @@
 }
 
 /* Styles for user messages */
-.userMessage {
+#userMessage {
     background-color: #A4A4AC;
     align-self: flex-end;
     width: 80%;
@@ -26,7 +26,7 @@
 }
 
 /* Styles for AI response messages */
-.responseMessage {
+#responseMessage {
     align-self: flex-start;
     width: 80%;
     background-color: #EFEFEF;
@@ -38,14 +38,14 @@
 }
 
 /* Styles for the reload button */
-.reloadButton {
+#reloadButton {
     background-color: transparent;
     border: none;
     cursor: pointer;
 }
 
 /* Wrapper for response message buttons */
-.responseButtonsWrapper {
+#responseButtonsWrapper {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -53,11 +53,175 @@
 }
 
 /* Darkens the button if hovered */
-.reloadButton:hover svg {
+#reloadButton:hover svg {
     fill: #000000;
 }
 
 /* Lightens the button if not hovered */
-.reloadButton svg {
+#reloadButton svg {
     fill: #A4A4AC;
 }
+
+#chat-window {
+    position: fixed;
+    bottom: 10px;
+    left: 270px;
+    width: 40vw;
+    height: 60vh;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    background-color: #448CEB;
+    border-radius: 10px;
+    gap: 10px;
+}
+
+#chatHeader {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 40px;
+    order: 0;
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 0px;
+}
+
+#chatyName {
+    margin: 0;
+    flex-grow: 1;
+}
+
+#closeButton {
+    color: grey;
+    height: 40px;
+    width: 40px;
+    border: none;
+    border-radius: 10px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#wrapper-prompts-container {
+    width: 100%;
+    height: 100%;
+    order: 1;
+    max-height: 80vh;
+    overflow: auto;
+    z-index: 100;
+    padding: 10px;
+}
+
+#prompts-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: auto;
+    scroll-behavior: smooth;
+    min-height: 100%;
+    border-radius: 10px;
+    gap: 10px;
+    background-color: lightgray;
+    padding: 10px;
+}
+
+#wrapperChatInput {
+    width: 100%;
+    height: 50px;
+    order: 5;
+    z-index: 101;
+    padding: 10px;
+    padding-top: 0px;
+    margin-top: auto;
+}
+
+#chatInputDiv {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: lightgray;
+    border-radius: 10px;
+}
+
+#chatInputButton {
+    align-self: center;
+    border: none;
+    order: 1;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+#chat-input {
+    height: 40px;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+}
+
+/* CSS for user messages */
+.userMessage {
+    background-color: #A4A4AC;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    align-self: flex-end;
+    width: 80%;
+    text-overflow: wrap;
+    word-wrap: break-word; /* Line break for long words */
+    white-space: pre-wrap; /* Line breaks for normal spaces */
+}
+
+/* CSS for response messages */
+.responseMessage {
+    background-color: #A4A4AC;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    align-self: flex-start;
+    width: 80%;
+}
+
+/* CSS for the wrapper containing response message buttons */
+.wrapperResponseMessageButtons {
+    height: 40px;
+    padding-top: 10px;
+}
+
+/* CSS for buttons under the response message */
+.reloadButton, .thumbsUpButton, .thumbsDownButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* SVG darken on hover */
+.reloadButton:hover svg, .thumbsUpButton:hover svg, .thumbsDownButton:hover svg {
+    fill: #000000;
+}
+
+/* SVG lighten on mouse out */
+.reloadButton svg, .thumbsUpButton svg, .thumbsDownButton svg {
+    fill: #A4A4AC;
+}
+
+/* CSS for loading message */
+#loadMessage {
+    background-color: #A4A4AC;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    align-self: flex-start;
+    width: 80%;
+}
+
+#loadMessage div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
