@@ -1,4 +1,4 @@
-const makeChatWindow = () => {
+export const makeChatWindow = () => {
     const chatWindow = document.createElement("div");
     chatWindow.id = "chat-window";
 
