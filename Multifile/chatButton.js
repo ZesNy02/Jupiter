@@ -11,6 +11,6 @@
         chatWindow.style.display =
             chatWindow.style.display === "none" ? "flex" : "none";
     });
-    document.body.appendChild(chatButton);
+    return chatButton;
     console.log("chatButton created"); 
 };
