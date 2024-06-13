@@ -2,7 +2,7 @@
 // @name Chat Button
 // @grant none
 // ==/UserScript==
-
+console.log("Chat Button script loaded");
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
