@@ -6,6 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from embedding import get_embedding_function
 from langchain_community.vectorstores import Chroma
+import setup
 
 CHROMA_PATH = os.path.join(os.path.dirname(__file__), "./chroma")
 DATA_PATH = os.path.join(os.path.dirname(__file__), "./data")
@@ -27,7 +28,7 @@ def main():
 
 # retrieves the data from a pdf in the data folder
 def load_documents():
-    document_loader = PyPDFDirectoryLoader(DATA_PATH)
+    document_loader = PyPDFDirectoryLoader(setup.DATA_PATH)
     return document_loader.load()
 
 
@@ -46,7 +47,7 @@ def split_documents(documents: list[Document]):
 def add_to_chroma(chunks: list[Document]):
     # Load the existing database.
     db = Chroma(
-        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
+        persist_directory=setup.CHROMA_PATH, embedding_function=get_embedding_function()
     )
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
@@ -91,8 +92,8 @@ def calculate_chunk_ids(chunks):
 
 
 def clear_database():
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+    if os.path.exists(setup.CHROMA_PATH):
+        shutil.rmtree(setup.CHROMA_PATH)
 
 
 if __name__ == "__main__":
