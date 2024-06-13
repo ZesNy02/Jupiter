@@ -1,11 +1,23 @@
 use rust_server::{ config::{ get_config, Mode }, handlers::router::get_router };
 use tokio::signal;
 use tracing::info;
+use tracing_subscriber::EnvFilter;
 
+/// Main function to start the server
+///
+/// This function initializes the logger, loads the `config`, and starts the server.
+/// The server is servered using **Axum** and has *graceful shutdown*.
+///
+/// The routes are defined in the `router` module.
 #[tokio::main]
 async fn main() {
   // Initialize the logger
-  tracing_subscriber::fmt::init();
+  tracing_subscriber
+    ::fmt()
+    .without_time()
+    .with_target(false)
+    .with_env_filter(EnvFilter::from_default_env())
+    .init();
 
   // Set mode: "development" or "production"
   let mode = Mode::Dev;
@@ -30,6 +42,11 @@ async fn main() {
   axum::serve(listener, app).with_graceful_shutdown(shutdown_signal()).await.unwrap();
 }
 
+/// Graceful shutdown signal
+///
+/// This function listens for the `Ctrl+C` signal and gracefully shuts down the server.
+///
+/// If the server is running on a Unix system, it also listens for the `SIGTERM` signal.
 async fn shutdown_signal() {
   let ctrl_c = async {
     signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
@@ -47,7 +64,11 @@ async fn shutdown_signal() {
   let terminate = std::future::pending::<()>();
 
   tokio::select! {
-      _ = ctrl_c => {},
-      _ = terminate => {},
+      _ = ctrl_c => {
+          info!("Shutting down...");
+      },
+      _ = terminate => {
+          info!("Shutting down...");
+      },
   }
 }

@@ -8,8 +8,11 @@ from embedding import get_embedding_function
 from langchain_community.vectorstores import Chroma
 import setup
 
-def main():
+CHROMA_PATH = os.path.join(os.path.dirname(__file__), "./chroma")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "./data")
 
+
+def main():
     # Check if the database should be cleared (using the --clear flag).
     parser = argparse.ArgumentParser()
     parser.add_argument("--reset", action="store_true", help="Reset the database.")
@@ -17,18 +20,19 @@ def main():
     if args.reset:
         print("✨ Clearing Database")
         clear_database()
-
     # Create (or update) the data store.
     documents = load_documents()
     chunks = split_documents(documents)
     add_to_chroma(chunks)
 
-#retrieves the data from a pdf in the data folder
+
+# retrieves the data from a pdf in the data folder
 def load_documents():
     document_loader = PyPDFDirectoryLoader(setup.DATA_PATH)
     return document_loader.load()
 
-#splits the documents into chunks
+
+# splits the documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
@@ -38,27 +42,24 @@ def split_documents(documents: list[Document]):
     )
     return text_splitter.split_documents(documents)
 
-#adds the chunks to the database
+
+# adds the chunks to the database
 def add_to_chroma(chunks: list[Document]):
     # Load the existing database.
     db = Chroma(
         persist_directory=setup.CHROMA_PATH, embedding_function=get_embedding_function()
     )
-
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
-
     # Add or Update the documents.
     existing_items = db.get(include=[])  # IDs are always included by default
     existing_ids = set(existing_items["ids"])
     print(f"Number of existing documents in DB: {len(existing_ids)}")
-
     # Only add documents that don't exist in the DB.
     new_chunks = []
     for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
             new_chunks.append(chunk)
-
     if len(new_chunks):
         print(f"👉 Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
@@ -69,31 +70,24 @@ def add_to_chroma(chunks: list[Document]):
 
 
 def calculate_chunk_ids(chunks):
-
     # Creates a unique ID for each chunk in the format:
     # Page Source : Page Number : Chunk Index
-
     last_page_id = None
     current_chunk_index = 0
-
     for chunk in chunks:
         source = chunk.metadata.get("source")
         page = chunk.metadata.get("page")
         current_page_id = f"{source}:{page}"
-
         # If the page ID is the same as the last one, increment the index.
         if current_page_id == last_page_id:
             current_chunk_index += 1
         else:
             current_chunk_index = 0
-
         # Calculate the chunk ID.
         chunk_id = f"{current_page_id}:{current_chunk_index}"
         last_page_id = current_page_id
-
         # Add it to the page meta-data.
         chunk.metadata["id"] = chunk_id
-
     return chunks
 
 
@@ -103,4 +97,4 @@ def clear_database():
 
 
 if __name__ == "__main__":
-    main()      
+    main()

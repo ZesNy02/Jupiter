@@ -29,8 +29,8 @@ mod tests {
   #[test]
   fn test_get_db_path() {
     let config = get_config(Mode::Dev, false);
-    assert_eq!(config.get_db_path(), "./db.db");
+    assert_eq!(config.db_path.clone(), "./db.db");
     let config = get_config(Mode::Prod, true);
-    assert_eq!(config.get_db_path(), "./data/db.db");
+    assert_eq!(config.db_path.clone(), "./data/db.db");
   }
 }
