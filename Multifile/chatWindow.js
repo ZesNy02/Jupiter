@@ -216,4 +216,4 @@ const makeChatWindow = () => {
 
     return chatWindow;
 };
-unsafeWindow.makeChatWindow = makeChatWindow;
+window.makeChatWindow = makeChatWindow;
