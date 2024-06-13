@@ -1,4 +1,9 @@
 //this whole method makes the chat window so every design choice
+// ==UserScript==
+// @name Chat Button
+// @grant none
+// ==/UserScript==
+
 const makeChatWindow = () => {
 
     const makeResizeHandle = (container) => {
