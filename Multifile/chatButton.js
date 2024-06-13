@@ -1,4 +1,4 @@
-export const makeChatButton = () => {
+export function makeChatButton() {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
     chatButton.className = "chat-button";
@@ -9,5 +9,6 @@ export const makeChatButton = () => {
         chatWindow.style.display =
             chatWindow.style.display === "none" ? "flex" : "none";
     });
-    return chatButton;
+   //return chatButton;
+    document.body.appendChild(chatButton);
 };

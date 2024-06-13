@@ -1,5 +1,5 @@
 /* Styles for the chat button */
-#chat-button {
+.chat-button {
     position: fixed;
     bottom: 10px;
     left: 270px;
@@ -14,7 +14,7 @@
 }
 
 /* Styles for user messages */
-#userMessage {
+.userMessage {
     background-color: #A4A4AC;
     align-self: flex-end;
     width: 80%;
@@ -26,7 +26,7 @@
 }
 
 /* Styles for AI response messages */
-#responseMessage {
+.responseMessage {
     align-self: flex-start;
     width: 80%;
     background-color: #EFEFEF;
@@ -38,14 +38,14 @@
 }
 
 /* Styles for the reload button */
-#reloadButton {
+.reloadButton {
     background-color: transparent;
     border: none;
     cursor: pointer;
 }
 
 /* Wrapper for response message buttons */
-#responseButtonsWrapper {
+.responseButtonsWrapper {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -53,12 +53,12 @@
 }
 
 /* Darkens the button if hovered */
-#reloadButton:hover svg {
+.reloadButton:hover svg {
     fill: #000000;
 }
 
 /* Lightens the button if not hovered */
-#reloadButton svg {
+.reloadButton svg {
     fill: #A4A4AC;
 }
 
