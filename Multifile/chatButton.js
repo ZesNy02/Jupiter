@@ -27,5 +27,4 @@ const makeChatButton = () => {
     });
     return chatButton;
 };
-export { makeChatButton };
 window.makeChatButton = makeChatButton;
