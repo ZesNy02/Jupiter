@@ -1,3 +1,5 @@
+ console.log("chatButton.js loaded");
+ 
  function makeChatButton() {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
@@ -9,5 +11,6 @@
         chatWindow.style.display =
             chatWindow.style.display === "none" ? "flex" : "none";
     });
-    document.body.appendChild(chatButton); 
+    document.body.appendChild(chatButton);
+    console.log("chatButton created"); 
 };
