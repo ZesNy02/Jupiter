@@ -29,4 +29,3 @@ const makeChatButton = () => {
 };
 
 window.makeChatButton = makeChatButton;
-docu
