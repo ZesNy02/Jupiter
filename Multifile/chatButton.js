@@ -1,3 +1,8 @@
+// ==UserScript==
+// @name Chat Button
+// @grant none
+// ==/UserScript==
+
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
@@ -24,3 +29,4 @@ const makeChatButton = () => {
 };
 
 window.makeChatButton = makeChatButton;
+docu
