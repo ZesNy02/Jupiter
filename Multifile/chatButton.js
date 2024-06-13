@@ -1,4 +1,4 @@
-export function makeChatButton() {
+ function makeChatButton() {
     const chatButton = document.createElement("button");
     chatButton.id = "chat-button";
     chatButton.className = "chat-button";
