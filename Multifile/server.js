@@ -3,6 +3,8 @@ const ratingURL = "http://localhost:3000/rating";
 const prompts = new Map();
 const responseToPrompt = new Map();
 
+console.log("Start from server.js");
+
 function reloadPrompt(promptUUID) {
      //search the cached prompts to find the corresponding message
      const prompt = prompts.get(promptUUID);
@@ -94,3 +96,5 @@ window.thumbsNeutral = thumbsNeutral;
 window.thumbsDown = thumbsDown;
 window.generateUUID = generateUUID;
 window.sendMessageAndFormat = sendMessageAndFormat;
+
+console.log("End of server.js");
