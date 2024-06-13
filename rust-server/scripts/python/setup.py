@@ -9,7 +9,7 @@ You are supposed to act as a customer support and explain how to use the Proophb
 
 
 
-Keep the question in mind. Answer the question based on the above context and think step by step. Stick to relevenat information to the Questions in your answer: {question}
+Keep the question in mind. Answer the question based on the above context and think step by step. Stick to relevenat information to the Questions in your answer and answer in three sentences: {question}
 """
 
 TOKEN_VALUE = 'Q41KQzOiTPe75o0cJsxinZw64CwmxcGGvEmy4xn8dvc1qM6nUgWtbwiftOHcNCI5'

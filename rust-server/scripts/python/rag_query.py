@@ -24,7 +24,8 @@ def query_rag(query_text: str):
     results = db.similarity_search_with_score(query_text, k=5)
 
     #merges the context from the documents in the db and the question asked by the user with a template
-    context_text = "\n\n".join([doc.page_content for doc, _score in results]) 
+    context_text = "\n\n".join([doc.page_content for doc, _score in results])
+    print(context_text)
     prompt_template = ChatPromptTemplate.from_template(setup.PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
     
