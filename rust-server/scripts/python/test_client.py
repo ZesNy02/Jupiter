@@ -1,18 +1,46 @@
-import requests
-import json
+import psycopg2
 
-# Define the JSON object to send
-data = {"message": "Was ist das Prooph-Board?"}
+# Establish a connection to the PostgreSQL database
+conn = psycopg2.connect(
+    host="localhost",
+    port=5432,
+    database="postgres",
+    user="postgres",
+    password="password",
+)
 
-# Set the URL to send the request to
-url = "http://localhost:3000/ai"
+# Create a cursor object to interact with the database
+cur = conn.cursor()
 
-# Send the POST request with the JSON object attached
-response = requests.post(url, json=data)
+# # Create a table
+# cur.execute(
+#     """
+#     CREATE TABLE IF NOT EXISTS your_table_name (
+#         id SERIAL PRIMARY KEY,
+#         name VARCHAR(255),
+#         age INTEGER
+#     )
+# """
+# )
 
-# Print the response
-# Convert the response text to a Python object
-response_obj = json.loads(response.text)
+# # Insert data into the table
+# cur.execute(
+#     """
+#     INSERT INTO your_table_name (name, age)
+#     VALUES ('John Doe', 30),
+#            ('Jane Smith', 25)
+# """
+# )
 
-# Print the response object
-print(response_obj["Success"]["response"])
+# Fetch all data from the table
+cur.execute("SELECT * FROM your_table_name")
+rows = cur.fetchall()
+
+# Display the data in the console
+for row in rows:
+    print(row)
+
+# Commit the changes and close the connection
+conn.commit()
+cur.close()
+conn.close()
