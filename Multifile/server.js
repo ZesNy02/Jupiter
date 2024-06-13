@@ -88,6 +88,8 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
     });
 }
 
+console.log("Mid of server.js");
+
 // Expose the functions to the global scope
 window.reloadPrompt = reloadPrompt;
 window.sendRatingToServer = sendRatingToServer;
