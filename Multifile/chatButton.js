@@ -27,4 +27,4 @@ const makeChatButton = () => {
     });
     return chatButton;
 };
-unsafeWindow.makeChatButton = makeChatButton;
+window.makeChatButton = makeChatButton;
