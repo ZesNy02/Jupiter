@@ -3,13 +3,25 @@
 #[derive(Debug)]
 pub enum AIError {
   /// Error related to the file path.
-  PathError,
+  PathError(String),
   /// Error related to the execution of the script.
-  ScriptError,
+  ScriptError(String),
   /// Error related to input/output operations.
-  IOError,
+  IOError(String),
   /// Error indicating an empty response from the AI.
-  EmptyResponse,
+  EmptyResponse(String),
+}
+
+impl AIError {
+  /// Returns a string representation of the error.
+  pub fn to_string(&self) -> String {
+    match self {
+      AIError::PathError(message) => format!("Path Error: {}", message),
+      AIError::ScriptError(message) => format!("Script Error: {}", message),
+      AIError::IOError(message) => format!("IO Error: {}", message),
+      AIError::EmptyResponse(message) => format!("Empty Response: {}", message),
+    }
+  }
 }
 
 /// A specialized `Result` type for the AI module.

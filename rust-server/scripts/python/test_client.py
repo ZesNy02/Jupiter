@@ -12,31 +12,23 @@ conn = psycopg2.connect(
 # Create a cursor object to interact with the database
 cur = conn.cursor()
 
-# # Create a table
-# cur.execute(
-#     """
-#     CREATE TABLE IF NOT EXISTS your_table_name (
-#         id SERIAL PRIMARY KEY,
-#         name VARCHAR(255),
-#         age INTEGER
-#     )
-# """
-# )
+# Execute a query to select everything from a table
+cur.execute("SELECT * FROM prompts")
 
-# # Insert data into the table
-# cur.execute(
-#     """
-#     INSERT INTO your_table_name (name, age)
-#     VALUES ('John Doe', 30),
-#            ('Jane Smith', 25)
-# """
-# )
-
-# Fetch all data from the table
-cur.execute("SELECT * FROM your_table_name")
+# Fetch all the rows from the result set
 rows = cur.fetchall()
 
-# Display the data in the console
+# Print the rows
+for row in rows:
+    print(row)
+
+# Execute a query to select everything from a table
+cur.execute("SELECT * FROM answers")
+
+# Fetch all the rows from the result set
+rows = cur.fetchall()
+
+# Print the rows
 for row in rows:
     print(row)
 

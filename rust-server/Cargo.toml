@@ -16,6 +16,9 @@ rusqlite = { version = "0.31.0", features = ["bundled"] }
 dotenv = "0.15.0"
 tower-http = { version = "0.5", features = ["timeout", "trace", "cors"] }
 tower = { version = "0.4", features = ["util"] }
+pgvector = { version = "0.3.2", features = ["postgres"] }
+postgres = "0.19"
+sequential-test = "0.2.4"
 
 [lib]
 name = "rust_server"

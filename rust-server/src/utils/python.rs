@@ -1,11 +1,11 @@
-use crate::{ config::Config, models::python_ai::{ AIError, Result } };
+use crate::models::python_ai::{ AIError, Result };
 use std::{ path::Path, process::Command };
 
 /// This function runs the Python AI model with the given prompt.
 ///
 /// # Params
 ///
-/// * `config` - The [Config] struct containing the script path.
+/// * `script_path` - The path to the python script to execute.
 /// * `prompt` - The prompt to be sent to the AI model.
 ///
 /// # Returns
@@ -26,17 +26,9 @@ use std::{ path::Path, process::Command };
 /// use rust_server::models::python_ai::AIError;
 /// use rust_server::utils::python::run_ai;
 ///
-/// let config = Config {
-///   ip: "0.0.0.0".to_string(),
-///   port: 3000,
-///   mode: Mode::Dev,
-///   db_path: "db.sqlite".to_string(),
-///   script: "ai.py".to_string(),
-/// };
-///
 /// let prompt = "Hello".to_string();
 ///
-/// let response = run_ai(&config, prompt);
+/// let response = run_ai("test.py".to_string(), prompt);
 ///
 /// match response {
 ///   Ok(response) => {
@@ -53,17 +45,16 @@ use std::{ path::Path, process::Command };
 /// }
 ///
 /// ```
-pub fn run_ai(config: &Config, prompt: String) -> Result<String> {
+pub fn run_ai(script_path: String, prompt: String) -> Result<String> {
   // get the path to the python script
-  let path = config.get_script_path();
   let prompt = prompt.clone();
 
-  if Path::new(&path).exists() == false {
-    return Err(AIError::PathError);
+  if Path::new(&script_path).exists() == false {
+    return Err(AIError::PathError(format!("Path does not exist: {}", script_path)));
   }
 
   // run the python script and wait for the output
-  let response = Command::new("python3").arg(path).arg(prompt).output();
+  let response = Command::new("python3").arg(script_path).arg(prompt).output();
 
   // match the response from the script
   match response {
@@ -72,17 +63,17 @@ pub fn run_ai(config: &Config, prompt: String) -> Result<String> {
       let response = String::from_utf8_lossy(&response.stdout).to_string();
 
       if response.starts_with("Error: ") {
-        return Err(AIError::ScriptError);
+        return Err(AIError::ScriptError(response));
       }
 
       if response.is_empty() {
-        return Err(AIError::EmptyResponse);
+        return Err(AIError::EmptyResponse("Script returned an empty response".to_string()));
       }
 
       return Ok(response.to_string());
     }
     Err(_e) => {
-      return Err(AIError::IOError);
+      return Err(AIError::IOError("Error while reading the python script".to_string()));
     }
   }
 }
