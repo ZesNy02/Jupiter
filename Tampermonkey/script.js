@@ -113,6 +113,16 @@ const styleSheet = () => {
     .loadMessage{
     width: 50%;
     }
+    .replyButton svg {
+    fill: #a4a4ab;
+}
+.replyButton:hover svg {
+    fill: #1A73E8;
+}
+.replyButton:active svg {
+    fill: #0A47A1;
+}
+
 `;
     return style;
 }
@@ -135,6 +145,9 @@ const makeChatButton = () => {
     chatButton.style.zIndex = "80";
     chatButton.style.cursor = "pointer";
     chatButton.style.padding = "4px";
+    chatButton.style.display = "flex"; // Add flexbox
+    chatButton.style.alignItems = "center"; // Center items vertically
+    chatButton.style.justifyContent = "center"; // Center items horizontally
     chatButton.addEventListener("click", () => {
         const chatWindow = document.getElementById("chat-window");
         chatWindow.style.display =
@@ -163,13 +176,9 @@ const makeUserMessage = (text) => {
 
 // A Response Message is a message on the left of the Chat that the AI Typed
 const makeResponseMessage = (responseUUID, text, success) => {
-
-    //gets the promptUUID to give it to the buttons, so they can do their stuff
     const promptUUID = responseToPrompt.get(responseUUID);
 
-    //creates the wrapper for the 3 buttons under the response
     const makeWrapperResponseMessageButtons = () => {
-        //creates the reload button to put under the response message
         const createReloadButton = () => {
             const reloadButton = document.createElement("button");
             reloadButton.className = "reloadButton";
@@ -177,13 +186,12 @@ const makeResponseMessage = (responseUUID, text, success) => {
             reloadButton.style.backgroundColor = "transparent";
             reloadButton.style.border = "none";
             reloadButton.style.cursor = "pointer";
-            //when clicked give the reloadPrompt function the UUID of the answer so that it can find the coresponding prompt
             reloadButton.addEventListener("click", () => {
                 reloadPrompt(promptUUID);
             });
             return reloadButton;
         }
-        //creates the thumbs up button to put under the response message
+
         const createThumbsUpButton = () => {
             const thumbsUpButton = document.createElement("button");
             thumbsUpButton.className = "thumbsUpButton";
@@ -207,7 +215,7 @@ const makeResponseMessage = (responseUUID, text, success) => {
             });
             return thumbsUpButton;
         }
-        //creates the thumbs down button to put under the response message
+
         const createThumbsDownButton = () => {
             const thumbsDownButton = document.createElement("button");
             thumbsDownButton.className = "thumbsDownButton";
@@ -220,7 +228,6 @@ const makeResponseMessage = (responseUUID, text, success) => {
                     switchSelectedButton()
                     thumbsDown(responseUUID);
                 } else {
-                    //tests if the button has been pressed alredy
                     if (thumbsDownButton.classList.contains("selected")) {
                         thumbsNeutral(responseUUID);
                     } else {
@@ -234,11 +241,9 @@ const makeResponseMessage = (responseUUID, text, success) => {
 
         const thumbsUpButton = createThumbsUpButton();
         const thumbsDownButton = createThumbsDownButton();
-        //checks if the other button has been pressed
-        //example: if positive was pressed and then you press negative it returns true
+
         function checkIfOtherButtonHasBeenPressed(button) {
             if (thumbsUpButton.className === button.className) {
-                //checks if the thumbsDownButton was selected
                 return thumbsDownButton.classList.contains("selected");
             } else {
                 return thumbsUpButton.classList.contains("selected");
@@ -251,15 +256,12 @@ const makeResponseMessage = (responseUUID, text, success) => {
         }
 
         const wrapperResponseMessageButtons = document.createElement("div");
-
         wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
         wrapperResponseMessageButtons.style.height = "40px";
         wrapperResponseMessageButtons.style.paddingTop = "10px";
 
-        //attaches the buttons into the div
         wrapperResponseMessageButtons.appendChild(createReloadButton());
 
-        //checks if the answer was a success if not the thumbs up and down button will not be attached
         if (success) {
             wrapperResponseMessageButtons.appendChild(thumbsUpButton);
             wrapperResponseMessageButtons.appendChild(thumbsDownButton);
@@ -268,28 +270,54 @@ const makeResponseMessage = (responseUUID, text, success) => {
         return wrapperResponseMessageButtons;
     }
 
+    const createReplyButton = () => {
+        const replyButton = document.createElement("button");
+        replyButton.className = "replyButton";
+        replyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed"><path d="M773.33-200v-157.33q0-56.67-37.66-94.34-37.67-37.66-94.34-37.66h-393L405-332.67l-47.67 47.34L120-522.67 357.33-760 405-712.67 248.33-556h393q84.34 0 141.5 57.17Q840-441.67 840-357.33V-200h-66.67Z"/></svg>';        replyButton.style.backgroundColor = "transparent";
+        replyButton.style.border = "10px";
+        replyButton.style.cursor = "pointer";
+        replyButton.style.marginLeft="5vw";
+        replyButton.style.height="40px";
+        replyButton.style.width="40px";
+        replyButton.addEventListener("click", () => {
+            replyToMessage(responseUUID);
+        });
+        return replyButton;
+    }
+
     const responseMessage = document.createElement("div");
     responseMessage.className = "responseMessage";
     responseMessage.id = responseUUID;
     responseMessage.innerHTML = text;
+    responseMessage.style.position = "relative"; // Important for positioning the reply button
     responseMessage.style.alignSelf = "flex-start";
     responseMessage.style.border = "1px solid black";
     responseMessage.style.borderRadius = "10px";
     responseMessage.style.padding = "10px";
     responseMessage.style.borderColor = "transparent";
-    //if the answer was successful the background color will be grey if not it will be red
     if (success) {
         responseMessage.style.backgroundColor = "#A4A4AC";
     } else {
         responseMessage.style.backgroundColor = "#e37e8a";
     }
-    // Der Wrapper wird mit dem Div für die Nachricht und den drei Buttons gefüllt
+    const wrapperMessageAndReply=document.createElement("div");
+    wrapperMessageAndReply.style.justifyContent="left";
+    wrapperMessageAndReply.style.display="flex";
+    wrapperMessageAndReply.style.alignItems="center";
+    wrapperMessageAndReply.appendChild(responseMessage);
+    wrapperMessageAndReply.appendChild(createReplyButton());
     const wrapperResponseMessage = document.createElement("div");
-
-    wrapperResponseMessage.appendChild(responseMessage);
+    wrapperResponseMessage.appendChild(wrapperMessageAndReply);
     wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
 
     return wrapperResponseMessage;
+};
+
+// Function to handle reply action
+//TODO:implement
+const replyToMessage = (responseUUID) => {
+    // Your reply logic here
+    console.log(`Reply to message with UUID: ${responseUUID}`);
 };
 
 //reloads the promp and lets the ai generate a new response
@@ -427,7 +455,7 @@ const makeChatWindow = () => {
     chatyName.id = "chatyName";
     chatyName.style.userSelect = "none";
     chatyName.innerText = "Chaty";
-    chatyName.style.color="#D9D9D9";
+    chatyName.style.color = "#D9D9D9";
     chatyName.style.margin = "0"; // Margin entfernen, um die Positionierung zu erleichtern
     chatyName.style.flexGrow = "1"; // Lässt den Namen den verfügbaren Platz einnehmen
 
@@ -497,7 +525,7 @@ const makeChatWindow = () => {
     chatInputDiv.style.display = "flex";
     chatInputDiv.style.flexDirection = "row";
     chatInputDiv.style.width = "100%";
-    chatInputDiv.style.backgroundColor = "lightgray";
+    chatInputDiv.style.backgroundColor = "white";
     chatInputDiv.style.borderRadius = "15px";
 
     // -------------------------- Send Prompt --------------------------
@@ -573,6 +601,26 @@ function generateUUID() {
     });
 }
 
+//finds and returns the first prompt after the prompt with the given UUID and the number of answers it had to scroll through
+//returns the div element of the next answer or null if there are no next answers yet
+function getLastAnswerToPromptUUID(promptUUID) {
+    //gets the prompt in question
+    const prompt = document.getElementById(promptUUID);
+    var numberOfAnswers = 0;
+    var currentSibling = prompt.nextSibling;
+    while (currentSibling !== null) {
+        //if the currentSibling is a prompt written by the user return currentSibling
+        if (prompts.get(currentSibling.id)) {
+            return {firstAnswer: currentSibling,numberOfAnswers: numberOfAnswers};
+        } else {
+            numberOfAnswers++;
+            currentSibling = currentSibling.nextSibling;
+        }
+    }
+    //if while loop is exited without currentSibling being undefined return undefined
+    return {firstAnswer:null,numberOfAnswers: numberOfAnswers};
+}
+
 //sends the message to the correct server and formats the chat window
 function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
 
@@ -581,17 +629,15 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
 
     // loading animation until response
     const loadingMessage = makeLoadMessage();
-    chatWindow.insertBefore(loadingMessage, document.getElementById(promptUUID).nextSibling);
-
+    chatWindow.insertBefore(loadingMessage, getLastAnswerToPromptUUID(promptUUID).firstAnswer);
     //scrolls to the loading message
     loadingMessage.scrollIntoView({behavior: "smooth"});
-
     // Send the message to the server
     // When Server responds, add the response to the chat window
     GM_xmlhttpRequest({
         method: "POST",
         url: serverUrlToSendTo,
-        data: JSON.stringify({messageId: promptUUID, message: prompt}), // Send data as JSON
+        data: JSON.stringify({message: prompt}), // Send data as JSON
         headers: {
             "Content-Type": "application/json",
         },
@@ -599,14 +645,18 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
 
             //generate a UUID for the response and link it to the prompt
             const responseUUID = generateUUID();
-            responseToPrompt.set(responseUUID, promptUUID);
-
             var responseMessage = undefined;
+            //this is not allowed to move below the creating of the message otherwise the buttons dont have the UUID necessary
+            responseToPrompt.set(responseUUID, promptUUID);
             //check if the operation was a success
             if (JSON.parse(response.responseText).Success !== undefined) {
                 responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
+                //TODO uncomment if backend is ready
+                //responseUUID=SON.parse(response.responseText).Success.answerID;
             } else {
                 responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Failure.response, false);
+                //TODO uncomment
+                //responseUUID=SON.parse(response.responseText).Failure.answerID;
             }
             //inserts the response in front of the loading message
             chatWindow.insertBefore(responseMessage, loadingMessage);
@@ -623,18 +673,16 @@ window.onload = () => {
     document.head.appendChild(styleSheet());
     document.body.appendChild(makeChatButton());
     document.body.appendChild(makeChatWindow());
-    // Funktion, die aufgerufen wird, wenn sich das Padding-Left ändert
-    // Ein MutationObserver erstellen, um Änderungen im DOM zu überwachen
+    // function checks if the padding of the topmenu changes
     const domObserver = new MutationObserver(handleDOMChange);
-// Konfiguration für den Observer festlegen
-    const domConfig = { childList: true, subtree: true };
-// Den Observer starten und das Dokument beobachten
+// configuration for the observer
+    const domConfig = {childList: true, subtree: true};
+// starting the observer
     domObserver.observe(document.documentElement, domConfig);
 };
-
-// Funktion, die aufgerufen wird, wenn sich das DOM ändert
+// the function checks if the DOM is generated so that we can start the other observer to observe the padding
 const handleDOMChange = (mutationsList, observer) => {
-    for(const mutation of mutationsList) {
+    for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             // Überprüfen, ob das Element mit der ID "topMenu" existiert
             const topMenu = document.getElementById('topmenu');
@@ -642,7 +690,7 @@ const handleDOMChange = (mutationsList, observer) => {
                 // Ein MutationObserver erstellen, um Änderungen am Padding-Left zu überwachen
                 const paddingLeftObserver = new MutationObserver(handlePaddingLeftChange);
                 // Konfiguration für den Observer festlegen
-                const config = { attributes: true, attributeFilter: ['style'] };
+                const config = {attributes: true, attributeFilter: ['style']};
                 // Den Observer starten und das Element mit der ID "topMenu" beobachten
                 paddingLeftObserver.observe(topMenu, config);
                 // Observer beenden, sobald das Element gefunden wurde
@@ -654,13 +702,13 @@ const handleDOMChange = (mutationsList, observer) => {
 
 // function is getting called when the topmenu is found and the padding is changed
 const handlePaddingLeftChange = (mutationsList, observer) => {
-    const chatWindow=document.getElementById("chat-window");
-    const chatButton=document.getElementById("chat-button");
-    for(const mutation of mutationsList) {
+    const chatWindow = document.getElementById("chat-window");
+    const chatButton = document.getElementById("chat-button");
+    for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
             const paddingLeftValue = mutation.target.style.paddingLeft;
-            chatWindow.style.left=paddingLeftValue;
-            chatButton.style.left=paddingLeftValue;
+            chatWindow.style.left = paddingLeftValue;
+            chatButton.style.left = paddingLeftValue;
         }
     }
 };
