@@ -54,6 +54,7 @@ impl DBError {
 pub type Result<T> = std::result::Result<T, DBError>;
 
 /// Represents a prompt in the database.
+/// //TODO Remove
 #[derive(PartialEq, Debug, Deserialize, Serialize)]
 pub struct DBEntry {
   pub id: i64,
@@ -80,14 +81,52 @@ impl DBEntry {
 }
 
 /// Represents the database connection details.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct DBConnectionInfo {
   /// The ip/url of the database.
   pub host: String,
+  /// The port of the database.
+  pub port: u16,
   /// The name of the database to access.
   pub dbname: String,
   /// The username to use for the connection.
   pub user: String,
   /// The password to use for the connection.
   pub password: String,
+}
+
+impl DBConnectionInfo {
+  /// Creates a new [DBConnectionInfo] instance.
+  pub fn new(
+    host: String,
+    port: u16,
+    dbname: String,
+    user: String,
+    password: String
+  ) -> DBConnectionInfo {
+    DBConnectionInfo {
+      host,
+      port,
+      dbname,
+      user,
+      password,
+    }
+  }
+
+  /// Converts the [DBConnectionInfo] instance to a string representation.
+  ///
+  /// # Returns
+  ///
+  /// A string representation of the [DBConnectionInfo] instance
+  /// directly compatibel for python's vector search.
+  pub fn to_string(&self) -> String {
+    return format!(
+      "host={} port={} dbname={} user={} password={}",
+      self.host,
+      self.port,
+      self.dbname,
+      self.user,
+      self.password
+    );
+  }
 }

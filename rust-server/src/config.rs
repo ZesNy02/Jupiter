@@ -2,10 +2,10 @@ use dotenv::dotenv;
 use tracing::{ error, info };
 use std::env;
 
+use crate::models::database::DBConnectionInfo;
+
 /// Represents the mode of the configuration.
-#[derive(PartialEq)]
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum Mode {
   /// Development mode.
   /// This mode is used for testing and debugging.
@@ -18,9 +18,7 @@ pub enum Mode {
 }
 
 /// Represents the configuration settings.
-#[derive(PartialEq)]
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Config {
   /// The IP address of the server.
   pub ip: String,
@@ -28,10 +26,16 @@ pub struct Config {
   pub port: u16,
   /// The mode of the configuration.
   pub mode: Mode,
-  /// The path to the SQLite database file.
-  pub db_path: String,
-  /// The name of the Python script file..
-  pub script: String,
+  /// The connection information for the PostgreSQL database.
+  pub db_connection: DBConnectionInfo,
+  /// The connection string for the LLM Server (Ollama).
+  pub llm_connection: String,
+  /// The path to the Python RAG script file.
+  pub rag_script: String,
+  /// The path to the Python vector query script file.
+  pub vector_query_script: String,
+  /// The path to the Python event storming script file.
+  pub event_storming_script: String,
 }
 
 impl Config {
@@ -44,53 +48,65 @@ impl Config {
   /// # Returns
   ///
   /// The loaded configuration.
-  fn load_from_env(mode: Mode) -> Config {
+  ///
+  /// # Panics
+  ///
+  /// - Panics if the [DBConnectionInfo] cannot be loaded from the environment variables.
+  /// - Panics if the LLM Server connection cannot be loaded from the environment variables.
+  pub fn load_from_env(mode: Mode) -> Config {
     dotenv().ok();
+    let db_host = env::var("DB_HOST").expect("Couldn't find DB_HOST in environment variables");
+    let db_name = env::var("DB_NAME").expect("Couldn't find DB_NAME in environment variables");
+    let db_user = env::var("DB_USER").expect("Couldn't find DB_USER in environment variables");
+    let db_password = env
+      ::var("DB_PASSWORD")
+      .expect("Couldn't find DB_PASSWORD in environment variables");
+    let llm_server = env
+      ::var("LLM_SERVER")
+      .expect("Couldn't find LLM_SERVER in environment variables");
+    // load IP of the Server from the environment variables
     let ip = env
       ::var("IP")
       .ok()
       .unwrap_or_else(|| {
-        info!("IP not found in .env file. Using default IP.");
+        info!("IP not found in .env file. Using default IP 127.0.0.1.");
         return "127.0.0.1".to_string();
       });
+    // load Port of the Server from the environment variables
     let port = env
       ::var("PORT")
       .ok()
       .unwrap_or_else(|| {
-        info!("Port not found in .env file. Using default port.");
+        info!("Port not found in .env file. Using default port 3000.");
         return "3000".to_string();
       })
       .parse::<u16>()
       .unwrap_or_else(|_port| {
-        error!("Failed to parse port. Using default port.");
+        error!("Failed to parse port. Using default port 3000.");
         return 3000;
+      });
+    let db_port = env
+      ::var("DB_PORT")
+      .ok()
+      .unwrap_or_else(|| {
+        info!("DB_PORT not found in .env file. Using default port 5432.");
+        return "5432".to_string();
+      })
+      .parse::<u16>()
+      .unwrap_or_else(|_port| {
+        error!("Failed to parse DB_PORT. Using default port 5432.");
+        return 5432;
       });
 
     Config {
       ip,
       port,
       mode,
-      db_path: "./db.db".to_string(),
-      script: "rag_query.py".to_string(),
-    }
-  }
-
-  /// Loads the configuration for Docker environment.
-  ///
-  /// # Arguments
-  ///
-  /// * `mode` - The [Mode] of the configuration.
-  ///
-  /// # Returns
-  ///
-  /// The loaded configuration.
-  fn load_from_docker(mode: Mode) -> Config {
-    Config {
-      ip: "0.0.0.0".to_string(),
-      port: 3000,
-      mode,
-      db_path: "./data/db.db".to_string(),
-      script: "rag.py".to_string(),
+      db_connection: DBConnectionInfo::new(db_host, db_port, db_name, db_user, db_password),
+      llm_connection: llm_server,
+      rag_script: "./scripts/python/rag_query.py".to_string(),
+      vector_query_script: "./scripts/python/vector_query.py".to_string(),
+      event_storming_script: "./scripts/python/event_storming.py".to_string(),
     }
   }
 
@@ -99,31 +115,8 @@ impl Config {
     return format!("{}:{}", self.ip, self.port);
   }
 
-  /// Gets the path to the SQLite database file.
-  pub fn get_db_path(&self) -> String {
-    return self.db_path.clone();
-  }
-
-  /// Gets the path to the Python script file, located in the directory `./scripts/python/`.
-  pub fn get_script_path(&self) -> String {
-    return "./scripts/python/".to_string() + &self.script.clone();
-  }
-}
-
-/// Gets the configuration based on the mode and Docker flag.
-///
-/// # Arguments
-///
-/// * `mode` - The [Mode] of the configuration.
-/// * `docker` - A flag indicating whether the configuration is for Docker environment.
-///
-/// # Returns
-///
-/// The configuration.
-pub fn get_config(mode: Mode, docker: bool) -> Config {
-  if docker {
-    return Config::load_from_docker(mode);
-  } else {
-    return Config::load_from_env(mode);
+  /// Gets the connection string for the database. Ready to be used in the vector_query script.
+  pub fn get_db_connection_string(&self) -> String {
+    return self.db_connection.to_string();
   }
 }

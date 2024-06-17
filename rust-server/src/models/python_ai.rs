@@ -1,28 +1,28 @@
 /// Represents the possible errors that can occur in the AI module.
 #[derive(PartialEq)]
 #[derive(Debug)]
-pub enum AIError {
+pub enum PythonError {
   /// Error related to the file path.
   PathError(String),
   /// Error related to the execution of the script.
   ScriptError(String),
   /// Error related to input/output operations.
   IOError(String),
-  /// Error indicating an empty response from the AI.
-  EmptyResponse(String),
+  /// Error related to the repsonse from the script.
+  ResponseError(String),
 }
 
-impl AIError {
+impl PythonError {
   /// Returns a string representation of the error.
   pub fn to_string(&self) -> String {
     match self {
-      AIError::PathError(message) => format!("Path Error: {}", message),
-      AIError::ScriptError(message) => format!("Script Error: {}", message),
-      AIError::IOError(message) => format!("IO Error: {}", message),
-      AIError::EmptyResponse(message) => format!("Empty Response: {}", message),
+      PythonError::PathError(message) => format!("Path Error: {}", message),
+      PythonError::ScriptError(message) => format!("Script Error: {}", message),
+      PythonError::IOError(message) => format!("IO Error: {}", message),
+      PythonError::ResponseError(message) => format!("Empty Response: {}", message),
     }
   }
 }
 
 /// A specialized `Result` type for the AI module.
-pub type Result<T> = std::result::Result<T, AIError>;
+pub type Result<T> = std::result::Result<T, PythonError>;

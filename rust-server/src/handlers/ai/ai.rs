@@ -9,7 +9,7 @@ use crate::{
   config::{ Config, Mode },
   models::{
     database::DBError,
-    python_ai::AIError,
+    python_ai::PythonError,
     routes_data::{ AIResponse, AIPromptRequest, AIPromptResponse },
   },
   utils::{ python::run_ai, sqlite::insert_prompt },
@@ -100,28 +100,28 @@ pub fn handle_ai(config: &Config, payload: AIPromptRequest) -> (StatusCode, AIRe
     }
     Err(e) => {
       match e {
-        AIError::PathError(some) => {
+        PythonError::PathError(some) => {
           error!("Could not find the python script");
           return (
             StatusCode::INTERNAL_SERVER_ERROR,
             AIResponse::Error("Could not find the python script".to_string()),
           );
         }
-        AIError::ScriptError(some) => {
+        PythonError::ScriptError(some) => {
           error!("Error while running the python script");
           return (
             StatusCode::INTERNAL_SERVER_ERROR,
             AIResponse::Error("Error while running the python script".to_string()),
           );
         }
-        AIError::IOError(some) => {
+        PythonError::IOError(some) => {
           error!("Error while reading the python script");
           return (
             StatusCode::INTERNAL_SERVER_ERROR,
             AIResponse::Error("Error while reading the python script".to_string()),
           );
         }
-        AIError::EmptyResponse(some) => {
+        PythonError::EmptyResponse(some) => {
           error!("Empty response from the python script");
           return (
             StatusCode::INTERNAL_SERVER_ERROR,

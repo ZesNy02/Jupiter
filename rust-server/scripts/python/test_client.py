@@ -13,24 +13,11 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 # Execute a query to select everything from a table
-cur.execute("SELECT * FROM prompts")
-
-# Fetch all the rows from the result set
-rows = cur.fetchall()
-
-# Print the rows
-for row in rows:
-    print(row)
-
-# Execute a query to select everything from a table
-cur.execute("SELECT * FROM answers")
-
-# Fetch all the rows from the result set
-rows = cur.fetchall()
-
-# Print the rows
-for row in rows:
-    print(row)
+cur.execute("INSERT INTO prompts (prompt) VALUES ('test') RETURNING prompt_id;")
+result = cur.fetchone()
+if result:
+    prompt_id = result[0]
+    print(prompt_id)
 
 # Commit the changes and close the connection
 conn.commit()

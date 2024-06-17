@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod test {
-  use rust_server::models::python_ai::AIError;
+  use rust_server::models::python_ai::PythonError;
   use rust_server::utils::python::*;
   use rust_server::config::{ Config, Mode };
 
@@ -22,27 +22,27 @@ mod test {
   fn test_invalid_path() {
     let config = dummy_python("invalid.py".to_string());
     let prompt = "Hello".to_string();
-    assert_eq!(run_ai(&config, prompt), Err(AIError::PathError));
+    assert_eq!(run_script(&config, prompt), Err(PythonError::PathError));
   }
 
   #[test]
   fn test_error_script() {
     let config = get_config();
     let prompt = "err".to_string();
-    assert_eq!(run_ai(&config, prompt), Err(AIError::ScriptError));
+    assert_eq!(run_script(&config, prompt), Err(PythonError::ScriptError));
   }
 
   #[test]
   fn test_error_empty() {
     let config = get_config();
     let prompt = "Something Weird".to_string();
-    assert_eq!(run_ai(&config, prompt), Err(AIError::EmptyResponse));
+    assert_eq!(run_script(&config, prompt), Err(PythonError::ResponseError));
   }
 
   #[test]
   fn test_valid_run() {
     let config = get_config();
     let prompt = "hello".to_string();
-    assert_eq!(run_ai(&config, prompt), Ok("World\r\n".to_string()));
+    assert_eq!(run_script(&config, prompt), Ok("World\r\n".to_string()));
   }
 }

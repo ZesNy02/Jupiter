@@ -5,12 +5,13 @@ mod test {
   use sequential_test::sequential;
 
   fn dummy_postgres() -> DBConnectionInfo {
-    return DBConnectionInfo {
-      host: "localhost".to_string(),
-      dbname: "postgres".to_string(),
-      user: "postgres".to_string(),
-      password: "password".to_string(),
-    };
+    return DBConnectionInfo::new(
+      "localhost".to_string(),
+      5432,
+      "postgres".to_string(),
+      "password".to_string(),
+      "postgres".to_string()
+    );
   }
 
   fn drop_tables(info: &DBConnectionInfo) {
