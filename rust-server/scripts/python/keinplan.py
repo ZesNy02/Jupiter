@@ -5,13 +5,7 @@ from pgvector.psycopg2 import register_vector
 import numpy as np
 
 def getanswer(dburl: str, prompt: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        port=5432,
-        database="postgres",
-        user="postgres",
-        password="password",
-    )
+    conn = psycopg2.connect(dburl)
     cur = conn.cursor()
     cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
     register_vector(conn)
@@ -52,14 +46,12 @@ def getanswer(dburl: str, prompt: str):
     return f"New {new_id}"
 
 def main():
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument("dburl", type=str)
-    #parser.add_argument("prompt", type=str)
-    #args = parser.parse_args()
-    #dburl = args.dburl
-    #prompt = args.prompt
-    dburl = ""
-    prompt = "Was ist ein Hotspot?"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dburl", type=str)
+    parser.add_argument("prompt", type=str)
+    args = parser.parse_args()
+    dburl = args.dburl
+    prompt = args.prompt
 
     print(getanswer(dburl, prompt))
 
