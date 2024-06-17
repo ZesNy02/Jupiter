@@ -35,10 +35,10 @@ def getanswer(dburl: str, prompt: str):
     
 
     # Check if a similar embedding already exists
-    cur.execute("SELECT* FROM prompts ORDER BY 1 - (embedding <=> %s) LIMIT 1",(prompt_embedding,))
+    cur.execute("SELECT prompt_id, 1 - (embedding <=> %s) AS cosine_similarity FROM prompts ORDER BY cosine_similarity DESC LIMIT 1",(prompt_embedding,))
     result = cur.fetchall()
 
-    if  result[2] > 0.95:
+    if  result[1] > 0.95:
         # If a similar embedding exists, increment the count
         cur.execute("UPDATE prompts SET count = count + 1 WHERE prompt_id = %s", (result[0],))
         conn.commit()
