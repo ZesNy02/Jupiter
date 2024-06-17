@@ -30,99 +30,195 @@ const responseToPrompt = new Map();
 const styleSheet = () => {
     const style = document.createElement('style');
     style.innerHTML = `
-     #prompts-container::-webkit-scrollbar {
-            width: 16px;
-        }
-        #prompts-container::-webkit-scrollbar-track {
-            background: lightgray;
-            border-radius: 6px;
-        }
-        #prompts-container::-webkit-scrollbar-thumb {
-            background-color: #A4A4AC;
-            border-radius: 6px;
-            border: 2px solid lightgray;
-             }
+   .chatWindow {
+    background-color: #448CEB;
+    transition: background-color 0.3s;
+}
+
+.chatWindow.active {
+    background-color: #EBA360;
+    transition: background-color 0.3s;
+}
+
+.chatButton {
+    background-color: #448CEB;
+    transition: background-color 0.3s;
+}
+
+.chatButton.active {
+    background-color: #EBA360;
+    transition: background-color 0.3s;
+}
+
+#prompts-container::-webkit-scrollbar {
+    width: 16px;
+}
+
+#prompts-container::-webkit-scrollbar-track {
+    background: lightgray;
+    border-radius: 6px;
+}
+
+#prompts-container::-webkit-scrollbar-thumb {
+    background-color: #A4A4AC;
+    border-radius: 6px;
+    border: 2px solid lightgray;
+}
+
 .reloadButton svg {
     fill: #A4A4AC; /* Default color */
 }
+
 .reloadButton:hover svg {
     fill: #1A73E8; /* Hover color */
 }
+
 .reloadButton:active svg {
     fill: #0A47A1; /* Active color */
 }
+
 .reloadButton.selected svg {
     fill: #FF0000; /* Toggled color */
 }
+
 .thumbsUpButton svg {
     fill: #A4A4AC; /* Default color */
 }
+
 .thumbsUpButton:hover svg {
     fill: #1A73E8; /* Hover color */
 }
+
 .thumbsUpButton:active svg {
     fill: #0A47A1; /* Active color */
 }
+
 .thumbsUpButton.selected svg {
     fill: #14ba38; /* Toggled color */
 }
+
 .thumbsDownButton svg {
     fill: #A4A4AC; /* Default color */
 }
+
 .thumbsDownButton:hover svg {
     fill: #1A73E8; /* Hover color */
 }
+
 .thumbsDownButton:active svg {
     fill: #0A47A1; /* Active color */
 }
+
 .thumbsDownButton.selected svg {
     fill: #a30709; /* Toggled color */
 }
+
 .chatInputButton svg {
-    fill: #000000;
+    fill: #434343;
 }
- .chatInputButton:hover svg {
+
+.chatInputButton:hover svg {
     fill: #1A73E8; /* Hover color */
 }
+
 .chatInputButton:active svg {
     fill: #0A47A1; /* Active color */
 }
+
 .chatInputButton.selected svg {
     fill: #FF0000; /* Toggled color */
 }
- .resize-handle {
-        position: absolute;
-        right:0px;
-        top:0px;
-        width: 20px;
-        height: 20px;
-        background-color: transparent;
-        cursor: nesw-resize;
-    }
 
-    .responseMessage {
+.resize-handle {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    cursor: nesw-resize;
+}
+
+.responseMessage {
     width: fit-content;
     max-width: 70%;
-    text-align:left;
-    }
-    .userMessage{
+    text-align: left;
+}
+
+.userMessage {
     width: fit-content;
     max-width: 80%;
-    text-align:left;
-    }
-    .loadMessage{
+    text-align: left;
+}
+
+.loadMessage {
     width: 50%;
-    }
-    .replyButton svg {
+}
+
+.replyButton svg {
     fill: #a4a4ab;
 }
+
 .replyButton:hover svg {
     fill: #1A73E8;
 }
+
 .replyButton:active svg {
     fill: #0A47A1;
 }
 
+.eventStormingSwitchContainer {
+    margin-bottom: 10px;
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background-color: #d3d3d3;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+}
+
+.eventStormingSwitchKnob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background-color: #434343;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.eventStormingSwitchContainer.active .eventStormingSwitchKnob {
+    left: 33px;
+    background-color: orange;
+    transition: all 0.3s;
+}
+
+.eventStormingSwitchInner {
+    height: 20px;
+    align-self: center;
+    background-color: #A6A6A6;
+    width: 44px;
+    align-content: center;
+    position: sticky;
+    border-radius: 15px;
+    padding-left: 0px;
+    margin-left: 8px;
+    transition: background-color 0.1s;
+}
+
+.eventStormingSwitchInner.active {
+background-color: #EEE;
+}
+
+.eventStormingHeading {
+    margin-bottom: 10px;
+    align-content: center;
+    margin-top: 0px;
+    margin-left: 10px;
+}
 `;
     return style;
 }
@@ -130,7 +226,7 @@ const styleSheet = () => {
 // When clicked, it opens the chat window
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
-    chatButton.id = "chat-button";
+    chatButton.id = "chatButton";
     chatButton.className = "chatButton";
     chatButton.innerHTML =
         '<svg xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%" fill="#D9D9D9"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
@@ -139,7 +235,6 @@ const makeChatButton = () => {
     chatButton.style.left = "270px";
     chatButton.style.width = "48px";
     chatButton.style.height = "48px";
-    chatButton.style.backgroundColor = "#448CEB";
     chatButton.style.borderRadius = "100%";
     chatButton.style.border = "none";
     chatButton.style.zIndex = "80";
@@ -149,7 +244,7 @@ const makeChatButton = () => {
     chatButton.style.alignItems = "center"; // Center items vertically
     chatButton.style.justifyContent = "center"; // Center items horizontally
     chatButton.addEventListener("click", () => {
-        const chatWindow = document.getElementById("chat-window");
+        const chatWindow = document.getElementById("chatWindow");
         chatWindow.style.display =
             chatWindow.style.display === "none" ? "flex" : "none";
     });
@@ -273,12 +368,12 @@ const makeResponseMessage = (responseUUID, text, success) => {
     const createReplyButton = () => {
         const replyButton = document.createElement("button");
         replyButton.className = "replyButton";
-        replyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed"><path d="M773.33-200v-157.33q0-56.67-37.66-94.34-37.67-37.66-94.34-37.66h-393L405-332.67l-47.67 47.34L120-522.67 357.33-760 405-712.67 248.33-556h393q84.34 0 141.5 57.17Q840-441.67 840-357.33V-200h-66.67Z"/></svg>';        replyButton.style.backgroundColor = "transparent";
+        replyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#e8eaed"><path d="M773.33-200v-157.33q0-56.67-37.66-94.34-37.67-37.66-94.34-37.66h-393L405-332.67l-47.67 47.34L120-522.67 357.33-760 405-712.67 248.33-556h393q84.34 0 141.5 57.17Q840-441.67 840-357.33V-200h-66.67Z"/></svg>';
+        replyButton.style.backgroundColor = "transparent";
         replyButton.style.border = "10px";
         replyButton.style.cursor = "pointer";
-        replyButton.style.marginLeft="5vw";
-        replyButton.style.height="40px";
-        replyButton.style.width="40px";
+        replyButton.style.height = "40px";
+        replyButton.style.width = "40px";
         replyButton.addEventListener("click", () => {
             replyToMessage(responseUUID);
         });
@@ -300,10 +395,10 @@ const makeResponseMessage = (responseUUID, text, success) => {
     } else {
         responseMessage.style.backgroundColor = "#e37e8a";
     }
-    const wrapperMessageAndReply=document.createElement("div");
-    wrapperMessageAndReply.style.justifyContent="left";
-    wrapperMessageAndReply.style.display="flex";
-    wrapperMessageAndReply.style.alignItems="center";
+    const wrapperMessageAndReply = document.createElement("div");
+    wrapperMessageAndReply.style.justifyContent = "left";
+    wrapperMessageAndReply.style.display = "flex";
+    wrapperMessageAndReply.style.alignItems = "center";
     wrapperMessageAndReply.appendChild(responseMessage);
     wrapperMessageAndReply.appendChild(createReplyButton());
     const wrapperResponseMessage = document.createElement("div");
@@ -418,7 +513,8 @@ const makeChatWindow = () => {
 
     // -------------------------- Chat Window --------------------------
     const chatWindow = document.createElement("div");
-    chatWindow.id = "chat-window";
+    chatWindow.id = "chatWindow";
+    chatWindow.className = "chatWindow";
     chatWindow.style.position = "fixed";
     chatWindow.style.bottom = "10px";
     chatWindow.style.left = "270px";
@@ -427,7 +523,6 @@ const makeChatWindow = () => {
     chatWindow.style.zIndex = "100";
     chatWindow.style.display = "none";
     chatWindow.style.flexDirection = "column";
-    chatWindow.style.backgroundColor = "#448CEB";
     chatWindow.style.borderRadius = "10px";
     chatWindow.style.gap = "10px";
     chatWindow.style.overflow = "auto"; // Ensure content is scrollable if the window is resized smaller
@@ -510,7 +605,7 @@ const makeChatWindow = () => {
     const wrapperChatInput = document.createElement("div");
     wrapperChatInput.id = "wrapperChatInput";
     wrapperChatInput.style.width = "100%";
-    wrapperChatInput.style.height = "50px";
+    wrapperChatInput.style.height = "90px";
     wrapperChatInput.style.order = "5";
     wrapperChatInput.style.zIndex = "101";
     wrapperChatInput.style.padding = "10px";
@@ -559,7 +654,7 @@ const makeChatWindow = () => {
     // -------------------------- Chat Input Button --------------------------
     const chatInputButton = document.createElement("button");
     chatInputButton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>';
+        '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>';
     chatInputButton.id = "chatInputButton";
     chatInputButton.class = "chatInputButton";
     chatInputButton.style.alignSelf = "center";
@@ -588,9 +683,45 @@ const makeChatWindow = () => {
         }
     });
     chatInputDiv.appendChild(chatInput);
+
+    //eventStormingButton
+    const createEventStormingSwitch = () => {
+        const switchContainer = document.createElement('div');
+        switchContainer.className = 'eventStormingSwitchContainer';
+
+        const switchKnob = document.createElement('div');
+        switchKnob.className = 'eventStormingSwitchKnob';
+
+        const switchInner = document.createElement("div");
+        switchInner.className = 'eventStormingSwitchInner';
+        switchContainer.appendChild(switchInner);
+        switchContainer.appendChild(switchKnob);
+
+        switchContainer.addEventListener('click', () => {
+            switchContainer.classList.toggle('active');
+            chatWindow.classList.toggle('active');
+            switchInner.classList.toggle('active');
+            document.getElementById("chatButton").classList.toggle('active');
+        });
+
+        return switchContainer;
+    };
+    const createEventStormingHeading = () => {
+        const eventStormingHeading=document.createElement("h2");
+        eventStormingHeading.className="eventStormingHeading";
+        eventStormingHeading.id = "eventStormingHeading";
+        eventStormingHeading.style.userSelect = "none";
+        eventStormingHeading.innerText = "Eventstorming-Mode";
+        eventStormingHeading.style.color = "#D9D9D9";
+        return eventStormingHeading;
+    }
+    const wrapperEventStorming = document.createElement("div");
+    wrapperEventStorming.style.display="ruby";
+    wrapperEventStorming.appendChild(createEventStormingSwitch());
+    wrapperEventStorming.appendChild(createEventStormingHeading());
+    wrapperChatInput.appendChild(wrapperEventStorming);
     wrapperChatInput.appendChild(chatInputDiv);
     chatWindow.appendChild(wrapperChatInput);
-
     return chatWindow;
 };
 
@@ -611,14 +742,14 @@ function getLastAnswerToPromptUUID(promptUUID) {
     while (currentSibling !== null) {
         //if the currentSibling is a prompt written by the user return currentSibling
         if (prompts.get(currentSibling.id)) {
-            return {firstAnswer: currentSibling,numberOfAnswers: numberOfAnswers};
+            return {firstAnswer: currentSibling, numberOfAnswers: numberOfAnswers};
         } else {
             numberOfAnswers++;
             currentSibling = currentSibling.nextSibling;
         }
     }
     //if while loop is exited without currentSibling being undefined return undefined
-    return {firstAnswer:null,numberOfAnswers: numberOfAnswers};
+    return {firstAnswer: null, numberOfAnswers: numberOfAnswers};
 }
 
 //sends the message to the correct server and formats the chat window
@@ -702,8 +833,8 @@ const handleDOMChange = (mutationsList, observer) => {
 
 // function is getting called when the topmenu is found and the padding is changed
 const handlePaddingLeftChange = (mutationsList, observer) => {
-    const chatWindow = document.getElementById("chat-window");
-    const chatButton = document.getElementById("chat-button");
+    const chatWindow = document.getElementById("chatWindow");
+    const chatButton = document.getElementById("chatButton");
     for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
             const paddingLeftValue = mutation.target.style.paddingLeft;
@@ -711,4 +842,5 @@ const handlePaddingLeftChange = (mutationsList, observer) => {
             chatButton.style.left = paddingLeftValue;
         }
     }
+
 };
