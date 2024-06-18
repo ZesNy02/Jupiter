@@ -1,11 +1,15 @@
 import psycopg2
 from embedding import get_embedding_function
 import argparse
+from pgvector.psycopg2 import register_vector
 import numpy as np
 
 def getanswer(dburl: str, prompt: str):
-    conn = psycopg2.connect(dburl)
+    conn = psycopg2.connect("host=127.0.0.1 port=5432 dbname=postgres user=postgres password=password")
     cur = conn.cursor()
+    cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
+    register_vector(conn)
+
 
     # Check if the prompt already exists
     cur.execute("SELECT prompt_id, count FROM prompts WHERE LOWER(prompt) = LOWER(%s)", (prompt,))
