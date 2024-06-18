@@ -1,5 +1,6 @@
 # Start the React App:
 - run "npm run dev" in the terminal to start the Node.js Server
+- if vite isn't found run "npm install Vite --save-dev"
 - When the Server is running Type "o" and press Enter to open the site in your browser
 
 # Editing The components:
@@ -8,11 +9,6 @@
 - App.jsx implements the components
 - each components has it's own css file
 - css files needed to be importet in main.jsx 
-
-
-
-
-
 
 
 
