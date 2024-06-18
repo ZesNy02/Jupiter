@@ -16,20 +16,44 @@
 <a href="#14" id="14">14</a>
 <a href="#15" id="15">15</a>
 <a href="#16" id="16">16</a>
+<a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Represents the possible errors that can occur in the AI module.
 </span><span class="attr">#[derive(PartialEq)]
 #[derive(Debug)]
-</span><span class="kw">pub enum </span>AIError {
+</span><span class="kw">pub enum </span>PythonError {
   <span class="doccomment">/// Error related to the file path.
-  </span>PathError,
+  </span>PathError(String),
   <span class="doccomment">/// Error related to the execution of the script.
-  </span>ScriptError,
+  </span>ScriptError(String),
   <span class="doccomment">/// Error related to input/output operations.
-  </span>IOError,
-  <span class="doccomment">/// Error indicating an empty response from the AI.
-  </span>EmptyResponse,
+  </span>IOError(String),
+  <span class="doccomment">/// Error related to the repsonse from the script.
+  </span>ResponseError(String),
+}
+
+<span class="kw">impl </span>PythonError {
+  <span class="doccomment">/// Returns a string representation of the error.
+  </span><span class="kw">pub fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+    <span class="kw">match </span><span class="self">self </span>{
+      PythonError::PathError(message) =&gt; <span class="macro">format!</span>(<span class="string">"Path Error: {}"</span>, message),
+      PythonError::ScriptError(message) =&gt; <span class="macro">format!</span>(<span class="string">"Script Error: {}"</span>, message),
+      PythonError::IOError(message) =&gt; <span class="macro">format!</span>(<span class="string">"IO Error: {}"</span>, message),
+      PythonError::ResponseError(message) =&gt; <span class="macro">format!</span>(<span class="string">"Empty Response: {}"</span>, message),
+    }
+  }
 }
 
 <span class="doccomment">/// A specialized `Result` type for the AI module.
-</span><span class="kw">pub type </span><span class="prelude-ty">Result</span>&lt;T&gt; = std::result::Result&lt;T, AIError&gt;;
+</span><span class="kw">pub type </span><span class="prelude-ty">Result</span>&lt;T&gt; = std::result::Result&lt;T, PythonError&gt;;
 </code></pre></div></section></main></body></html>

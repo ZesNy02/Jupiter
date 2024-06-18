@@ -54,35 +54,18 @@
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
-<a href="#55" id="55">55</a>
-<a href="#56" id="56">56</a>
-<a href="#57" id="57">57</a>
-<a href="#58" id="58">58</a>
-<a href="#59" id="59">59</a>
-<a href="#60" id="60">60</a>
-<a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
-<a href="#63" id="63">63</a>
-<a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
-<a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::time::Duration;
 
-<span class="kw">use </span>axum::{ http::{ HeaderValue, Method }, routing::{ get, post }, Router };
+<span class="kw">use </span>axum::{ http::{ HeaderValue, Method }, routing::post, Router };
 <span class="kw">use </span>tower_http::{ cors::CorsLayer, timeout::TimeoutLayer, trace::TraceLayer };
 
-<span class="kw">use </span><span class="kw">crate</span>::config::{ Config, Mode };
+<span class="kw">use </span><span class="kw">crate</span>::config::Config;
 
-<span class="kw">use super</span>::{
-  ai::{ handle_ai_dummy_err, handle_ai_dummy_ok, handle_ai_post },
-  db::{
-    handle_db_post_edit,
-    handle_db_post_fetch_all,
-    handle_db_post_fetch_not_usefull,
-    handle_db_post_fetch_usefull,
-  },
+<span class="kw">use </span><span class="kw">super</span>::ai::{
+  eventstorming::handle_eventstorming_post,
+  prompt::handle_prompt_post,
+  rating::handle_rating_post,
+  regenerate::handle_regenerate_post,
 };
 
 <span class="doccomment">/// Constructs and returns the axum router for the server.
@@ -100,21 +83,16 @@
 ///
 /// # Routing Paths
 ///
-/// * `/db/edit` - **POST** request to edit a prompt in the database.
-/// * `/db/fetch/all` - **GET** request to fetch all prompts from the database.
-/// * `/db/fetch/usefull` - **GET** request to fetch all usefull prompts from the database.
-/// * `/db/fetch/not_usefull` - **GET** request to fetch all not usefull prompts from the database.
-/// * `/ai` - **POST** request to get a response from the AI model.
-/// * `/ai/dummy/ok` - **POST** request to get a dummy response instead of running the AI. **DEVELOPMENT ONLY**.
-/// * `/ai/dummy/err` - **POST** request to get a dummy error instead of running the AI. **DEVELOPMENT ONLY**.
+/// - [`ai/prompt`][handle_prompt_post] - **POST** - Handles the AI prompt request.
+/// - [`ai/rating`][handle_rating_post] - **POST** - Handles the AI rating request.
+/// - [`ai/regenerate`][handle_regenerate_post] - **POST** - Handles the AI regenerate request.
+/// - [`ai/eventstorming`][handle_eventstorming_post] - **POST** - Handles the AI Eventstorming request.
 </span><span class="kw">pub fn </span>get_router(config: Config) -&gt; Router {
-  <span class="kw">let </span>configcopy = config.clone();
-  <span class="kw">let </span><span class="kw-2">mut </span>router = Router::new()
-    .route(<span class="string">"/db/edit"</span>, post(handle_db_post_edit))
-    .route(<span class="string">"/db/fetch/all"</span>, get(handle_db_post_fetch_all))
-    .route(<span class="string">"/db/fetch/usefull"</span>, get(handle_db_post_fetch_usefull))
-    .route(<span class="string">"/db/fetch/not_usefull"</span>, get(handle_db_post_fetch_not_usefull))
-    .route(<span class="string">"/ai"</span>, post(handle_ai_post))
+  <span class="kw">let </span>router = Router::new()
+    .route(<span class="string">"/ai/prompt"</span>, post(handle_prompt_post))
+    .route(<span class="string">"/ai/rating"</span>, post(handle_rating_post))
+    .route(<span class="string">"/ai/regenerate"</span>, post(handle_regenerate_post))
+    .route(<span class="string">"/ai/eventstorming"</span>, post(handle_eventstorming_post))
     .layer((
       TraceLayer::new_for_http(),
       <span class="comment">// Set a timeout for all requests after 30 seconds
@@ -122,15 +100,9 @@
       <span class="comment">// Enable CORS
       </span>CorsLayer::new()
         .allow_origin(<span class="string">"*"</span>.parse::&lt;HeaderValue&gt;().unwrap())
-        .allow_methods([Method::GET, Method::POST]),
+        .allow_methods([Method::POST]),
     ))
     .with_state(config);
-
-  <span class="kw">if </span>configcopy.mode == Mode::Dev {
-    router = router
-      .route(<span class="string">"/ai/dummy/ok"</span>, post(handle_ai_dummy_ok))
-      .route(<span class="string">"/ai/dummy/err"</span>, post(handle_ai_dummy_err));
-  }
 
   <span class="kw">let </span>r = router.clone();
 

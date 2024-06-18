@@ -88,45 +88,107 @@
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{ config::Config, models::python_ai::{ AIError, <span class="prelude-ty">Result </span>} };
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
+    config::{ Config, Mode },
+    models::{ python_ai::{ PythonError, <span class="prelude-ty">Result </span>}, routes_data::VectorSearchResult },
+};
 <span class="kw">use </span>std::{ path::Path, process::Command };
 
+<span class="kw">use </span>tracing::{ error, info };
 <span class="doccomment">/// This function runs the Python AI model with the given prompt.
 ///
 /// # Params
 ///
-/// * `config` - The [Config] struct containing the script path.
-/// * `prompt` - The prompt to be sent to the AI model.
+/// * `script_path` - The path to the python script to execute.
+/// * `args` - The arguments to pass to the script.
 ///
 /// # Returns
 ///
-/// A [Result] containing the AI response or an [AIError].
+/// A [Result] containing the response or an [PythonError].
 ///
 /// # Errors
 ///
-/// * [AIError::PathError] if the script path does not exist.
-/// * [AIError::ScriptError] if the script returns an error.
-/// * [AIError::EmptyResponse] if the script returns an empty response.
-/// * [AIError::IOError] if there is an IO error.
+/// * [PythonError::PathError] if the script path does not exist.
+/// * [PythonError::ScriptError] if the script returns an error.
+/// * [PythonError::ResponseError] if the script returns an empty response.
+/// * [PythonError::IOError] if there is an IO error.
 ///
 /// # Example
 ///
 /// ```rust
-/// use rust_server::config::{ Config, Mode };
-/// use rust_server::models::python_ai::AIError;
+/// use rust_server::models::python_ai::PythonError;
 /// use rust_server::utils::python::run_ai;
-///
-/// let config = Config {
-///   ip: "0.0.0.0".to_string(),
-///   port: 3000,
-///   mode: Mode::Dev,
-///   db_path: "db.sqlite".to_string(),
-///   script: "ai.py".to_string(),
-/// };
 ///
 /// let prompt = "Hello".to_string();
 ///
-/// let response = run_ai(&amp;config, prompt);
+/// let response = run_script("test.py".to_string(), prompt);
 ///
 /// match response {
 ///   Ok(response) =&gt; {
@@ -134,46 +196,118 @@
 ///   }
 ///   Err(e) =&gt; {
 ///     match e {
-///       AIError::PathError =&gt; println!("Path error."),
-///       AIError::ScriptError =&gt; println!("Script error."),
-///       AIError::EmptyResponse =&gt; println!("Empty response."),
-///       AIError::IOError =&gt; println!("IO error."),
+///       PythonError::PathError =&gt; println!("Path error."),
+///       PythonError::ScriptError =&gt; println!("Script error."),
+///       PythonError::ResponseError =&gt; println!("Response error."),
+///       PythonError::IOError =&gt; println!("IO error."),
 ///     }
 ///   }
 /// }
+</span><span class="kw">pub fn </span>run_script(script_path: String, args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    <span class="kw">if </span>Path::new(<span class="kw-2">&amp;</span>script_path).exists() == <span class="bool-val">false </span>{
+        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::PathError(<span class="macro">format!</span>(<span class="string">"Path does not exist: {}"</span>, script_path)));
+    }
+
+    <span class="comment">// run the python script and wait for the output
+    </span><span class="kw">let </span>response = Command::new(<span class="string">"python3"</span>).arg(script_path).args(args).output();
+
+    <span class="comment">// match the response from the script
+    </span><span class="kw">match </span>response {
+        <span class="prelude-val">Ok</span>(response) =&gt; {
+            <span class="comment">// convert the response to a string
+            </span><span class="kw">let </span>response = String::from_utf8_lossy(<span class="kw-2">&amp;</span>response.stdout).to_string();
+
+            <span class="kw">if </span>response.starts_with(<span class="string">"Error: "</span>) {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ScriptError(response));
+            }
+
+            <span class="kw">if </span>response.is_empty() {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(
+                    PythonError::ResponseError(<span class="string">"Script returned an empty response"</span>.to_string())
+                );
+            }
+
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(response.to_string());
+        }
+        <span class="prelude-val">Err</span>(_e) =&gt; {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::IOError(<span class="string">"Error while reading the python script"</span>.to_string()));
+        }
+    }
+}
+
+<span class="doccomment">/// Handles the vector search request.
 ///
-/// ```
-</span><span class="kw">pub fn </span>run_ai(config: <span class="kw-2">&amp;</span>Config, prompt: String) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-  <span class="comment">// get the path to the python script
-  </span><span class="kw">let </span>path = config.get_script_path();
-  <span class="kw">let </span>prompt = prompt.clone();
-
-  <span class="kw">if </span>Path::new(<span class="kw-2">&amp;</span>path).exists() == <span class="bool-val">false </span>{
-    <span class="kw">return </span><span class="prelude-val">Err</span>(AIError::PathError);
-  }
-
-  <span class="comment">// run the python script and wait for the output
-  </span><span class="kw">let </span>response = Command::new(<span class="string">"python3"</span>).arg(path).arg(prompt).output();
-
-  <span class="comment">// match the response from the script
-  </span><span class="kw">match </span>response {
-    <span class="prelude-val">Ok</span>(response) =&gt; {
-      <span class="comment">// convert the response to a string
-      </span><span class="kw">let </span>response = String::from_utf8_lossy(<span class="kw-2">&amp;</span>response.stdout).to_string();
-
-      <span class="kw">if </span>response.starts_with(<span class="string">"Error: "</span>) {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(AIError::ScriptError);
-      }
-
-      <span class="kw">if </span>response.is_empty() {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(AIError::EmptyResponse);
-      }
-
-      <span class="kw">return </span><span class="prelude-val">Ok</span>(response.to_string());
+/// # Arguments
+///
+/// * `config` - The server [`Config`].
+/// * `prompt` - The prompt from the payload.
+///
+/// # Returns
+///
+/// The [`VectorSearchResult`] containing the ID of the existing or new vector or
+/// an [`PythonError`] if the response is unparseable or can't be matched.
+///
+/// # Errors
+///
+/// Returns an [`PythonError::ResponseError`] if the response is unparseable or
+/// if the response couldn't be matched. Also returns the [`PythonError`] from the
+/// [`run_script`] function.
+</span><span class="kw">pub fn </span>handle_vector_search(config: <span class="kw-2">&amp;</span>Config, prompt: <span class="kw-2">&amp;</span>String) -&gt; <span class="prelude-ty">Result</span>&lt;VectorSearchResult&gt; {
+    <span class="kw">let </span>mode = config.mode.clone();
+    <span class="kw">let </span>script_path = config.vector_query_script.clone();
+    <span class="kw">let </span>db_url = config.db_connection.to_string();
+    <span class="kw">let </span>prompt = prompt.clone();
+    <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[db_url, prompt])<span class="question-mark">?</span>;
+    <span class="kw">let </span>result: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = script_result.split(<span class="kw-2">&amp;</span>[<span class="string">' '</span>, <span class="string">'\r'</span>, <span class="string">'\n'</span>]).collect();
+    <span class="comment">// Should be either "Existing &lt;id&gt;" or "New &lt;id&gt;"
+    </span><span class="kw">if </span>result[<span class="number">0</span>] == <span class="string">"Existing" </span>{
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::Existing(id));
+        } <span class="kw">else </span>{
+            <span class="kw">if </span>mode == Mode::Dev {
+                <span class="macro">error!</span>(<span class="string">"Failed to parse the ID from the result: {}"</span>, result[<span class="number">1</span>]);
+            }
+            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Received unparseable response."</span>.to_string()));
+        }
+    } <span class="kw">else if </span>result[<span class="number">0</span>] == <span class="string">"New" </span>{
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::New(id));
+        } <span class="kw">else </span>{
+            <span class="kw">if </span>mode == Mode::Dev {
+                <span class="macro">error!</span>(<span class="string">"Failed to parse the ID from the result: {}"</span>, result[<span class="number">1</span>]);
+            }
+            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Received unparseable response."</span>.to_string()));
+        }
+    } <span class="kw">else </span>{
+        <span class="kw">if </span>mode == Mode::Dev {
+            <span class="macro">error!</span>(<span class="string">"Couldn't match response: {}"</span>, script_result);
+        }
+        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Couldn't match response."</span>.to_string()));
     }
-    <span class="prelude-val">Err</span>(_e) =&gt; {
-      <span class="kw">return </span><span class="prelude-val">Err</span>(AIError::IOError);
+}
+
+<span class="doccomment">/// Handles the prompt request.
+///
+/// # Arguments
+///
+/// * `config` - The server [`Config`].
+/// * `prompt` - The prompt to send to the AI.
+///
+/// # Returns
+///
+/// The response from the AI.
+///
+/// # Errors
+///
+/// Returns an [`PythonError`] passed from the [`run_script`] function.
+</span><span class="kw">pub fn </span>handle_prompt_request(config: <span class="kw-2">&amp;</span>Config, prompt: <span class="kw-2">&amp;</span>String) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    <span class="kw">let </span>mode = config.mode.clone();
+    <span class="kw">let </span>script_path = config.rag_script.clone();
+    <span class="kw">let </span>llm_server = config.llm_connection.clone();
+    <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[llm_server, prompt.clone()])<span class="question-mark">?</span>;
+    <span class="kw">if </span>mode == Mode::Dev {
+        <span class="macro">info!</span>(<span class="string">"Script result: {}"</span>, script_result);
     }
-  }
+    <span class="prelude-val">Ok</span>(script_result)
 }
 </code></pre></div></section></main></body></html>

@@ -59,63 +59,169 @@
 <a href="#57" id="57">57</a>
 <a href="#58" id="58">58</a>
 <a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{ Deserialize, Serialize };
 
-<span class="kw">use </span><span class="kw">super</span>::database::DBEntry;
-
-<span class="doccomment">/// Represents a list of prompts.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
-</span><span class="kw">pub struct </span>EntryList {
-    <span class="doccomment">/// The list of [DBEntry].
-    </span><span class="kw">pub </span>prompts: Vec&lt;DBEntry&gt;,
-}
-
-<span class="doccomment">/// Represents a response to a prompt from the AI.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
-</span><span class="kw">pub struct </span>AIPromptResponse {
-    <span class="doccomment">/// The id of the prompt.
-    </span><span class="kw">pub </span>id: i64,
-    <span class="doccomment">/// The response from the AI.
-    </span><span class="kw">pub </span>response: String,
-}
-
-<span class="doccomment">/// Represents a request for a prompt.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
+<span class="comment">// --------------------------- Start of Request Structs ---------------------------
+</span><span class="doccomment">/// Represents the request payload for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
 </span><span class="kw">pub struct </span>AIPromptRequest {
-    <span class="doccomment">/// The prompt to send to the AI.
-    </span><span class="kw">pub </span>message: String,
+  <span class="kw">pub </span>prompt: String,
 }
 
-<span class="doccomment">/// Represents a request to edit a prompt in the database.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
-</span><span class="kw">pub struct </span>DBRatingEditRequest {
-    <span class="doccomment">/// The id of the prompt to edit.
-    </span><span class="kw">pub </span>id: i64,
-    <span class="doccomment">/// The new rating of the prompt.
-    </span><span class="kw">pub </span>usefull: bool,
+<span class="doccomment">/// Represents the request payload for the [`ai/rating`][crate::handlers::ai::rating] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIRatingRequest {
+  <span class="kw">pub </span>id: i32,
+  <span class="kw">pub </span>rating: i32,
 }
 
-<span class="doccomment">/// Represents the response when fetching prompts from the database.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
-</span><span class="kw">pub enum </span>DBFetchResponse {
-    <span class="doccomment">/// Represents an error response.
-    </span>Error(String),
-    <span class="doccomment">/// Represents a successful response with a list of prompts.
-    </span>Success(EntryList),
+<span class="doccomment">/// Represents the request payload for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIRegenerateRequest {
+  <span class="kw">pub </span>prompt: String,
 }
 
-<span class="doccomment">/// Represents the response from the AI model.
-</span><span class="attr">#[derive(Deserialize)]
-#[derive(Serialize)]
-</span><span class="kw">pub enum </span>AIResponse {
-    <span class="doccomment">/// Represents an error response.
-    </span>Error(String),
-    <span class="doccomment">/// Represents a successful response with a prompt response.
-    </span>Success(AIPromptResponse),
+<span class="doccomment">/// Represents the request payload for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIEventStormingRequest {
+  <span class="kw">pub </span>prompt: String,
 }
-</code></pre></div></section></main></body></html>
+
+<span class="comment">// --------------------------- End of Request Structs ---------------------------
+
+// --------------------------- Start of Response Structs ---------------------------
+
+</span><span class="doccomment">/// Represents the response for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIPromptResponseData {
+  <span class="kw">pub </span>id: i32,
+  <span class="kw">pub </span>response: String,
+}
+
+<span class="doccomment">/// Represents the response for the [`ai/rating`][crate::handlers::ai::rating] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIRatingResponseData {
+  <span class="kw">pub </span>message: String,
+}
+
+<span class="doccomment">/// Represents the response for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIRegenerateResponseData {
+  <span class="kw">pub </span>id: i32,
+  <span class="kw">pub </span>response: String,
+}
+
+<span class="doccomment">/// Represents the response for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub struct </span>AIEventStormingResponseData {
+  <span class="kw">pub </span>message: String,
+}
+
+<span class="comment">// --------------------------- End of Response Structs ---------------------------
+
+// --------------------------- Start of Reponse Enums ---------------------------
+
+</span><span class="doccomment">/// Represents the response or error for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub enum </span>AIPromptResponse {
+  <span class="doccomment">/// Represents a successful response.
+  </span>Success(AIPromptResponseData),
+  <span class="doccomment">/// Represents an error response.
+  </span>Error(String),
+}
+
+<span class="doccomment">/// Represents the response or error for the [`ai/rating`][crate::handlers::ai::rating] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub enum </span>AIRatingResponse {
+  <span class="doccomment">/// Represents a successful response.
+  </span>Success(AIRatingResponseData),
+  <span class="doccomment">/// Represents an error response.
+  </span>Error(String),
+}
+
+<span class="doccomment">/// Represents the response or error for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub enum </span>AIRegenerateResponse {
+  <span class="doccomment">/// Represents a successful response.
+  </span>Success(AIRegenerateResponseData),
+  <span class="doccomment">/// Represents an error response.
+  </span>Error(String),
+}
+
+<span class="doccomment">/// Represents the response or error for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">pub enum </span>AIEventStormingResponse {
+  <span class="doccomment">/// Represents a successful response.
+  </span>Success(AIEventStormingResponseData),
+  <span class="doccomment">/// Represents an error response.
+  </span>Error(String),
+}
+
+<span class="comment">// --------------------------- End of Reponse Enums ---------------------------
+
+// --------------------------- Start of Enums ---------------------------
+
+</span><span class="doccomment">/// Represents the result of a vector search operation in
+/// [`testable_handle_prompt_post`][crate::handlers::ai::prompt::testable_handle_prompt_post].
+</span><span class="kw">pub enum </span>VectorSearchResult {
+  <span class="comment">// Represents if the the prompt was already in the database.
+  </span>Existing(i32),
+  <span class="comment">// Represents if the prompt was not in the database.
+  </span>New(i32),
+}
+
+<span class="comment">// --------------------------- End of Enums ---------------------------
+</span></code></pre></div></section></main></body></html>

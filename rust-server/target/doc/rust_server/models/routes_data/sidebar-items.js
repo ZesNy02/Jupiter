@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AIResponse","DBFetchResponse"],"struct":["AIPromptRequest","AIPromptResponse","DBRatingEditRequest","EntryList"]};
+window.SIDEBAR_ITEMS = {"enum":["AIEventStormingResponse","AIPromptResponse","AIRatingResponse","AIRegenerateResponse","VectorSearchResult"],"struct":["AIEventStormingRequest","AIEventStormingResponseData","AIPromptRequest","AIPromptResponseData","AIRatingRequest","AIRatingResponseData","AIRegenerateRequest","AIRegenerateResponseData"]};

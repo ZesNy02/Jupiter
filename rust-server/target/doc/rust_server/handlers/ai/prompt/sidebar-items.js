@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["handle_prompt_post","testable_handle_prompt_post"]};

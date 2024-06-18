@@ -34,6 +34,7 @@ def install_dependencies():
             "bs4",
             "pypdf",
             "sentence_transformers",
+            "pgvector",
         ]
     )
 

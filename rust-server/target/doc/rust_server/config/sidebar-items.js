@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Mode"],"fn":["get_config"],"struct":["Config"]};
+window.SIDEBAR_ITEMS = {"enum":["Mode"],"struct":["Config"]};

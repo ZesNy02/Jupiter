@@ -73,8 +73,7 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>rust_server::{ config::{ get_config, Mode }, handlers::router::get_router };
+</pre></div><pre class="rust"><code><span class="kw">use </span>rust_server::{ config::{ Config, Mode }, handlers::router::get_router };
 <span class="kw">use </span>tokio::signal;
 <span class="kw">use </span>tracing::info;
 <span class="kw">use </span>tracing_subscriber::EnvFilter;
@@ -97,11 +96,10 @@
 
   <span class="comment">// Set mode: "development" or "production"
   </span><span class="kw">let </span>mode = Mode::Dev;
-  <span class="kw">let </span>docker = <span class="bool-val">false</span>;
 
   <span class="comment">// Get the configuration
   </span><span class="macro">info!</span>(<span class="string">"Loading configuration..."</span>);
-  <span class="kw">let </span>config = get_config(mode, docker);
+  <span class="kw">let </span>config = Config::load_from_env(mode);
 
   <span class="comment">// Start the server
   </span><span class="macro">info!</span>(<span class="string">"Starting server..."</span>);

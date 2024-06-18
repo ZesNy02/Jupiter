@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AIError"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["PythonError"],"type":["Result"]};

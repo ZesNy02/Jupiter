@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["DBError"],"struct":["DBEntry"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["DBError"],"struct":["DBConnectionInfo"],"type":["Result"]};

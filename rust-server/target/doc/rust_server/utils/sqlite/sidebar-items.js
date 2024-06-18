@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["drop_table","fetch_prompts","insert_prompt","update_prompt"]};
