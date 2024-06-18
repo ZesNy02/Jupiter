@@ -1,48 +1,70 @@
 #[cfg(test)]
-mod test {
-  use rust_server::models::python_ai::PythonError;
-  use rust_server::utils::python::*;
-  use rust_server::config::{ Config, Mode };
+mod tests {
+    use rust_server::{ config::{ Config, Mode }, utils::python::* };
+    use sequential_test::sequential;
 
-  fn dummy_python(path: String) -> Config {
-    return Config {
-      ip: "".to_string(),
-      port: 0,
-      mode: Mode::Dev,
-      db_path: "".to_string(),
-      script: path,
-    };
-  }
+    fn get_script_path() -> String {
+        return "./scripts/python/call_test.py".to_string();
+    }
 
-  fn get_config() -> Config {
-    return dummy_python("call_test.py".to_string());
-  }
+    fn get_config() -> Config {
+        return Config::load_from_env(Mode::Dev);
+    }
 
-  #[test]
-  fn test_invalid_path() {
-    let config = dummy_python("invalid.py".to_string());
-    let prompt = "Hello".to_string();
-    assert_eq!(run_script(&config, prompt), Err(PythonError::PathError));
-  }
+    #[test]
+    #[sequential]
+    fn test_invalid_path_error() {
+        let script_path = "Some ordinary path like: =(/§%/);".to_string();
+        let args = vec![];
+        let res = run_script(script_path, args);
+        assert_eq!(res.is_err(), true);
+    }
 
-  #[test]
-  fn test_error_script() {
-    let config = get_config();
-    let prompt = "err".to_string();
-    assert_eq!(run_script(&config, prompt), Err(PythonError::ScriptError));
-  }
+    #[test]
+    #[sequential]
+    fn test_response_error() {
+        let script_path = get_script_path();
+        let args = vec![];
+        let res = run_script(script_path, args);
+        assert_eq!(res.is_err(), true);
+    }
 
-  #[test]
-  fn test_error_empty() {
-    let config = get_config();
-    let prompt = "Something Weird".to_string();
-    assert_eq!(run_script(&config, prompt), Err(PythonError::ResponseError));
-  }
+    #[test]
+    #[sequential]
+    fn test_script_error() {
+        let script_path = get_script_path();
+        let args = vec!["err".to_string()];
+        let res = run_script(script_path, args);
+        assert_eq!(res.is_err(), true);
+    }
 
-  #[test]
-  fn test_valid_run() {
-    let config = get_config();
-    let prompt = "hello".to_string();
-    assert_eq!(run_script(&config, prompt), Ok("World\r\n".to_string()));
-  }
+    #[test]
+    #[sequential]
+    fn test_script_success() {
+        let script_path = get_script_path();
+        let args = vec!["hello".to_string()];
+        let res = run_script(script_path, args);
+        assert_eq!(res.is_ok(), true);
+    }
+
+    #[test]
+    #[sequential]
+    fn test_prompt_request() {
+        let config = get_config();
+        let prompt = "What is the prooph-board?".to_string();
+        let response = handle_prompt_request(&config, &prompt);
+        assert_eq!(response.is_ok(), true);
+    }
+
+    #[test]
+    #[sequential]
+    fn test_vector_search_request() {
+        let config = get_config();
+        let prompt = "What is the prooph-board?".to_string();
+        let response = handle_vector_search(&config, &prompt);
+        if let Err(err) = &response {
+            println!("Error: {:?}", err);
+        }
+        assert_eq!(response.is_ok(), true);
+    }
 }

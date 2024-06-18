@@ -1,7 +1,8 @@
 import sys
 
+# This scripts purpose is to test the call to a python script from Rust
+
 if len(sys.argv) != 2:
-    print("No argument provided")
     sys.exit(1)
 
 if sys.argv[1] == "hello":

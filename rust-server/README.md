@@ -28,3 +28,9 @@ TODO
 ## See the Rust Documentation
 
 - To see the documentation of the Rust Server, click [here](./target/doc/rust_server/index.html)
+
+## Run the tests
+
+### Rust
+
+- Go into the `rust-server` directory and run `cargo test`
