@@ -1,4 +1,4 @@
-CHROMA_PATH = "chroma"
+CHROMA_PATH = "scripts/python/ai/chroma"
 DATA_PATH = "data"
 
 

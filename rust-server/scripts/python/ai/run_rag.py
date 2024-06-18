@@ -25,7 +25,6 @@ def query_rag(url: str, query_text: str):
 
     #merges the context from the documents in the db and the question asked by the user with a template
     context_text = "\n\n".join([doc.page_content for doc, _score in results])
-    print(context_text)
     prompt_template = ChatPromptTemplate.from_template(setup.PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
     
