@@ -32,4 +32,4 @@ STORM_TEMPLATE = """ Imagine you're facilitating an Event Storming session on th
     'Event3',...
 ]        
     """
-
+misc = "host=localhost port=5432 dbname=postgres user=postgres password=password"
