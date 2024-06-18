@@ -15,7 +15,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 dotenv = "0.15.0"
 tower-http = { version = "0.5", features = ["timeout", "trace", "cors"] }
 tower = { version = "0.4", features = ["util"] }
-postgres = "0.19"
+tokio-postgres = "0.7.10"
 sequential-test = "0.2.4"
 
 [lib]
