@@ -15,6 +15,16 @@ cur = conn.cursor()
 
 cur.execute(
     """
+    CREATE TABLE IF NOT EXISTS prompts (
+        prompt_id SERIAL PRIMARY KEY,
+        prompt TEXT NOT NULL,
+        embedding vector(1024),
+        count INTEGER DEFAULT 1
+    );"""
+)
+
+cur.execute(
+    """
     CREATE TABLE IF NOT EXISTS answers (
         answer_id SERIAL PRIMARY KEY,
         prompt_id integer REFERENCES prompts(prompt_id),
@@ -55,17 +65,17 @@ cur.close()
 conn.close()
 
 # Define the URL and payload for the POST request
-url = "http://localhost:3000/ai/rating"
-payload = {"id": 0, "rating": 1}
+# url = "http://localhost:3000/ai/rating"
+# payload = {"id": 0, "rating": 1}
 
 # Send the POST request
 # response = requests.post(url, json=payload)
 
-#url = "http://localhost:3000/ai/prompt"
-#payload = {"prompt": "What is the prooph-board?"}
+# url = "http://localhost:3000/ai/prompt"
+# payload = {"prompt": "What is the prooph-board?"}
 
 # Send the POST request
-response = requests.post(url, json=payload)
+# response = requests.post(url, json=payload)
 
 # Check the response status code
-print(response)
+# print(response)
