@@ -5,7 +5,7 @@ from pgvector.psycopg2 import register_vector
 import numpy as np
 
 def getanswer(dburl: str, prompt: str):
-    conn = psycopg2.connect(dburl)
+    conn = psycopg2.connect("host=127.0.0.1 port=5432 dbname=postgres user=postgres password=password")
     cur = conn.cursor()
     cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
     register_vector(conn)
@@ -31,12 +31,12 @@ def getanswer(dburl: str, prompt: str):
     # Check if a similar embedding already exists
     cur.execute("SELECT prompt_id, 1 - (embedding <=> %s) AS cosine_similarity FROM prompts ORDER BY cosine_similarity DESC LIMIT 1",(prompt_embedding,))
     result = cur.fetchall()
-
-    if  result[1] > 0.95:
+    if len(result) > 1:
+        if  result[1] > 0.95:
         # If a similar embedding exists, increment the count
-        cur.execute("UPDATE prompts SET count = count + 1 WHERE prompt_id = %s", (result[0],))
-        conn.commit()
-        return f"Existing {result[0]}"
+            cur.execute("UPDATE prompts SET count = count + 1 WHERE prompt_id = %s", (result[0],))
+            conn.commit()
+            return f"Existing {result[0]}"
 
     # If a similar embedding does not exist, insert a new row
     cur.execute("INSERT INTO prompts (prompt,embedding) VALUES (%s, %s) RETURNING prompt_id", (prompt, prompt_embedding))
