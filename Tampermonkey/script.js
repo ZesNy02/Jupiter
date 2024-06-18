@@ -16,9 +16,13 @@
 // --------------------------------------------------------------------
 
 // Server URL where the server runs
-const serverUrl = "http://localhost:3000/ai";
+const serverURL = "http://localhost:3000/ai/prompt";
 //Sever URL where the server receives ratings
-const ratingURL = "http://localhost:3000/rating";
+const ratingURL = "http://localhost:3000/ai/rating";
+//Server URL where the server receives the regenerate prompt
+const regenerateURL="http://localhost:3000/ai/regenerate";
+//Server URL where the server receives the eventStorming prompt
+const eventStormingURL="http://localhost:3000/ai/eventstorming";
 //cached prompt map mapped from UUID(string) -> Message content(string)
 //this is important so that you can reload or give thumbs up or down so that you can find the specific message quickly
 const prompts = new Map();
@@ -26,6 +30,11 @@ const prompts = new Map();
 // a map connecting the prompts sent by the user to the received messages by the server
 // responseUUID(string) -> promptUUID(string)
 const responseToPrompt = new Map();
+
+//boolean to check if the eventStorming mode is activated
+var eventStormingModeActive=false;
+//boolean to check if the user can send a message to the server
+var inputLock=false;
 
 const styleSheet = () => {
     const style = document.createElement('style');
@@ -129,7 +138,7 @@ const styleSheet = () => {
     fill: #FF0000; /* Toggled color */
 }
 
-.resize-handle {
+.resizeHandle {
     position: absolute;
     right: 0px;
     top: 0px;
@@ -155,18 +164,6 @@ const styleSheet = () => {
     width: 50%;
 }
 
-.replyButton svg {
-    fill: #a4a4ab;
-}
-
-.replyButton:hover svg {
-    fill: #1A73E8;
-}
-
-.replyButton:active svg {
-    fill: #0A47A1;
-}
-
 .eventStormingSwitchContainer {
     margin-bottom: 10px;
     position: relative;
@@ -177,6 +174,7 @@ const styleSheet = () => {
     cursor: pointer;
     transition: background-color 0.3s;
     display: flex;
+    min-width: 60px;
 }
 
 .eventStormingSwitchKnob {
@@ -219,17 +217,50 @@ background-color: #EEE;
     margin-top: 0px;
     margin-left: 10px;
 }
+
+.wrapperEventStorming{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-wrap: nowrap;
+    overflow: hidden;
+}
+
+.resizeHandlePath,
+.closeButtonSVG,
+.chatButtonSVG{
+ transition: all 0.3s;
+
+}
+.eventStormingHeading,
+.chatyName{
+ transition: all 0.3s;
+}
+
+.resizeHandlePath.active,
+.closeButtonSVG.active,
+.chatButtonSVG.active{
+ fill:#434343 !important;
+ stroke:#434343 !important;
+ transition: all 0.3s;
+
+}
+.eventStormingHeading.active,
+.chatyName.active{
+ color:#434343 !important;
+ transition: all 0.3s;
+}
 `;
     return style;
 }
-// The Chat button is the orange button that appears on the bottom left of the screen
+// The Chat button is the blue button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
 const makeChatButton = () => {
     const chatButton = document.createElement("button");
     chatButton.id = "chatButton";
     chatButton.className = "chatButton";
     chatButton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%" fill="#D9D9D9"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
+        '<svg class="chatButtonSVG" id="chatButtonSVG" xmlns="http://www.w3.org/2000/svg" height="90%" viewBox="0 -960 960 960" width="90%" fill="#D9D9D9"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>';
     chatButton.style.position = "fixed";
     chatButton.style.bottom = "10px";
     chatButton.style.left = "270px";
@@ -365,26 +396,12 @@ const makeResponseMessage = (responseUUID, text, success) => {
         return wrapperResponseMessageButtons;
     }
 
-    const createReplyButton = () => {
-        const replyButton = document.createElement("button");
-        replyButton.className = "replyButton";
-        replyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#e8eaed"><path d="M773.33-200v-157.33q0-56.67-37.66-94.34-37.67-37.66-94.34-37.66h-393L405-332.67l-47.67 47.34L120-522.67 357.33-760 405-712.67 248.33-556h393q84.34 0 141.5 57.17Q840-441.67 840-357.33V-200h-66.67Z"/></svg>';
-        replyButton.style.backgroundColor = "transparent";
-        replyButton.style.border = "10px";
-        replyButton.style.cursor = "pointer";
-        replyButton.style.height = "40px";
-        replyButton.style.width = "40px";
-        replyButton.addEventListener("click", () => {
-            replyToMessage(responseUUID);
-        });
-        return replyButton;
-    }
 
     const responseMessage = document.createElement("div");
     responseMessage.className = "responseMessage";
     responseMessage.id = responseUUID;
     responseMessage.innerHTML = text;
-    responseMessage.style.position = "relative"; // Important for positioning the reply button
+    responseMessage.style.position = "relative";
     responseMessage.style.alignSelf = "flex-start";
     responseMessage.style.border = "1px solid black";
     responseMessage.style.borderRadius = "10px";
@@ -395,64 +412,35 @@ const makeResponseMessage = (responseUUID, text, success) => {
     } else {
         responseMessage.style.backgroundColor = "#e37e8a";
     }
-    const wrapperMessageAndReply = document.createElement("div");
-    wrapperMessageAndReply.style.justifyContent = "left";
-    wrapperMessageAndReply.style.display = "flex";
-    wrapperMessageAndReply.style.alignItems = "center";
-    wrapperMessageAndReply.appendChild(responseMessage);
-    wrapperMessageAndReply.appendChild(createReplyButton());
     const wrapperResponseMessage = document.createElement("div");
-    wrapperResponseMessage.appendChild(wrapperMessageAndReply);
+    wrapperResponseMessage.appendChild(responseMessage);
     wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
 
     return wrapperResponseMessage;
 };
 
-// Function to handle reply action
-//TODO:implement
-const replyToMessage = (responseUUID) => {
-    // Your reply logic here
-    console.log(`Reply to message with UUID: ${responseUUID}`);
-};
-
-//reloads the promp and lets the ai generate a new response
+//reloads the prompt and lets the ai generate a new response
 function reloadPrompt(promptUUID) {
-
     //search the cached prompts to find the corresponding message
     const prompt = prompts.get(promptUUID);
     //sends the prompt to the server again to reload it
-    sendMessageAndFormat(promptUUID, prompt, serverUrl);
+    sendRegenerateMessage(promptUUID, prompt, regenerateURL);
 
-}
-
-//sends the rating to the corresponding server, the rating is a whole number from -1 to 1
-function sendRatingToServer(responseUUID, rating) {
-
-    GM_xmlhttpRequest({
-        method: "POST",
-        url: ratingURL,
-        data: JSON.stringify({messageId: responseUUID, rating: rating}), // Send data as JSON
-        headers: {
-            "Content-Type": "application/json",
-        },
-        onload: function (response) {
-            //Stub not used
-        },
-    });
 }
 
 //Thumbs up gives the server a positive respond to the answer of the coresponding prompt and adds them to hasBeenRated
 function thumbsUp(responseUUID) {
-    sendRatingToServer(responseUUID, 1);
+    sendRating(responseUUID, 1);
 }
 
+//removes the rating for the prompt
 function thumbsNeutral(responseUUID) {
-    sendRatingToServer(responseUUID, 0);
+    sendRating(responseUUID, 0);
 }
 
 //Thumbs up gives the server a negative respond to the answer of the coresponding prompt
 function thumbsDown(responseUUID) {
-    sendRatingToServer(responseUUID, -1);
+    sendRating(responseUUID, -1);
 }
 
 // The Chat Window is the window that appears when the Chat button is clicked
@@ -475,9 +463,9 @@ const makeChatWindow = () => {
 
     const makeResizeHandle = (container) => {
         const resizeHandle = document.createElement("div");
-        resizeHandle.className = "resize-handle";
+        resizeHandle.className = "resizeHandle";
         resizeHandle.id = "resizeHandle";
-        resizeHandle.innerHTML = '<svg viewBox="-1.92 -1.92 27.84 27.84" fill="#D9D9D9" xmlns="http://www.w3.org/2000/svg" transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#D9D9D9" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path d="M21 15L15 21M21 8L8 21" stroke="#D9D9D9" stroke-width="1.6799999999999997" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
+        resizeHandle.innerHTML = '<svg class="resizeHandleSVG" id="resizeHandleSVG" viewBox="-1.92 -1.92 27.84 27.84" fill="#D9D9D9" xmlns="http://www.w3.org/2000/svg" transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#D9D9D9" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path class="resizeHandlePath" id="resizeHandlePath" d="M21 15L15 21M21 8L8 21" stroke="#D9D9D9" stroke-width="1.6799999999999997" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
         let isResizing = false;
         let startX, startY, startWidth, startHeight;
 
@@ -548,6 +536,7 @@ const makeChatWindow = () => {
 // Chaty Name on top of the chat window
     const chatyName = document.createElement("h2");
     chatyName.id = "chatyName";
+    chatyName.className="chatyName";
     chatyName.style.userSelect = "none";
     chatyName.innerText = "Chaty";
     chatyName.style.color = "#D9D9D9";
@@ -557,8 +546,9 @@ const makeChatWindow = () => {
 // Chat Close Button
     const closeButton = document.createElement("button");
     closeButton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#D9D9D9"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+        '<svg class="closeButtonSVG" id="closeButtonSVG" xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#D9D9D9"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
     closeButton.id = "closeButton";
+    closeButton.className="closeButton";
     closeButton.style.color = "#D9D9D9";
     closeButton.style.height = "40px";
     closeButton.style.width = "40px";
@@ -648,7 +638,11 @@ const makeChatWindow = () => {
         //add message to the cached prompts
         prompts.set(userMessage.id, message);
         //sends the message to the server
-        sendMessageAndFormat(userMessage.id, message, serverUrl);
+        if(eventStormingModeActive){
+            sendEventStormingMessage(userMessage.id, message);
+        }else{
+            sendPromptMessage(userMessage.id, message, serverURL);
+        }
     };
 
     // -------------------------- Chat Input Button --------------------------
@@ -663,7 +657,9 @@ const makeChatWindow = () => {
     chatInputButton.style.cursor = "pointer";
     chatInputButton.style.backgroundColor = "transparent";
     chatInputButton.addEventListener("click", () => {
-        sendPrompt();
+        if(!inputLock){
+            sendPrompt();
+        }
     });
     chatInputDiv.appendChild(chatInputButton);
 
@@ -679,7 +675,9 @@ const makeChatWindow = () => {
     chatInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            sendPrompt();
+            if(!inputLock){
+                sendPrompt();
+            }
         }
     });
     chatInputDiv.appendChild(chatInput);
@@ -701,7 +699,13 @@ const makeChatWindow = () => {
             switchContainer.classList.toggle('active');
             chatWindow.classList.toggle('active');
             switchInner.classList.toggle('active');
+            document.getElementById("resizeHandlePath").classList.toggle('active');
+            document.getElementById("closeButtonSVG").classList.toggle('active');
+            document.getElementById("eventStormingHeading").classList.toggle('active');
+            document.getElementById("chatyName").classList.toggle('active');
             document.getElementById("chatButton").classList.toggle('active');
+            document.getElementById("chatButtonSVG").classList.toggle('active');
+            eventStormingModeActive=!eventStormingModeActive;
         });
 
         return switchContainer;
@@ -716,7 +720,7 @@ const makeChatWindow = () => {
         return eventStormingHeading;
     }
     const wrapperEventStorming = document.createElement("div");
-    wrapperEventStorming.style.display="ruby";
+    wrapperEventStorming.className="wrapperEventStorming";
     wrapperEventStorming.appendChild(createEventStormingSwitch());
     wrapperEventStorming.appendChild(createEventStormingHeading());
     wrapperChatInput.appendChild(wrapperEventStorming);
@@ -752,12 +756,39 @@ function getLastAnswerToPromptUUID(promptUUID) {
     return {firstAnswer: null, numberOfAnswers: numberOfAnswers};
 }
 
-//sends the message to the correct server and formats the chat window
-function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
+//sends the message to the eventStormingServer
+function sendEventStormingMessage(promptUUID, prompt){
+    handleSend(promptUUID,prompt,eventStormingURL,"eventStorming");
+}
 
+//sends the prompt to the given server
+function sendPromptMessage(promptUUID, prompt, serverUrlToSendTo) {
+    handleSend(promptUUID,prompt,serverUrlToSendTo,"prompt");
+}
+
+//sends the regenerate Message to the server
+function sendRegenerateMessage(promptUUID, prompt){
+    handleSend(promptUUID, prompt, regenerateURL,"regenerate")
+}
+
+//sends the rating to the corresponding server, the rating is a whole number from -1 to 1
+function sendRating(responseUUID, rating) {
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: ratingURL,
+        data: JSON.stringify({messageId: responseUUID, rating: rating}), // Send data as JSON
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}
+
+//handles the sending protocols and formats the window
+function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
     const chatWindow = document.getElementById("prompts-container");
     const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
-
+    // set inputLock
+    inputLock=true;
     // loading animation until response
     const loadingMessage = makeLoadMessage();
     chatWindow.insertBefore(loadingMessage, getLastAnswerToPromptUUID(promptUUID).firstAnswer);
@@ -780,20 +811,29 @@ function sendMessageAndFormat(promptUUID, prompt, serverUrlToSendTo) {
             //this is not allowed to move below the creating of the message otherwise the buttons dont have the UUID necessary
             responseToPrompt.set(responseUUID, promptUUID);
             //check if the operation was a success
-            if (JSON.parse(response.responseText).Success !== undefined) {
-                responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
-                //TODO uncomment if backend is ready
-                //responseUUID=SON.parse(response.responseText).Success.answerID;
-            } else {
-                responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Failure.response, false);
-                //TODO uncomment
-                //responseUUID=SON.parse(response.responseText).Failure.answerID;
+            if(type==="prompt"||type==="regenerate"){
+                if (JSON.parse(response.responseText).Success !== undefined) {
+                    //TODO uncomment if backend is ready
+                    //responseUUID=JSON.parse(response.responseText).Success.answerID;
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
+                } else {
+                    //TODO uncomment
+                    //responseUUID=JSON.parse(response.responseText).Error.answerID;
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error.response, false);
+                }
+            }else if(type==="eventStorming"){
+                if (JSON.parse(response.responseText).Success !== undefined) {
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success, true);
+                } else {
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
+                }
             }
             //inserts the response in front of the loading message
             chatWindow.insertBefore(responseMessage, loadingMessage);
             //after loading the message remove loading message
             chatWindow.removeChild(loadingMessage);
-
+            //remove inputLock
+            inputLock=false;
             responseMessage.scrollIntoView({behavior: "smooth"});
         },
     });
@@ -811,6 +851,7 @@ window.onload = () => {
 // starting the observer
     domObserver.observe(document.documentElement, domConfig);
 };
+
 // the function checks if the DOM is generated so that we can start the other observer to observe the padding
 const handleDOMChange = (mutationsList, observer) => {
     for (const mutation of mutationsList) {
