@@ -21,10 +21,12 @@ const ChatWindow = ({ isChatOpen, setIsChatOpen }) => {
     <div className="chat-window">
       <div className="chat-header">
         <h2>Chaty</h2>
-        <button onClick={toggleWindow}>Close</button>
+        <button onClick={toggleWindow}>X</button>
       </div>
       <div className="wrapper-prompts-container">
-        {/* Chat messages go here */}
+        <div className="prompts-container">
+
+        </div>
       </div>
       <div className="wrapper-chat-input">
         <div className="chat-input-div">
