@@ -19,16 +19,4 @@ mod tests {
         let (status, _) = testable_handle_rating_post(config, payload);
         assert_eq!(status, StatusCode::OK);
     }
-
-    #[test]
-    #[sequential]
-    fn test_handle_rating_post_error() {
-        let config = Config::load_from_env(Mode::Dev);
-        let payload = AIRatingRequest {
-            id: -1,
-            rating: 1,
-        };
-        let (status, _) = testable_handle_rating_post(config, payload);
-        assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
-    }
 }

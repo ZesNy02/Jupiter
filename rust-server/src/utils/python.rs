@@ -101,7 +101,7 @@ pub fn handle_vector_search(config: &Config, prompt: &String) -> Result<VectorSe
     let db_url = config.db_connection.to_string();
     let prompt = prompt.clone();
     let script_result = run_script(script_path, vec![db_url, prompt])?;
-    let result: Vec<&str> = script_result.split(" ").collect();
+    let result: Vec<&str> = script_result.split(&[' ', '\r', '\n']).collect();
     // Should be either "Existing <id>" or "New <id>"
     if result[0] == "Existing" {
         if let Ok(id) = result[1].parse::<i32>() {
