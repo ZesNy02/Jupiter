@@ -776,7 +776,7 @@ function sendRating(responseUUID, rating) {
     GM_xmlhttpRequest({
         method: "POST",
         url: ratingURL,
-        data: JSON.stringify({messageId: responseUUID, rating: rating}), // Send data as JSON
+        data: JSON.stringify({id: responseUUID, rating: rating}), // Send data as JSON
         headers: {
             "Content-Type": "application/json",
         },
@@ -799,7 +799,7 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
     GM_xmlhttpRequest({
         method: "POST",
         url: serverUrlToSendTo,
-        data: JSON.stringify({message: prompt}), // Send data as JSON
+        data: JSON.stringify({prompt: prompt}), // Send data as JSON
         headers: {
             "Content-Type": "application/json",
         },
@@ -819,7 +819,7 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
                 } else {
                     //TODO uncomment
                     //responseUUID=JSON.parse(response.responseText).Error.answerID;
-                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error.response, false);
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
                 }
             }else if(type==="eventStorming"){
                 if (JSON.parse(response.responseText).Success !== undefined) {
