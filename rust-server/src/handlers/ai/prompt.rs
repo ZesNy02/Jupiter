@@ -12,7 +12,7 @@ use crate::{
     python::{ handle_prompt_request, handle_vector_search },
   },
 };
-use tracing::error;
+use tracing::{ error, info };
 
 /// Bridges the [`testable_handle_prompt_post`] to the Axum Router.
 ///
@@ -44,10 +44,14 @@ pub async fn testable_handle_prompt_post(
 ) -> (StatusCode, Json<AIPromptResponse>) {
   let mode = config.mode.clone();
   let prompt = payload.prompt.clone();
+
+  info!("Trying to find prompt in database.");
   let search_result = handle_vector_search(&config, &prompt);
   match search_result {
     Ok(VectorSearchResult::Existing(id)) => {
+      info!("Prompt found in database with id: {}", id);
       let db_connection = config.db_connection.clone();
+      info!("Trying to find answer in database.");
       let query_result = find_answer(&db_connection, id).await;
       if let Err(err) = query_result {
         if mode == Mode::Dev {
@@ -56,17 +60,20 @@ pub async fn testable_handle_prompt_post(
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.message())));
       }
       let (id, answer) = query_result.unwrap();
+      info!("Answer found in database with id: {}", id);
       return (
         StatusCode::OK,
         Json(AIPromptResponse::Success(AIPromptResponseData { id, response: answer })),
       );
     }
     Ok(VectorSearchResult::New(id)) => {
+      info!("Prompt not found in database, made a new entry.");
       let prompt = payload.prompt.clone();
-      // TODO parse llm url
+      info!("Trying to generate answer for prompt.");
       let response = handle_prompt_request(&config, &prompt);
       match response {
         Ok(answer) => {
+          info!("Answer generated successfully.");
           return handle_db_insert(config, id, answer).await;
         }
         Err(err) => {
@@ -110,10 +117,12 @@ async fn handle_db_insert(
   let mode = config.mode.clone();
   let db_connection = config.db_connection.clone();
 
+  info!("Trying to insert answer for prompt with id: {}", prompt_id);
   let result = insert_answer(&db_connection, prompt_id, &response).await;
 
   match result {
     Ok(id) => {
+      info!("Answer inserted successfully.");
       return (
         StatusCode::OK,
         Json(AIPromptResponse::Success(AIPromptResponseData { id, response })),

@@ -6,7 +6,7 @@ use crate::{
   utils::postgres::update_rating,
 };
 
-use tracing::error;
+use tracing::{ error, info };
 
 /// Bridges the [`testable_handle_rating_post`] to the Axum Router.
 ///
@@ -40,9 +40,11 @@ pub async fn testable_handle_rating_post(
   let db_connection = config.db_connection.clone();
   let answer_id = payload.id;
   let rating = payload.rating;
+  info!("Trying to modify rating for answer with id: {}", answer_id);
   let result = update_rating(&db_connection, answer_id, rating).await;
   match result {
     Ok(_) => {
+      info!("Rating changed successfully.");
       return (
         StatusCode::OK,
         Json(

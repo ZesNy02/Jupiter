@@ -11,7 +11,7 @@ use crate::{
   utils::{ postgres::insert_answer, python::{ handle_prompt_request, handle_vector_search } },
 };
 
-use tracing::error;
+use tracing::{ error, info };
 
 /// Bridges the [`testable_handle_regenerate_post`] to the Axum Router.
 ///
@@ -44,6 +44,7 @@ pub async fn testable_handle_regenerate_post(
   let mode = config.mode.clone();
   let prompt = payload.prompt.clone();
 
+  info!("Trying to find prompt in database.");
   let search_result = handle_vector_search(&config, &prompt);
   if let Err(err) = search_result {
     if mode == Mode::Dev {
@@ -56,11 +57,13 @@ pub async fn testable_handle_regenerate_post(
     VectorSearchResult::Existing(id) => id,
     VectorSearchResult::New(id) => id,
   };
+  info!("Prompt found in database with id: {}", prompt_id);
 
-  // TODO parse llm url
+  info!("Trying to generate answer for prompt.");
   let result = handle_prompt_request(&config, &prompt);
   match result {
     Ok(answer) => {
+      info!("Answer generated successfully.");
       return handle_db_insert(config, prompt_id, answer).await;
     }
     Err(err) => {
@@ -95,10 +98,12 @@ async fn handle_db_insert(
   let mode = config.mode.clone();
   let db_connection = config.db_connection.clone();
 
+  info!("Trying to insert answer for prompt with id: {}", prompt_id);
   let result = insert_answer(&db_connection, prompt_id, &answer).await;
 
   match result {
     Ok(answer_id) => {
+      info!("Answer inserted successfully.");
       return (
         StatusCode::OK,
         Json(
