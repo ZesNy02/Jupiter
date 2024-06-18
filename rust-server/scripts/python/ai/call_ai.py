@@ -3,10 +3,9 @@ import json
 import setup  # Assuming setup.py contains URL and TOKEN_VALUE
 
 # Define the URL and token
-url = setup.URL
 token = setup.TOKEN_VALUE
 
-def ask_ai(prompt: str) -> str:
+def ask_ai(url: str, prompt: str) -> str:
     try:
         data = {
             'model': 'codestral',

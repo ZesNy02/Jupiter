@@ -55,14 +55,14 @@ cur.close()
 conn.close()
 
 # Define the URL and payload for the POST request
-# url = "http://localhost:3000/ai/rating"
-# payload = {"id": 0, "rating": 1}
+url = "http://localhost:3000/ai/rating"
+payload = {"id": 0, "rating": 1}
 
 # Send the POST request
 # response = requests.post(url, json=payload)
 
-url = "http://localhost:3000/ai/prompt"
-payload = {"prompt": "What is the prooph-board?"}
+#url = "http://localhost:3000/ai/prompt"
+#payload = {"prompt": "What is the prooph-board?"}
 
 # Send the POST request
 response = requests.post(url, json=payload)

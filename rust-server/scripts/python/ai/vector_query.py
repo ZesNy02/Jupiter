@@ -31,7 +31,7 @@ def getanswer(dburl: str, prompt: str):
     # Check if a similar embedding already exists
     cur.execute("SELECT prompt_id, 1 - (embedding <=> %s) AS cosine_similarity FROM prompts ORDER BY cosine_similarity DESC LIMIT 1",(prompt_embedding,))
     result = cur.fetchall()
-    if len(result[0]) > 1:
+    if result is not None and len(result[0]) > 1:
         if  result[0][1] > 0.98:
         # If a similar embedding exists, increment the count
             prompt_id = result[0][0]
@@ -53,8 +53,7 @@ def main():
     args = parser.parse_args()
     dburl = args.dburl
     prompt = args.prompt
-
-    print(getanswer(dburl, prompt))
+    getanswer(dburl, prompt)
 
 
 if __name__ == "__main__":
