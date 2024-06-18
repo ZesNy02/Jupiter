@@ -20,19 +20,26 @@ use crate::models::database::{ DBConnectionInfo, DBError, Result };
 /// * [DBError::ExtensionError] - If there is an error while installing the vector extension.
 /// * [DBError::TableCreationError] - If there is an error while creating the table.
 /// * [DBError::InsertError] - If there is an error while inserting the answer.
-pub fn insert_anwser(info: &DBConnectionInfo, prompt_id: i32, answer: &String) -> Result<()> {
+pub fn insert_anwser(info: &DBConnectionInfo, prompt_id: i32, answer: &String) -> Result<i32> {
   let mut client = get_connection(info)?;
   // Insert the answer with the given prompt_id to answers.
-  let res = client.execute(
-    "INSERT INTO answers (prompt_id, answer) VALUES ($1, $2)",
+  let rows = client.query(
+    "INSERT INTO answers (prompt_id, answer) VALUES ($1, $2) RETURNING answer_id",
     &[&prompt_id, &answer]
   );
-  if let Err(e) = res {
+  if let Err(e) = rows {
     return Err(
       DBError::InsertError("Error while trying to insert answer".to_string(), e.to_string())
     );
   }
-  Ok(())
+  let row = rows.unwrap();
+  if let Some(row) = row.get(0) {
+    return Ok(row.get(0));
+  } else {
+    return Err(
+      DBError::InsertError("Error while trying to inserted answer id".to_string(), "".to_string())
+    );
+  }
 }
 
 /// Utility function to easily update the rating of an answer in the database.
@@ -56,16 +63,24 @@ pub fn insert_anwser(info: &DBConnectionInfo, prompt_id: i32, answer: &String) -
 pub fn update_rating(info: &DBConnectionInfo, answer_id: i32, rating: i32) -> Result<()> {
   let mut client = get_connection(info)?;
   let mut to_insert_rating = rating;
-  if rating > 1 {
+  if rating >= 1 {
     to_insert_rating = 1;
-  } else if rating < -1 {
+  } else if rating <= -1 {
     to_insert_rating = -1;
+  } else {
+    return Ok(()); // Do nothing if the rating is 0.
   }
+
+  let mut query = "UPDATE answer SET rating = 0 WHERE answer_id = $1";
+  // Increment the rating if the new rating is 1, otherwise decrement it.
+  if to_insert_rating == 1 {
+    query = "UPDATE answer SET rating = rating + 1 WHERE answer_id = $1";
+  } else {
+    query = "UPDATE answer SET rating = rating - 1 WHERE answer_id = $1";
+  }
+
   // Update the rating of the answer with the given answer_id.
-  let res = client.execute(
-    "UPDATE answers SET rating = $1 WHERE answer_id = $2",
-    &[&to_insert_rating, &answer_id]
-  );
+  let res = client.execute(query, &[&answer_id]);
   if let Err(e) = res {
     return Err(
       DBError::UpdateError("Error while trying to update rating".to_string(), e.to_string())
@@ -93,9 +108,9 @@ pub fn update_rating(info: &DBConnectionInfo, answer_id: i32, rating: i32) -> Re
 /// * [DBError::QueryError] - If there is an error while trying to find the answer.
 pub fn find_answer(info: &DBConnectionInfo, prompt_id: i32) -> Result<(i32, String)> {
   let mut client = get_connection(info)?;
-  // Select all answers with a rating of 1 for the given prompt_id and order them randomly.
+  // Select all answers with a rating greater than 0 and order them by rating.
   let res = client.query(
-    "SELECT answer_id, answer FROM answers WHERE prompt_id = $1 AND rating = 1 ORDER BY RANDOM()",
+    "SELECT answer_id, answer FROM answers WHERE prompt_id = $1 AND rating > 0 ORDER BY rating DESC",
     &[&prompt_id]
   );
   if let Err(e) = res {
@@ -133,6 +148,7 @@ pub fn get_connection(info: &DBConnectionInfo) -> Result<Client> {
     .dbname(&info.dbname)
     .user(&info.user)
     .password(&info.password)
+    .port(info.port.clone())
     .connect(NoTls);
   match client {
     Ok(mut client) => {

@@ -1,4 +1,4 @@
-use rust_server::{ config::{ get_config, Mode }, handlers::router::get_router };
+use rust_server::{ config::{ Config, Mode }, handlers::router::get_router };
 use tokio::signal;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
@@ -21,11 +21,10 @@ async fn main() {
 
   // Set mode: "development" or "production"
   let mode = Mode::Dev;
-  let docker = false;
 
   // Get the configuration
   info!("Loading configuration...");
-  let config = get_config(mode, docker);
+  let config = Config::load_from_env(mode);
 
   // Start the server
   info!("Starting server...");

@@ -1,8 +1,5 @@
-/// This module contains the AI-related functionality.
+/// This module contains all the handlers for the AI routes.
 pub mod ai;
 
-/// This module contains the database-related functionality.
-pub mod db;
-
-/// This module contains the router-related functionality.
+/// This module contains the router generator with the routes.
 pub mod router;

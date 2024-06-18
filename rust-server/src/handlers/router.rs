@@ -1,18 +1,15 @@
 use std::time::Duration;
 
-use axum::{ http::{ HeaderValue, Method }, routing::{ get, post }, Router };
+use axum::{ http::{ HeaderValue, Method }, routing::post, Router };
 use tower_http::{ cors::CorsLayer, timeout::TimeoutLayer, trace::TraceLayer };
 
-use crate::config::{ Config, Mode };
+use crate::config::Config;
 
-use super::{
-  ai::{ handle_ai_dummy_err, handle_ai_dummy_ok, handle_ai_post },
-  db::{
-    handle_db_post_edit,
-    handle_db_post_fetch_all,
-    handle_db_post_fetch_not_usefull,
-    handle_db_post_fetch_usefull,
-  },
+use super::ai::{
+  eventstorming::handle_eventstorming_post,
+  prompt::handle_prompt_post,
+  rating::handle_rating_post,
+  regenerate::handle_regenerate_post,
 };
 
 /// Constructs and returns the axum router for the server.
@@ -30,21 +27,16 @@ use super::{
 ///
 /// # Routing Paths
 ///
-/// * `/db/edit` - **POST** request to edit a prompt in the database.
-/// * `/db/fetch/all` - **GET** request to fetch all prompts from the database.
-/// * `/db/fetch/usefull` - **GET** request to fetch all usefull prompts from the database.
-/// * `/db/fetch/not_usefull` - **GET** request to fetch all not usefull prompts from the database.
-/// * `/ai` - **POST** request to get a response from the AI model.
-/// * `/ai/dummy/ok` - **POST** request to get a dummy response instead of running the AI. **DEVELOPMENT ONLY**.
-/// * `/ai/dummy/err` - **POST** request to get a dummy error instead of running the AI. **DEVELOPMENT ONLY**.
+/// - [`ai/prompt`][handle_prompt_post] - **POST** - Handles the AI prompt request.
+/// - [`ai/rating`][handle_rating_post] - **POST** - Handles the AI rating request.
+/// - [`ai/regenerate`][handle_regenerate_post] - **POST** - Handles the AI regenerate request.
+/// - [`ai/eventstorming`][handle_eventstorming_post] - **POST** - Handles the AI Eventstorming request.
 pub fn get_router(config: Config) -> Router {
-  let configcopy = config.clone();
-  let mut router = Router::new()
-    .route("/db/edit", post(handle_db_post_edit))
-    .route("/db/fetch/all", get(handle_db_post_fetch_all))
-    .route("/db/fetch/usefull", get(handle_db_post_fetch_usefull))
-    .route("/db/fetch/not_usefull", get(handle_db_post_fetch_not_usefull))
-    .route("/ai", post(handle_ai_post))
+  let router = Router::new()
+    .route("/ai/prompt", post(handle_prompt_post))
+    .route("/ai/rating", post(handle_rating_post))
+    .route("/ai/regenerate", post(handle_regenerate_post))
+    .route("/ai/eventstorming", post(handle_eventstorming_post))
     .layer((
       TraceLayer::new_for_http(),
       // Set a timeout for all requests after 30 seconds
@@ -52,15 +44,9 @@ pub fn get_router(config: Config) -> Router {
       // Enable CORS
       CorsLayer::new()
         .allow_origin("*".parse::<HeaderValue>().unwrap())
-        .allow_methods([Method::GET, Method::POST]),
+        .allow_methods([Method::POST]),
     ))
     .with_state(config);
-
-  if configcopy.mode == Mode::Dev {
-    router = router
-      .route("/ai/dummy/ok", post(handle_ai_dummy_ok))
-      .route("/ai/dummy/err", post(handle_ai_dummy_err));
-  }
 
   let r = router.clone();
 
