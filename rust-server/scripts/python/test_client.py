@@ -1,4 +1,5 @@
 import psycopg2
+import requests
 
 # Establish a connection to the PostgreSQL database
 conn = psycopg2.connect(
@@ -46,9 +47,19 @@ cur.execute(
 #     print(prompt)
 
 # Update the rating of an answer with negative id
-cur.execute("UPDATE answers SET rating = rating + 1 WHERE answer_id = -1")
+# cur.execute("UPDATE answers SET rating = rating + 1 WHERE answer_id = -1")
 
 # Commit the changes and close the connection
 conn.commit()
 cur.close()
 conn.close()
+
+# Define the URL and payload for the POST request
+url = "http://localhost:3000/ai/rating"
+payload = {"id": 0, "rating": 1}
+
+# Send the POST request
+response = requests.post(url, json=payload)
+
+# Check the response status code
+print(response)
