@@ -9,13 +9,13 @@ from call_ai import ask_ai
 def main():
     #Cli, Handles the input through the command line, in our case its going to be the question asked by the user
     parser = argparse.ArgumentParser()
+    parser.add_argument("ai_url", type=str, help="The URL of the AI model.")
     parser.add_argument("query_text", type=str, help="The query text.")
     args = parser.parse_args()
-    query_text = args.query_text
-    query_rag(query_text)
+    query_rag(args.ai_url,args.query_text)
 
 #fetches the db from local storage and querys the vectorstore for the context relating to the question asked by the user
-def query_rag(query_text: str):
+def query_rag(url: str, query_text: str):
     # Prepare the DB.
     embedding_function = get_embedding_function()
     db = Chroma(persist_directory=setup.CHROMA_PATH, embedding_function=embedding_function)
@@ -31,7 +31,7 @@ def query_rag(query_text: str):
     
 
     #invoke the model to generate a response based on the context and the question
-    response_text = ask_ai(prompt)
+    response_text = ask_ai(url, prompt)
 
     #prints the response and the sources of the context
     sources = [doc.metadata.get("id", None) for doc, _score in results]

@@ -11,10 +11,10 @@ from call_ai import ask_ai
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("ai_url", type=str, help="The URL of the AI model.")
     parser.add_argument("query_text", type=str, help="The query text.")
     args = parser.parse_args()
-    query_text = args.query_text
-    generate_events(query_text)
+    generate_events(args.ai_url,args.query_text)
 
 def place_event(event: str,x: int, y: int):
         data = {
@@ -45,10 +45,10 @@ def place_event(event: str,x: int, y: int):
         requests.post(setup.PROOPH_URL, headers=headers, json=data)
     
 
-def generate_events(topic: str):
+def generate_events(url: str, topic: str):
     prompt_template = ChatPromptTemplate.from_template(setup.STORM_TEMPLATE)
     prompt = prompt_template.format(topic=topic)
-    response = ask_ai(prompt)
+    response = ask_ai(url, prompt)
     #print(response)
     
     start = response.find("[") + len("[")
