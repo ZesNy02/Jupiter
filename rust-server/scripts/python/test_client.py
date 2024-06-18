@@ -13,6 +13,8 @@ conn = psycopg2.connect(
 # Create a cursor object to interact with the database
 cur = conn.cursor()
 
+cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
 cur.execute(
     """
     CREATE TABLE IF NOT EXISTS prompts (
