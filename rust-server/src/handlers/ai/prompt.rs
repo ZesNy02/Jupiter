@@ -1,6 +1,6 @@
 use axum::{ extract::State, http::StatusCode, Json };
 use crate::{
-  config::{ Config, Mode },
+  config::Config,
   models::routes_data::{
     AIPromptRequest,
     AIPromptResponse,
@@ -42,7 +42,6 @@ pub async fn testable_handle_prompt_post(
   config: Config,
   payload: AIPromptRequest
 ) -> (StatusCode, Json<AIPromptResponse>) {
-  let mode = config.mode.clone();
   let prompt = payload.prompt.clone();
 
   info!("Trying to find prompt in database.");
@@ -54,9 +53,11 @@ pub async fn testable_handle_prompt_post(
       info!("Trying to find answer in database.");
       let query_result = find_answer(&db_connection, id).await;
       if let Err(err) = query_result {
-        if mode == Mode::Dev {
-          error!("Error: {:?}", err.log_message());
+        if err.message() == "Query Error: No answer found".to_string() {
+          info!("No answer found in database. Generating a new one.");
+          return handle_generate_answer(config, prompt, id).await;
         }
+        error!("Error: {:?}", err.log_message());
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.message())));
       }
       let (id, answer) = query_result.unwrap();
@@ -68,30 +69,42 @@ pub async fn testable_handle_prompt_post(
     }
     Ok(VectorSearchResult::New(id)) => {
       info!("Prompt not found in database, made a new entry.");
-      let prompt = payload.prompt.clone();
-      info!("Trying to generate answer for prompt.");
-      let response = handle_prompt_request(&config, &prompt);
-      match response {
-        Ok(answer) => {
-          info!("Answer generated successfully.");
-          return handle_db_insert(config, id, answer).await;
-        }
-        Err(err) => {
-          if mode == Mode::Dev {
-            error!("Error: {:?}", err);
-          }
-          return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(AIPromptResponse::Error(err.to_string())),
-          );
-        }
-      }
+      return handle_generate_answer(config, prompt, id).await;
     }
 
     Err(err) => {
-      if mode == Mode::Dev {
-        error!("Error: {:?}", err);
-      }
+      error!("Error: {:?}", err);
+      return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.to_string())));
+    }
+  }
+}
+
+/// Handles the generation of an answer for the prompt and converts the result to
+/// the appropriate response.
+///
+/// # Arguments
+///
+/// * `config` - The server [`Config`].
+/// * `prompt` - The prompt from the payload.
+/// * `id` - The ID of the prompt.
+///
+/// # Returns
+///
+/// A tuple containing the [`StatusCode`] and the [`AIPromptResponse`] as JSON.
+async fn handle_generate_answer(
+  config: Config,
+  prompt: String,
+  id: i32
+) -> (StatusCode, Json<AIPromptResponse>) {
+  info!("Trying to generate answer for prompt.");
+  let response = handle_prompt_request(&config, &prompt);
+  match response {
+    Ok(answer) => {
+      info!("Answer generated successfully.");
+      return handle_db_insert(config, id, answer).await;
+    }
+    Err(err) => {
+      error!("Error: {:?}", err);
       return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.to_string())));
     }
   }
@@ -114,7 +127,6 @@ async fn handle_db_insert(
   prompt_id: i32,
   response: String
 ) -> (StatusCode, Json<AIPromptResponse>) {
-  let mode = config.mode.clone();
   let db_connection = config.db_connection.clone();
 
   info!("Trying to insert answer for prompt with id: {}", prompt_id);
@@ -129,9 +141,7 @@ async fn handle_db_insert(
       );
     }
     Err(err) => {
-      if mode == Mode::Dev {
-        error!("Error: {:?}", err.log_message());
-      }
+      error!("Error: {:?}", err.log_message());
       return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.message())));
     }
   }
