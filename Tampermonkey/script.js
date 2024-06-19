@@ -823,9 +823,9 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
                 }
             }else if(type==="eventStorming"){
                 if (JSON.parse(response.responseText).Success !== undefined) {
-                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success, true);
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.message, true);
                 } else {
-                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error.message, false);
                 }
             }
             //inserts the response in front of the loading message
