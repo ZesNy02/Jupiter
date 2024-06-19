@@ -15,6 +15,9 @@ cur = conn.cursor()
 
 cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 
+cur.execute("DROP TABLE IF EXISTS prompts CASCADE;")
+cur.execute("DROP TABLE IF EXISTS answers CASCADE;")
+
 cur.execute(
     """
     CREATE TABLE IF NOT EXISTS prompts (
