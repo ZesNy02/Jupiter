@@ -35,6 +35,7 @@ def install_dependencies():
             "pypdf",
             "sentence_transformers",
             "pgvector",
+            "psycopg2",
         ]
     )
 
