@@ -15,7 +15,7 @@ def main():
     parser.add_argument("query_text", type=str, help="The query text.")
     args = parser.parse_args()
     generate_events(args.ai_url,args.query_text)
-    return("Succes!")
+    print("Succes!")
 
 def place_event(event: str,x: int, y: int):
         data = {

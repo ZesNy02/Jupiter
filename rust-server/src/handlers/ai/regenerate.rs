@@ -1,14 +1,14 @@
 use axum::{ extract::State, http::StatusCode, Json };
 
 use crate::{
-  config::{ Config, Mode },
-  models::routes_data::{
-    AIRegenerateRequest,
-    AIRegenerateResponse,
-    AIRegenerateResponseData,
-    VectorSearchResult,
-  },
-  utils::{ postgres::insert_answer, python::{ handle_prompt_request, handle_vector_search } },
+    config::{ Config, Mode },
+    models::routes_data::{
+        AIRegenerateRequest,
+        AIRegenerateResponse,
+        AIRegenerateResponseData,
+        VectorSearchResult,
+    },
+    utils::{ postgres::insert_answer, python::{ handle_prompt_request, handle_vector_search } },
 };
 
 use tracing::{ error, info };
@@ -21,10 +21,10 @@ use tracing::{ error, info };
 ///
 /// Handels the `ai/regenerate` **POST** route.
 pub async fn handle_regenerate_post(
-  State(config): State<Config>,
-  Json(payload): Json<AIRegenerateRequest>
+    State(config): State<Config>,
+    Json(payload): Json<AIRegenerateRequest>
 ) -> (StatusCode, Json<AIRegenerateResponse>) {
-  return testable_handle_regenerate_post(config, payload).await;
+    return testable_handle_regenerate_post(config, payload).await;
 }
 
 /// Handles the AI regenerate request.
@@ -38,44 +38,47 @@ pub async fn handle_regenerate_post(
 ///
 /// A tuple containing the [`StatusCode`] and the [`AIRegenerateResponse`] as JSON.
 pub async fn testable_handle_regenerate_post(
-  config: Config,
-  payload: AIRegenerateRequest
+    config: Config,
+    payload: AIRegenerateRequest
 ) -> (StatusCode, Json<AIRegenerateResponse>) {
-  let mode = config.mode.clone();
-  let prompt = payload.prompt.clone();
+    let mode = config.mode.clone();
+    let prompt = payload.prompt.clone();
 
-  info!("Trying to find prompt in database.");
-  let search_result = handle_vector_search(&config, &prompt);
-  if let Err(err) = search_result {
-    if mode == Mode::Dev {
-      error!("Error: {:?}", err);
+    info!("Trying to find prompt in database.");
+    let search_result = handle_vector_search(&config, &prompt);
+    if let Err(err) = search_result {
+        if mode == Mode::Dev {
+            error!("Error: {:?}", err);
+        }
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(AIRegenerateResponse::Error(err.to_string())),
+        );
     }
-    return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIRegenerateResponse::Error(err.to_string())));
-  }
-  let id_result = search_result.unwrap();
-  let prompt_id = match id_result {
-    VectorSearchResult::Existing(id) => id,
-    VectorSearchResult::New(id) => id,
-  };
-  info!("Prompt found in database with id: {}", prompt_id);
+    let id_result = search_result.unwrap();
+    let prompt_id = match id_result {
+        VectorSearchResult::Existing(id) => id,
+        VectorSearchResult::New(id) => id,
+    };
+    info!("Prompt found in database with id: {}", prompt_id);
 
-  info!("Trying to generate answer for prompt.");
-  let result = handle_prompt_request(&config, &prompt);
-  match result {
-    Ok(answer) => {
-      info!("Answer generated successfully.");
-      return handle_db_insert(config, prompt_id, answer).await;
+    info!("Trying to generate answer for prompt.");
+    let result = handle_prompt_request(&config, &prompt);
+    match result {
+        Ok(answer) => {
+            info!("Answer generated successfully.");
+            return handle_db_insert(config, prompt_id, answer).await;
+        }
+        Err(err) => {
+            if mode == Mode::Dev {
+                error!("Error: {:?}", err);
+            }
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(AIRegenerateResponse::Error(err.to_string())),
+            );
+        }
     }
-    Err(err) => {
-      if mode == Mode::Dev {
-        error!("Error: {:?}", err);
-      }
-      return (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(AIRegenerateResponse::Error(err.to_string())),
-      );
-    }
-  }
 }
 
 /// Handels the database insert operation for the answer and converts the result to
@@ -91,34 +94,37 @@ pub async fn testable_handle_regenerate_post(
 ///
 /// A tuple containing the [`StatusCode`] and the [`AIPromptResponse`] as JSON.
 async fn handle_db_insert(
-  config: Config,
-  prompt_id: i32,
-  answer: String
+    config: Config,
+    prompt_id: i32,
+    answer: String
 ) -> (StatusCode, Json<AIRegenerateResponse>) {
-  let mode = config.mode.clone();
-  let db_connection = config.db_connection.clone();
+    let mode = config.mode.clone();
+    let db_connection = config.db_connection.clone();
 
-  info!("Trying to insert answer for prompt with id: {}", prompt_id);
-  let result = insert_answer(&db_connection, prompt_id, &answer).await;
+    info!("Trying to insert answer for prompt with id: {}", prompt_id);
+    let result = insert_answer(&db_connection, prompt_id, &answer).await;
 
-  match result {
-    Ok(answer_id) => {
-      info!("Answer inserted successfully.");
-      return (
-        StatusCode::OK,
-        Json(
-          AIRegenerateResponse::Success(AIRegenerateResponseData {
-            id: answer_id,
-            response: "Answer inserted successfully.".to_string(),
-          })
-        ),
-      );
+    match result {
+        Ok(answer_id) => {
+            info!("Answer inserted successfully.");
+            return (
+                StatusCode::OK,
+                Json(
+                    AIRegenerateResponse::Success(AIRegenerateResponseData {
+                        id: answer_id,
+                        response: answer,
+                    })
+                ),
+            );
+        }
+        Err(err) => {
+            if mode == Mode::Dev {
+                error!("Error: {:?}", err.log_message());
+            }
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(AIRegenerateResponse::Error(err.message())),
+            );
+        }
     }
-    Err(err) => {
-      if mode == Mode::Dev {
-        error!("Error: {:?}", err.log_message());
-      }
-      return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIRegenerateResponse::Error(err.message())));
-    }
-  }
 }
