@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src\config.rs`."><title>config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rust_server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../rust_server/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src\config.rs`."><title>config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rust_server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -125,149 +123,129 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>dotenv::dotenv;
 <span class="kw">use </span>tracing::{ error, info };
 <span class="kw">use </span>std::env;
 
 <span class="kw">use </span><span class="kw">crate</span>::models::database::DBConnectionInfo;
 
-<span class="doccomment">/// Represents the mode of the configuration.
-</span><span class="attr">#[derive(PartialEq, Debug, Clone)]
-</span><span class="kw">pub enum </span>Mode {
-    <span class="doccomment">/// Development mode.
-    /// This mode is used for testing and debugging.
-    /// It contains additional logging and debugging information.
-    </span>Dev,
-    <span class="doccomment">/// Production mode.
-    /// This mode is used for production deployment.
-    /// It contains minimal logging and debugging information.
-    </span>Prod,
-}
-
 <span class="doccomment">/// Represents the configuration settings.
 </span><span class="attr">#[derive(PartialEq, Debug, Clone)]
 </span><span class="kw">pub struct </span>Config {
-    <span class="doccomment">/// The IP address of the server.
-    </span><span class="kw">pub </span>ip: String,
-    <span class="doccomment">/// The port of the server.
-    </span><span class="kw">pub </span>port: u16,
-    <span class="doccomment">/// The mode of the configuration.
-    </span><span class="kw">pub </span>mode: Mode,
-    <span class="doccomment">/// The connection information for the PostgreSQL database.
-    </span><span class="kw">pub </span>db_connection: DBConnectionInfo,
-    <span class="doccomment">/// The connection string for the LLM Server (Ollama).
-    </span><span class="kw">pub </span>llm_connection: String,
-    <span class="doccomment">/// The path to the Python RAG script file.
-    </span><span class="kw">pub </span>rag_script: String,
-    <span class="doccomment">/// The path to the Python vector query script file.
-    </span><span class="kw">pub </span>vector_query_script: String,
-    <span class="doccomment">/// The path to the Python event storming script file.
-    </span><span class="kw">pub </span>event_storming_script: String,
+  <span class="doccomment">/// The IP address of the server.
+  </span><span class="kw">pub </span>ip: String,
+  <span class="doccomment">/// The port of the server.
+  </span><span class="kw">pub </span>port: u16,
+  <span class="doccomment">/// The connection information for the PostgreSQL database.
+  </span><span class="kw">pub </span>db_connection: DBConnectionInfo,
+  <span class="doccomment">/// The connection string for the LLM Server (Ollama).
+  </span><span class="kw">pub </span>llm_connection: String,
+  <span class="doccomment">/// The path to the Python RAG script file.
+  </span><span class="kw">pub </span>rag_script: String,
+  <span class="doccomment">/// The path to the Python vector query script file.
+  </span><span class="kw">pub </span>vector_query_script: String,
+  <span class="doccomment">/// The path to the Python event storming script file.
+  </span><span class="kw">pub </span>event_storming_script: String,
 }
 
 <span class="kw">impl </span>Config {
-    <span class="doccomment">/// Loads the configuration from environment variables.
-    ///
-    /// # Arguments
-    ///
-    /// * `mode` - The [Mode] of the configuration.
-    ///
-    /// # Returns
-    ///
-    /// The loaded configuration.
-    ///
-    /// # Environment Variables
-    ///
-    /// The following environment variables are used to load the configuration:
-    /// - `DB_HOST`: The host/ip of the PostgreSQL database.
-    /// - `DB_NAME`: The name of the PostgreSQL database.
-    /// - `DB_USER`: The username for the PostgreSQL database.
-    /// - `DB_PASSWORD`: The password for the PostgreSQL database.
-    /// - `LLM_SERVER`: The connection url for the LLM Server (Ollama).
-    /// - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
-    /// - `PORT`: The port of the server. Defaults to `3000`.
-    /// - `DB_PORT`: The port of the PostgreSQL database. Defaults to `5432`.
-    ///
-    /// # Panics
-    ///
-    /// - Panics if the [DBConnectionInfo] cannot be loaded from the environment variables.
-    /// - Panics if the LLM Server connection cannot be loaded from the environment variables.
-    </span><span class="kw">pub fn </span>load_from_env(mode: Mode) -&gt; Config {
-        dotenv().ok();
-        <span class="kw">let </span>db_host = env::var(<span class="string">"DB_HOST"</span>).expect(<span class="string">"Couldn't find DB_HOST in environment variables"</span>);
-        <span class="kw">let </span>db_name = env::var(<span class="string">"DB_NAME"</span>).expect(<span class="string">"Couldn't find DB_NAME in environment variables"</span>);
-        <span class="kw">let </span>db_user = env::var(<span class="string">"DB_USER"</span>).expect(<span class="string">"Couldn't find DB_USER in environment variables"</span>);
-        <span class="kw">let </span>db_password = env
-            ::var(<span class="string">"DB_PASSWORD"</span>)
-            .expect(<span class="string">"Couldn't find DB_PASSWORD in environment variables"</span>);
-        <span class="kw">let </span>llm_server = env
-            ::var(<span class="string">"LLM_SERVER"</span>)
-            .expect(<span class="string">"Couldn't find LLM_SERVER in environment variables"</span>);
-        <span class="comment">// load IP of the Server from the environment variables or default to 127.0.0.1
-        </span><span class="kw">let </span>ip = env
-            ::var(<span class="string">"IP"</span>)
-            .ok()
-            .unwrap_or_else(|| {
-                <span class="macro">info!</span>(<span class="string">"IP not found in .env file. Using default IP 127.0.0.1."</span>);
-                <span class="kw">return </span><span class="string">"127.0.0.1"</span>.to_string();
-            });
-        <span class="comment">// load Port of the Server from the environment variables or default to 3000
-        </span><span class="kw">let </span>port = env
-            ::var(<span class="string">"PORT"</span>)
-            .ok()
-            .unwrap_or_else(|| {
-                <span class="macro">info!</span>(<span class="string">"Port not found in .env file. Using default port 3000."</span>);
-                <span class="kw">return </span><span class="string">"3000"</span>.to_string();
-            })
-            .parse::&lt;u16&gt;()
-            .unwrap_or_else(|_port| {
-                <span class="macro">error!</span>(<span class="string">"Failed to parse port. Using default port 3000."</span>);
-                <span class="kw">return </span><span class="number">3000</span>;
-            });
-        <span class="comment">// load Port of the Database from the environment variables or default to 5432
-        </span><span class="kw">let </span>db_port = env
-            ::var(<span class="string">"DB_PORT"</span>)
-            .ok()
-            .unwrap_or_else(|| {
-                <span class="macro">info!</span>(<span class="string">"DB_PORT not found in .env file. Using default port 5432."</span>);
-                <span class="kw">return </span><span class="string">"5432"</span>.to_string();
-            })
-            .parse::&lt;u16&gt;()
-            .unwrap_or_else(|_port| {
-                <span class="macro">error!</span>(<span class="string">"Failed to parse DB_PORT. Using default port 5432."</span>);
-                <span class="kw">return </span><span class="number">5432</span>;
-            });
+  <span class="doccomment">/// Loads the configuration from environment variables.
+  ///
+  /// # Returns
+  ///
+  /// The loaded configuration.
+  ///
+  /// # Environment Variables
+  ///
+  /// The following environment variables are used to load the configuration,
+  /// and the ones in **bold** are required, if they are not found
+  /// the function will panic:
+  /// - **`DB_HOST`**: The host/ip of the PostgreSQL database.
+  /// - **`DB_NAME`**: The name of the PostgreSQL database.
+  /// - **`DB_USER`**: The username for the PostgreSQL database.
+  /// - **`DB_PASSWORD`**: The password for the PostgreSQL database.
+  /// - **`LLM_SERVER`**: The connection url for the LLM Server (Ollama).
+  /// - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
+  /// - `PORT`: The port of the server. Defaults to `3000`.
+  /// - `DB_PORT`The port of the PostgreSQL database. Defaults to `5432`.
+  ///
+  /// # Panics
+  ///
+  /// - Panics if the [DBConnectionInfo] cannot be loaded
+  /// from the environment variables.
+  /// - Panics if the LLM Server connection cannot be loaded
+  /// from the environment variables.
+  </span><span class="kw">pub fn </span>load_from_env() -&gt; Config {
+    dotenv().ok();
+    <span class="kw">let </span>db_host = env::var(<span class="string">&quot;DB_HOST&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_HOST in environment variables&quot;</span>);
+    <span class="kw">let </span>db_name = env::var(<span class="string">&quot;DB_NAME&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_NAME in environment variables&quot;</span>);
+    <span class="kw">let </span>db_user = env::var(<span class="string">&quot;DB_USER&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_USER in environment variables&quot;</span>);
+    <span class="kw">let </span>db_password = env
+      ::var(<span class="string">&quot;DB_PASSWORD&quot;</span>)
+      .expect(<span class="string">&quot;Couldn&#39;t find DB_PASSWORD in environment variables&quot;</span>);
 
-        Config {
-            ip,
-            port,
-            mode,
-            db_connection: DBConnectionInfo::new(db_host, db_port, db_name, db_user, db_password),
-            llm_connection: llm_server,
-            rag_script: <span class="string">"./scripts/python/ai/run_rag.py"</span>.to_string(),
-            vector_query_script: <span class="string">"./scripts/python/ai/vector_query.py"</span>.to_string(),
-            event_storming_script: <span class="string">"./scripts/python/ai/storming.py"</span>.to_string(),
-        }
-    }
+    <span class="kw">let </span>llm_server = env
+      ::var(<span class="string">&quot;LLM_SERVER&quot;</span>)
+      .expect(<span class="string">&quot;Couldn&#39;t find LLM_SERVER in environment variables&quot;</span>);
 
-    <span class="doccomment">/// Gets the IP address and port of the server formatted as `IP:PORT`.
-    </span><span class="kw">pub fn </span>get_ported_ip(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="kw">return </span><span class="macro">format!</span>(<span class="string">"{}:{}"</span>, <span class="self">self</span>.ip, <span class="self">self</span>.port);
-    }
+    <span class="comment">// load IP of the Server from the environment variables or default to 127.0.0.1
+    </span><span class="kw">let </span>ip = env
+      ::var(<span class="string">&quot;IP&quot;</span>)
+      .ok()
+      .unwrap_or_else(|| {
+        <span class="macro">info!</span>(<span class="string">&quot;IP not found in .env file. Using default IP 127.0.0.1.&quot;</span>);
+        <span class="kw">return </span><span class="string">&quot;127.0.0.1&quot;</span>.to_string();
+      });
 
-    <span class="doccomment">/// Gets the connection string for the database. Ready to be used in the vector_query script.
-    </span><span class="kw">pub fn </span>get_db_connection_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="kw">return </span><span class="self">self</span>.db_connection.to_string();
+    <span class="comment">// load Port of the Server from the environment variables or default to 3000
+    </span><span class="kw">let </span>port = env
+      ::var(<span class="string">&quot;PORT&quot;</span>)
+      .ok()
+      .unwrap_or_else(|| {
+        <span class="macro">info!</span>(<span class="string">&quot;Port not found in .env file. Using default port 3000.&quot;</span>);
+        <span class="kw">return </span><span class="string">&quot;3000&quot;</span>.to_string();
+      })
+      .parse::&lt;u16&gt;()
+      .unwrap_or_else(|_port| {
+        <span class="macro">error!</span>(<span class="string">&quot;Failed to parse port. Using default port 3000.&quot;</span>);
+        <span class="kw">return </span><span class="number">3000</span>;
+      });
+
+    <span class="comment">// load Port of the Database from the environment variables or default to 5432
+    </span><span class="kw">let </span>db_port = env
+      ::var(<span class="string">&quot;DB_PORT&quot;</span>)
+      .ok()
+      .unwrap_or_else(|| {
+        <span class="macro">info!</span>(<span class="string">&quot;DB_PORT not found in .env file. Using default port 5432.&quot;</span>);
+        <span class="kw">return </span><span class="string">&quot;5432&quot;</span>.to_string();
+      })
+      .parse::&lt;u16&gt;()
+      .unwrap_or_else(|_port| {
+        <span class="macro">error!</span>(<span class="string">&quot;Failed to parse DB_PORT. Using default port 5432.&quot;</span>);
+        <span class="kw">return </span><span class="number">5432</span>;
+      });
+
+    Config {
+      ip,
+      port,
+      db_connection: DBConnectionInfo::new(db_host, db_port, db_name, db_user, db_password),
+      llm_connection: llm_server,
+      rag_script: <span class="string">&quot;./scripts/python/ai/run_rag.py&quot;</span>.to_string(),
+      vector_query_script: <span class="string">&quot;./scripts/python/ai/vector_query.py&quot;</span>.to_string(),
+      event_storming_script: <span class="string">&quot;./scripts/python/ai/storming.py&quot;</span>.to_string(),
     }
+  }
+
+  <span class="doccomment">/// Gets the IP address and port of the server formatted as `IP:PORT`.
+  </span><span class="kw">pub fn </span>get_ported_ip(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+    <span class="kw">return </span><span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="self">self</span>.ip, <span class="self">self</span>.port);
+  }
+
+  <span class="doccomment">/// Gets the connection string for the database.
+  ///
+  /// Formatted as `host=HOST port=PORT dbname=DB_NAME user=DB_USER password=DB_PASSWORD`.
+  </span><span class="kw">pub fn </span>get_db_connection_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+    <span class="kw">return </span><span class="self">self</span>.db_connection.to_string();
+  }
 }
 </code></pre></div></section></main></body></html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src\utils\python.rs`."><title>python.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rust_server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../rust_server/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src\utils\python.rs`."><title>python.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rust_server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -153,18 +151,18 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    config::{ Config, Mode },
-    models::{ python_ai::{ PythonError, <span class="prelude-ty">Result </span>}, routes_data::VectorSearchResult },
+  config::Config,
+  models::{ python_ai::{ PythonError, <span class="prelude-ty">Result </span>}, routes_data::VectorSearchResult },
 };
 <span class="kw">use </span>std::{ path::Path, process::Command };
 
 <span class="kw">use </span>tracing::{ error, info };
+
+<span class="kw">use </span><span class="kw">super</span>::postgres::get_connection;
 <span class="doccomment">/// This function runs the Python AI model with the given prompt.
 ///
-/// # Params
+/// # Arguments
 ///
 /// * `script_path` - The path to the python script to execute.
 /// * `args` - The arguments to pass to the script.
@@ -179,63 +177,40 @@
 /// * [PythonError::ScriptError] if the script returns an error.
 /// * [PythonError::ResponseError] if the script returns an empty response.
 /// * [PythonError::IOError] if there is an IO error.
-///
-/// # Example
-///
-/// ```rust
-/// use rust_server::models::python_ai::PythonError;
-/// use rust_server::utils::python::run_ai;
-///
-/// let prompt = "Hello".to_string();
-///
-/// let response = run_script("test.py".to_string(), prompt);
-///
-/// match response {
-///   Ok(response) =&gt; {
-///     println!("Response: {}", response);
-///   }
-///   Err(e) =&gt; {
-///     match e {
-///       PythonError::PathError =&gt; println!("Path error."),
-///       PythonError::ScriptError =&gt; println!("Script error."),
-///       PythonError::ResponseError =&gt; println!("Response error."),
-///       PythonError::IOError =&gt; println!("IO error."),
-///     }
-///   }
-/// }
 </span><span class="kw">pub fn </span>run_script(script_path: String, args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-    <span class="kw">if </span>Path::new(<span class="kw-2">&amp;</span>script_path).exists() == <span class="bool-val">false </span>{
-        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::PathError(<span class="macro">format!</span>(<span class="string">"Path does not exist: {}"</span>, script_path)));
+  <span class="kw">if </span>Path::new(<span class="kw-2">&amp;</span>script_path).exists() == <span class="bool-val">false </span>{
+    <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::PathError(<span class="macro">format!</span>(<span class="string">&quot;Path does not exist: {}&quot;</span>, script_path)));
+  }
+
+  <span class="comment">// run the python script and wait for the output
+  </span><span class="kw">let </span>response = Command::new(<span class="string">&quot;python3&quot;</span>).arg(script_path).args(args).output();
+
+  <span class="comment">// match the response from the script
+  </span><span class="kw">match </span>response {
+    <span class="prelude-val">Ok</span>(response) =&gt; {
+      <span class="comment">// convert the response to a string
+      </span><span class="kw">let </span>response = String::from_utf8_lossy(<span class="kw-2">&amp;</span>response.stdout).to_string();
+
+      <span class="kw">if </span>response.starts_with(<span class="string">&quot;Error: &quot;</span>) {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ScriptError(response));
+      }
+
+      <span class="kw">if </span>response.is_empty() {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">&quot;Script returned an empty response&quot;</span>.to_string()));
+      }
+
+      <span class="kw">return </span><span class="prelude-val">Ok</span>(response.to_string());
     }
-
-    <span class="comment">// run the python script and wait for the output
-    </span><span class="kw">let </span>response = Command::new(<span class="string">"python3"</span>).arg(script_path).args(args).output();
-
-    <span class="comment">// match the response from the script
-    </span><span class="kw">match </span>response {
-        <span class="prelude-val">Ok</span>(response) =&gt; {
-            <span class="comment">// convert the response to a string
-            </span><span class="kw">let </span>response = String::from_utf8_lossy(<span class="kw-2">&amp;</span>response.stdout).to_string();
-
-            <span class="kw">if </span>response.starts_with(<span class="string">"Error: "</span>) {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ScriptError(response));
-            }
-
-            <span class="kw">if </span>response.is_empty() {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(
-                    PythonError::ResponseError(<span class="string">"Script returned an empty response"</span>.to_string())
-                );
-            }
-
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(response.to_string());
-        }
-        <span class="prelude-val">Err</span>(_e) =&gt; {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::IOError(<span class="string">"Error while reading the python script"</span>.to_string()));
-        }
+    <span class="prelude-val">Err</span>(_e) =&gt; {
+      <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::IOError(<span class="string">&quot;Error while reading the python script&quot;</span>.to_string()));
     }
+  }
 }
 
 <span class="doccomment">/// Handles the vector search request.
+///
+/// This function runs the vector search script with the given prompt
+/// to get the prompt ID from the database.
 ///
 /// # Arguments
 ///
@@ -244,49 +219,64 @@
 ///
 /// # Returns
 ///
-/// The [`VectorSearchResult`] containing the ID of the existing or new vector or
-/// an [`PythonError`] if the response is unparseable or can't be matched.
+/// The [`VectorSearchResult`] containing the ID of the existing or new prompt
+/// entry in the Database or an [`PythonError`]
+/// if the response is unparseable or can&#39;t be matched.
 ///
 /// # Errors
 ///
 /// Returns an [`PythonError::ResponseError`] if the response is unparseable or
-/// if the response couldn't be matched. Also returns the [`PythonError`] from the
+/// if the response couldn&#39;t be matched. Also returns the [`PythonError`] from the
 /// [`run_script`] function.
-</span><span class="kw">pub fn </span>handle_vector_search(config: <span class="kw-2">&amp;</span>Config, prompt: <span class="kw-2">&amp;</span>String) -&gt; <span class="prelude-ty">Result</span>&lt;VectorSearchResult&gt; {
-    <span class="kw">let </span>mode = config.mode.clone();
-    <span class="kw">let </span>script_path = config.vector_query_script.clone();
-    <span class="kw">let </span>db_url = config.db_connection.to_string();
-    <span class="kw">let </span>prompt = prompt.clone();
-    <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[db_url, prompt])<span class="question-mark">?</span>;
-    <span class="kw">let </span>result: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = script_result.split(<span class="kw-2">&amp;</span>[<span class="string">' '</span>, <span class="string">'\r'</span>, <span class="string">'\n'</span>]).collect();
-    <span class="comment">// Should be either "Existing &lt;id&gt;" or "New &lt;id&gt;"
-    </span><span class="kw">if </span>result[<span class="number">0</span>] == <span class="string">"Existing" </span>{
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::Existing(id));
-        } <span class="kw">else </span>{
-            <span class="kw">if </span>mode == Mode::Dev {
-                <span class="macro">error!</span>(<span class="string">"Failed to parse the ID from the result: {}"</span>, result[<span class="number">1</span>]);
-            }
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Received unparseable response."</span>.to_string()));
-        }
-    } <span class="kw">else if </span>result[<span class="number">0</span>] == <span class="string">"New" </span>{
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::New(id));
-        } <span class="kw">else </span>{
-            <span class="kw">if </span>mode == Mode::Dev {
-                <span class="macro">error!</span>(<span class="string">"Failed to parse the ID from the result: {}"</span>, result[<span class="number">1</span>]);
-            }
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Received unparseable response."</span>.to_string()));
-        }
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - An parse error if the ID can&#39;t be parsed from the response as `error`
+///  in the format `Failed to parse the ID from the result: &lt;result&gt;`.
+/// - An error if the response can&#39;t be matched as `error` in the format
+/// `Couldn&#39;t match response: &lt;script_result&gt;`.
+</span><span class="kw">pub async fn </span>handle_vector_search(config: <span class="kw-2">&amp;</span>Config, prompt: <span class="kw-2">&amp;</span>String) -&gt; <span class="prelude-ty">Result</span>&lt;VectorSearchResult&gt; {
+  <span class="kw">let </span>script_path = config.vector_query_script.clone();
+  <span class="kw">let </span>db_url = config.db_connection.to_string();
+  <span class="kw">let </span>prompt = prompt.clone();
+
+  <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = get_connection(<span class="kw-2">&amp;</span>config.db_connection).<span class="kw">await </span>{
+    <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::IOError(e.message()));
+  }
+
+  <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[db_url, prompt])<span class="question-mark">?</span>;
+  <span class="kw">let </span>result: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = script_result.split(<span class="kw-2">&amp;</span>[<span class="string">&#39; &#39;</span>, <span class="string">&#39;\r&#39;</span>, <span class="string">&#39;\n&#39;</span>]).collect();
+
+  <span class="comment">// Should be either &quot;Existing &lt;id&gt;&quot; or &quot;New &lt;id&gt;&quot;
+  </span><span class="kw">if </span>result[<span class="number">0</span>] == <span class="string">&quot;Existing&quot; </span>{
+    <span class="comment">// --- Parse the ID from the result ---
+    </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
+      <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::Existing(id));
     } <span class="kw">else </span>{
-        <span class="kw">if </span>mode == Mode::Dev {
-            <span class="macro">error!</span>(<span class="string">"Couldn't match response: {}"</span>, script_result);
-        }
-        <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">"Couldn't match response."</span>.to_string()));
+      <span class="macro">error!</span>(<span class="string">&quot;Failed to parse the ID from the result: {}&quot;</span>, result[<span class="number">1</span>]);
+      <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">&quot;Received unparseable response.&quot;</span>.to_string()));
     }
+    <span class="comment">// --- ---
+  </span>} <span class="kw">else if </span>result[<span class="number">0</span>] == <span class="string">&quot;New&quot; </span>{
+    <span class="comment">// --- Parse the ID from the result ---
+    </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = result[<span class="number">1</span>].parse::&lt;i32&gt;() {
+      <span class="kw">return </span><span class="prelude-val">Ok</span>(VectorSearchResult::New(id));
+    } <span class="kw">else </span>{
+      <span class="macro">error!</span>(<span class="string">&quot;Failed to parse the ID from the result: {}&quot;</span>, result[<span class="number">1</span>]);
+      <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">&quot;Received unparseable response.&quot;</span>.to_string()));
+    }
+    <span class="comment">// --- ---
+  </span>} <span class="kw">else </span>{
+    <span class="macro">error!</span>(<span class="string">&quot;Couldn&#39;t match response: {}&quot;</span>, script_result);
+    <span class="kw">return </span><span class="prelude-val">Err</span>(PythonError::ResponseError(<span class="string">&quot;Couldn&#39;t match response.&quot;</span>.to_string()));
+  }
 }
 
 <span class="doccomment">/// Handles the prompt request.
+///
+/// This function runs the RAG script with the
+/// given prompt to get the response from the AI.
 ///
 /// # Arguments
 ///
@@ -300,14 +290,18 @@
 /// # Errors
 ///
 /// Returns an [`PythonError`] passed from the [`run_script`] function.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - The script result as `info` in the format `Script result: &lt;script_result&gt;`.
 </span><span class="kw">pub fn </span>handle_prompt_request(config: <span class="kw-2">&amp;</span>Config, prompt: <span class="kw-2">&amp;</span>String) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-    <span class="kw">let </span>mode = config.mode.clone();
-    <span class="kw">let </span>script_path = config.rag_script.clone();
-    <span class="kw">let </span>llm_server = config.llm_connection.clone();
-    <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[llm_server, prompt.clone()])<span class="question-mark">?</span>;
-    <span class="kw">if </span>mode == Mode::Dev {
-        <span class="macro">info!</span>(<span class="string">"Script result: {}"</span>, script_result);
-    }
-    <span class="prelude-val">Ok</span>(script_result)
+  <span class="kw">let </span>script_path = config.rag_script.clone();
+  <span class="kw">let </span>llm_server = config.llm_connection.clone();
+  <span class="kw">let </span>script_result = run_script(script_path, <span class="macro">vec!</span>[llm_server, prompt.clone()])<span class="question-mark">?</span>;
+
+  <span class="macro">info!</span>(<span class="string">&quot;Script result: {}&quot;</span>, script_result);
+
+  <span class="prelude-val">Ok</span>(script_result)
 }
 </code></pre></div></section></main></body></html>

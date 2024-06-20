@@ -1,11 +1,12 @@
-use rust_server::{ config::{ Config, Mode }, handlers::router::get_router };
+use rust_server::{ config::Config, handlers::router::get_router };
 use tokio::signal;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
 /// Main function to start the server
 ///
-/// This function initializes the logger, loads the `config`, and starts the server.
+/// This function initializes the logger,
+/// loads the `config`, and starts the server.
 /// The server is servered using **Axum** and has *graceful shutdown*.
 ///
 /// The routes are defined in the `router` module.
@@ -19,12 +20,9 @@ async fn main() {
     .with_env_filter(EnvFilter::from_default_env())
     .init();
 
-  // Set mode: "development" or "production"
-  let mode = Mode::Dev;
-
   // Get the configuration
   info!("Loading configuration...");
-  let config = Config::load_from_env(mode);
+  let config = Config::load_from_env();
 
   // Start the server
   info!("Starting server...");
@@ -43,9 +41,11 @@ async fn main() {
 
 /// Graceful shutdown signal
 ///
-/// This function listens for the `Ctrl+C` signal and gracefully shuts down the server.
+/// This function listens for the `Ctrl+C` signal and
+/// gracefully shuts down the server.
 ///
-/// If the server is running on a Unix system, it also listens for the `SIGTERM` signal.
+/// If the server is running on a Unix system,
+/// it also listens for the `SIGTERM` signal.
 async fn shutdown_signal() {
   let ctrl_c = async {
     signal::ctrl_c().await.expect("failed to install Ctrl+C handler");

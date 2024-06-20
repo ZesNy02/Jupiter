@@ -16,7 +16,8 @@ use tracing::{ error, info };
 
 /// Bridges the [`testable_handle_prompt_post`] to the Axum Router.
 ///
-/// This is done to allow the functionality to be tested with Rust's built-in testing framework.
+/// This is done to allow the functionality to be tested with
+/// Rust's built-in testing framework.
 ///
 /// # Route
 ///
@@ -30,6 +31,10 @@ pub async fn handle_prompt_post(
 
 /// Handles the AI prompt request.
 ///
+/// This function tries to find the prompt in the database and generates
+/// a new answer if the prompt is new, otherwise it returns
+/// the answer from the database via the [`find_answer`] function
+///
 /// # Arguments
 ///
 /// * `config` - The server configuration.
@@ -38,6 +43,24 @@ pub async fn handle_prompt_post(
 /// # Returns
 ///
 /// A tuple containing the [`StatusCode`] and the [`AIPromptResponse`] as JSON.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - An info message before trying to find the prompt in the database as
+/// `info` in the format `Trying to find prompt in database.`.
+/// - An info message when the prompt is found in the database as `info` in the
+/// format `Prompt found in database with id: <prompt_id>`.
+/// - An info message before trying to find the answer in the database as
+/// `info` in the format `Trying to find answer in database.`.
+/// - An info message when no answer is found in the database as `info` in the
+/// format `No answer found in database. Generating a new one.`.
+/// - An info message when the answer is found in the database as `info` in the
+/// format `Answer found in database with id: <answer_id>`.
+/// - An info message when the prompt is not found in the database as `info` in the
+/// format `Prompt not found in database, made a new entry.`.
+/// - An error message when the response is an error as `error` in the
+/// format `Error: <error>`.
 pub async fn testable_handle_prompt_post(
   config: Config,
   payload: AIPromptRequest
@@ -45,13 +68,19 @@ pub async fn testable_handle_prompt_post(
   let prompt = payload.prompt.clone();
 
   info!("Trying to find prompt in database.");
+
   let search_result = handle_vector_search(&config, &prompt).await;
+
   match search_result {
     Ok(VectorSearchResult::Existing(id)) => {
       info!("Prompt found in database with id: {}", id);
+
       let db_connection = config.db_connection.clone();
+
       info!("Trying to find answer in database.");
+
       let query_result = find_answer(&db_connection, id).await;
+
       if let Err(err) = query_result {
         if err.message() == "Query Error: No answer found".to_string() {
           info!("No answer found in database. Generating a new one.");
@@ -60,8 +89,11 @@ pub async fn testable_handle_prompt_post(
         error!("Error: {:?}", err.log_message());
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(AIPromptResponse::Error(err.message())));
       }
+
       let (id, answer) = query_result.unwrap();
+
       info!("Answer found in database with id: {}", id);
+
       return (
         StatusCode::OK,
         Json(AIPromptResponse::Success(AIPromptResponseData { id, response: answer })),
@@ -91,16 +123,28 @@ pub async fn testable_handle_prompt_post(
 /// # Returns
 ///
 /// A tuple containing the [`StatusCode`] and the [`AIPromptResponse`] as JSON.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - An info message before trying to generate the answer as `info` in the
+/// format `Trying to generate answer for prompt with id <prompt_id>.`.
+/// - An info message when the answer is generated successfully as `info` in the
+/// format `Answer for prompt with id <prompt_id> generated successfully.`.
+/// - An error message when the response is an error as `error` in the
+/// format `Error: <error>`.
 async fn handle_generate_answer(
   config: Config,
   prompt: String,
   id: i32
 ) -> (StatusCode, Json<AIPromptResponse>) {
-  info!("Trying to generate answer for prompt.");
+  info!("Trying to generate answer for prompt with id {}.", id);
+
   let response = handle_prompt_request(&config, &prompt);
+
   match response {
     Ok(answer) => {
-      info!("Answer generated successfully.");
+      info!("Answer for prompt with id {} generated successfully.", id);
       return handle_db_insert(config, id, answer).await;
     }
     Err(err) => {
@@ -122,6 +166,17 @@ async fn handle_generate_answer(
 /// # Returns
 ///
 /// A tuple containing the [`StatusCode`] and the [`AIPromptResponse`] as JSON.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - An info message before trying to insert the answer as `info` in the
+/// format `Trying to insert answer for prompt with id: <prompt_id>`.
+/// - An info message when the answer is inserted successfully as `info` in the
+/// format `Answer for prompt with id <prompt_id> inserted successfully
+/// with id <answer_id>.`.
+/// - An error message when the answer insertion fails as `error` in the
+/// format `Error: <error>`.
 async fn handle_db_insert(
   config: Config,
   prompt_id: i32,
@@ -134,7 +189,7 @@ async fn handle_db_insert(
 
   match result {
     Ok(id) => {
-      info!("Answer inserted successfully.");
+      info!("Answer for prompt with id {} inserted successfully with id {}.", prompt_id, id);
       return (
         StatusCode::OK,
         Json(AIPromptResponse::Success(AIPromptResponseData { id, response })),

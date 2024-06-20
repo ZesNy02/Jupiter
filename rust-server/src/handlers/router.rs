@@ -14,8 +14,9 @@ use super::ai::{
 
 /// Constructs and returns the axum router for the server.
 ///
-/// The router has **CORS** enabled for \* and **Timeout** set to 30 seconds after which the request
-/// will be timed out if a shutdown of the server is initiated.
+/// The router has **CORS** enabled for \* and **Timeout**
+/// set to 30 seconds after which the request will be timed
+/// out if a shutdown of the server is initiated.
 ///
 /// # Arguments
 ///
@@ -27,10 +28,14 @@ use super::ai::{
 ///
 /// # Routing Paths
 ///
-/// - [`ai/prompt`][handle_prompt_post] - **POST** - Handles the AI prompt request.
-/// - [`ai/rating`][handle_rating_post] - **POST** - Handles the AI rating request.
-/// - [`ai/regenerate`][handle_regenerate_post] - **POST** - Handles the AI regenerate request.
-/// - [`ai/eventstorming`][handle_eventstorming_post] - **POST** - Handles the AI Eventstorming request.
+/// - [`ai/prompt`][handle_prompt_post] - **POST** -
+/// Handles the AI prompt request.
+/// - [`ai/rating`][handle_rating_post] - **POST** -
+/// Handles the AI rating request.
+/// - [`ai/regenerate`][handle_regenerate_post] - **POST** -
+/// Handles the AI regenerate request.
+/// - [`ai/eventstorming`][handle_eventstorming_post] - **POST** -
+/// Handles the AI Eventstorming request.
 pub fn get_router(config: Config) -> Router {
   let router = Router::new()
     .route("/ai/prompt", post(handle_prompt_post))

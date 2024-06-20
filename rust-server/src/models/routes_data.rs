@@ -1,28 +1,37 @@
 use serde::{ Deserialize, Serialize };
 
 // --------------------------- Start of Request Structs ---------------------------
-/// Represents the request payload for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+/// Represents the request payload for the
+/// [`ai/prompt`][crate::handlers::ai::prompt] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIPromptRequest {
+  /// The prompt to send to the AI model.
   pub prompt: String,
 }
 
-/// Represents the request payload for the [`ai/rating`][crate::handlers::ai::rating] route.
+/// Represents the request payload for the
+/// [`ai/rating`][crate::handlers::ai::rating] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIRatingRequest {
+  /// The id of the answer from the Database.
   pub id: i32,
+  /// The rating to give to the answer.
   pub rating: i32,
 }
 
-/// Represents the request payload for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+/// Represents the request payload for the
+/// [`ai/regenerate`][crate::handlers::ai::regenerate] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIRegenerateRequest {
+  /// The prompt to send to the AI model.
   pub prompt: String,
 }
 
-/// Represents the request payload for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+/// Represents the request payload for the
+/// [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIEventStormingRequest {
+  /// The prompt to send to the AI model.
   pub prompt: String,
 }
 
@@ -30,29 +39,39 @@ pub struct AIEventStormingRequest {
 
 // --------------------------- Start of Response Structs ---------------------------
 
-/// Represents the response for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+/// Represents the response for the
+/// [`ai/prompt`][crate::handlers::ai::prompt] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIPromptResponseData {
+  /// The ID of the answer in the Database.
   pub id: i32,
+  /// The response from the AI model.
   pub response: String,
 }
 
-/// Represents the response for the [`ai/rating`][crate::handlers::ai::rating] route.
+/// Represents the response for the
+/// [`ai/rating`][crate::handlers::ai::rating] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIRatingResponseData {
+  /// A message indicating the success of the rating operation.
   pub message: String,
 }
 
-/// Represents the response for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+/// Represents the response for the
+/// [`ai/regenerate`][crate::handlers::ai::regenerate] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIRegenerateResponseData {
+  /// The ID of the answer in the Database.
   pub id: i32,
+  /// The response from the AI model.
   pub response: String,
 }
 
-/// Represents the response for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+/// Represents the response for the
+/// [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
 #[derive(Deserialize, Serialize)]
 pub struct AIEventStormingResponseData {
+  /// The response from the AI model.
   pub message: String,
 }
 
@@ -60,7 +79,8 @@ pub struct AIEventStormingResponseData {
 
 // --------------------------- Start of Reponse Enums ---------------------------
 
-/// Represents the response or error for the [`ai/prompt`][crate::handlers::ai::prompt] route.
+/// Represents the response or error for the
+/// [`ai/prompt`][crate::handlers::ai::prompt] route.
 #[derive(Deserialize, Serialize)]
 pub enum AIPromptResponse {
   /// Represents a successful response.
@@ -69,7 +89,8 @@ pub enum AIPromptResponse {
   Error(String),
 }
 
-/// Represents the response or error for the [`ai/rating`][crate::handlers::ai::rating] route.
+/// Represents the response or error for the
+/// [`ai/rating`][crate::handlers::ai::rating] route.
 #[derive(Deserialize, Serialize)]
 pub enum AIRatingResponse {
   /// Represents a successful response.
@@ -78,7 +99,8 @@ pub enum AIRatingResponse {
   Error(String),
 }
 
-/// Represents the response or error for the [`ai/regenerate`][crate::handlers::ai::regenerate] route.
+/// Represents the response or error for the
+/// [`ai/regenerate`][crate::handlers::ai::regenerate] route.
 #[derive(Deserialize, Serialize)]
 pub enum AIRegenerateResponse {
   /// Represents a successful response.
@@ -87,7 +109,8 @@ pub enum AIRegenerateResponse {
   Error(String),
 }
 
-/// Represents the response or error for the [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
+/// Represents the response or error for the
+/// [`ai/eventstorming`][crate::handlers::ai::eventstorming] route.
 #[derive(Deserialize, Serialize)]
 pub enum AIEventStormingResponse {
   /// Represents a successful response.

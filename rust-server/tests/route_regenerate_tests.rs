@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
   use rust_server::{
-    config::{ Config, Mode },
+    config::Config,
     handlers::ai::regenerate::testable_handle_regenerate_post,
     models::routes_data::AIRegenerateRequest,
   };
@@ -9,13 +9,17 @@ mod tests {
   use sequential_test::sequential;
   use tokio::runtime::Runtime;
 
+  // Needs the environment variables to be set for the Config.
+
+  // Test if the regenerate handler is working correctly.
   #[test]
   #[sequential]
   fn test_handle_regenerate_post_success() {
-    let config = Config::load_from_env(Mode::Dev);
+    let config = Config::load_from_env();
     let payload = AIRegenerateRequest {
       prompt: "What is the prooph-board?".to_string(),
     };
+
     let rt = Runtime::new().unwrap();
 
     let (status, _) = rt.block_on(testable_handle_regenerate_post(config, payload));

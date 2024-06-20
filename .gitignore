@@ -11,6 +11,4 @@ chroma/
 value.txt
 
 # Other git ignores
-.idea/*
-!.idea/.gitignore
 *.db

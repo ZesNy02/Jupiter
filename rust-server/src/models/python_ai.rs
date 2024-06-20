@@ -1,4 +1,5 @@
-/// Represents the possible errors that can occur in the AI module.
+/// Represents the possible errors
+/// that can occur in the execution of Python Scripts.
 #[derive(PartialEq)]
 #[derive(Debug)]
 pub enum PythonError {
@@ -24,5 +25,6 @@ impl PythonError {
   }
 }
 
-/// A specialized `Result` type for the AI module.
+/// A type alias for a result that can
+/// return a value of type `T` or a [`PythonError`].
 pub type Result<T> = std::result::Result<T, PythonError>;

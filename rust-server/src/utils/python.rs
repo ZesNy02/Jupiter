@@ -1,5 +1,5 @@
 use crate::{
-  config::{ Config, Mode },
+  config::Config,
   models::{ python_ai::{ PythonError, Result }, routes_data::VectorSearchResult },
 };
 use std::{ path::Path, process::Command };
@@ -9,7 +9,7 @@ use tracing::{ error, info };
 use super::postgres::get_connection;
 /// This function runs the Python AI model with the given prompt.
 ///
-/// # Params
+/// # Arguments
 ///
 /// * `script_path` - The path to the python script to execute.
 /// * `args` - The arguments to pass to the script.
@@ -24,30 +24,6 @@ use super::postgres::get_connection;
 /// * [PythonError::ScriptError] if the script returns an error.
 /// * [PythonError::ResponseError] if the script returns an empty response.
 /// * [PythonError::IOError] if there is an IO error.
-///
-/// # Example
-///
-/// ```rust
-/// use rust_server::models::python_ai::PythonError;
-/// use rust_server::utils::python::run_ai;
-///
-/// let prompt = "Hello".to_string();
-///
-/// let response = run_script("test.py".to_string(), prompt);
-///
-/// match response {
-///   Ok(response) => {
-///     println!("Response: {}", response);
-///   }
-///   Err(e) => {
-///     match e {
-///       PythonError::PathError => println!("Path error."),
-///       PythonError::ScriptError => println!("Script error."),
-///       PythonError::ResponseError => println!("Response error."),
-///       PythonError::IOError => println!("IO error."),
-///     }
-///   }
-/// }
 pub fn run_script(script_path: String, args: Vec<String>) -> Result<String> {
   if Path::new(&script_path).exists() == false {
     return Err(PythonError::PathError(format!("Path does not exist: {}", script_path)));
@@ -80,6 +56,9 @@ pub fn run_script(script_path: String, args: Vec<String>) -> Result<String> {
 
 /// Handles the vector search request.
 ///
+/// This function runs the vector search script with the given prompt
+/// to get the prompt ID from the database.
+///
 /// # Arguments
 ///
 /// * `config` - The server [`Config`].
@@ -87,52 +66,64 @@ pub fn run_script(script_path: String, args: Vec<String>) -> Result<String> {
 ///
 /// # Returns
 ///
-/// The [`VectorSearchResult`] containing the ID of the existing or new vector or
-/// an [`PythonError`] if the response is unparseable or can't be matched.
+/// The [`VectorSearchResult`] containing the ID of the existing or new prompt
+/// entry in the Database or an [`PythonError`]
+/// if the response is unparseable or can't be matched.
 ///
 /// # Errors
 ///
 /// Returns an [`PythonError::ResponseError`] if the response is unparseable or
 /// if the response couldn't be matched. Also returns the [`PythonError`] from the
 /// [`run_script`] function.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - An parse error if the ID can't be parsed from the response as `error`
+///  in the format `Failed to parse the ID from the result: <result>`.
+/// - An error if the response can't be matched as `error` in the format
+/// `Couldn't match response: <script_result>`.
 pub async fn handle_vector_search(config: &Config, prompt: &String) -> Result<VectorSearchResult> {
-  let mode = config.mode.clone();
   let script_path = config.vector_query_script.clone();
   let db_url = config.db_connection.to_string();
   let prompt = prompt.clone();
+
   if let Err(e) = get_connection(&config.db_connection).await {
     return Err(PythonError::IOError(e.message()));
   }
+
   let script_result = run_script(script_path, vec![db_url, prompt])?;
   let result: Vec<&str> = script_result.split(&[' ', '\r', '\n']).collect();
+
   // Should be either "Existing <id>" or "New <id>"
   if result[0] == "Existing" {
+    // --- Parse the ID from the result ---
     if let Ok(id) = result[1].parse::<i32>() {
       return Ok(VectorSearchResult::Existing(id));
     } else {
-      if mode == Mode::Dev {
-        error!("Failed to parse the ID from the result: {}", result[1]);
-      }
+      error!("Failed to parse the ID from the result: {}", result[1]);
       return Err(PythonError::ResponseError("Received unparseable response.".to_string()));
     }
+    // --- ---
   } else if result[0] == "New" {
+    // --- Parse the ID from the result ---
     if let Ok(id) = result[1].parse::<i32>() {
       return Ok(VectorSearchResult::New(id));
     } else {
-      if mode == Mode::Dev {
-        error!("Failed to parse the ID from the result: {}", result[1]);
-      }
+      error!("Failed to parse the ID from the result: {}", result[1]);
       return Err(PythonError::ResponseError("Received unparseable response.".to_string()));
     }
+    // --- ---
   } else {
-    if mode == Mode::Dev {
-      error!("Couldn't match response: {}", script_result);
-    }
+    error!("Couldn't match response: {}", script_result);
     return Err(PythonError::ResponseError("Couldn't match response.".to_string()));
   }
 }
 
 /// Handles the prompt request.
+///
+/// This function runs the RAG script with the
+/// given prompt to get the response from the AI.
 ///
 /// # Arguments
 ///
@@ -146,13 +137,17 @@ pub async fn handle_vector_search(config: &Config, prompt: &String) -> Result<Ve
 /// # Errors
 ///
 /// Returns an [`PythonError`] passed from the [`run_script`] function.
+///
+/// # Debug
+///
+/// This function logs the following:
+/// - The script result as `info` in the format `Script result: <script_result>`.
 pub fn handle_prompt_request(config: &Config, prompt: &String) -> Result<String> {
-  let mode = config.mode.clone();
   let script_path = config.rag_script.clone();
   let llm_server = config.llm_connection.clone();
   let script_result = run_script(script_path, vec![llm_server, prompt.clone()])?;
-  if mode == Mode::Dev {
-    info!("Script result: {}", script_result);
-  }
+
+  info!("Script result: {}", script_result);
+
   Ok(script_result)
 }

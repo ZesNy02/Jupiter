@@ -1,10 +1,13 @@
 //! The Rust Axum AI Server for the Prooph-Board Chatbot **Chaty**.
 //!
-//! This server is used to run the AI model for the chatbot and handle requests from the chatbot frontend.
+//! This server is used to run the AI model for the chatbot
+//! and handle requests from the chatbot frontend.
 //!
-//! The server is built using the `Axum` web framework and uses the `Tokio` runtime for asynchronous tasks.
+//! The server is built using the `Axum` framework and uses the
+//! `Tokio` runtime for asynchronous tasks.
 //!
-//! The server uses the `SQLite` database for storing prompts and responses and the `Python AI` model for generating responses.
+//! The server uses the `PostgreSQL` database for storing prompts and
+//! responses and uses `Python Scripts` to handle the AI model.
 //!
 //! The server is tested using Rust's built-in testing framework.
 //!
@@ -13,14 +16,19 @@
 //! The routes are defined in the [`router`][crate::handlers::router] module.
 //!
 //! The server has the following routes:
-//! - [`ai/prompt`][crate::handlers::ai::prompt::handle_prompt_post] - **POST** - Handles the AI prompt request.
-//! - [`ai/rating`][crate::handlers::ai::rating::handle_rating_post] - **POST** - Handles the AI rating request.
-//! - [`ai/regenerate`][crate::handlers::ai::regenerate::handle_regenerate_post] - **POST** - Handles the AI regenerate request.
-//! - [`ai/eventstorming`][crate::handlers::ai::eventstorming::handle_eventstorming_post] - **POST** - Handles the AI Eventstorming request.
+//! - [`ai/prompt`][crate::handlers::ai::prompt::handle_prompt_post] -
+//! **POST** - Handles the AI prompt request.
+//! - [`ai/rating`][crate::handlers::ai::rating::handle_rating_post] -
+//! **POST** - Handles the AI rating request.
+//! - [`ai/regenerate`][crate::handlers::ai::regenerate::handle_regenerate_post] -
+//! **POST** - Handles the AI regenerate request.
+//! - [`ai/eventstorming`][crate::handlers::ai::eventstorming::handle_eventstorming_post] -
+//! **POST** - Handles the AI Eventstorming request.
 //!
 //! # Configuration
 //!
-//! The server configuration is defined in the [`config`][crate::config::Config] Struct.The following environment variables are used to load the configuration:
+//! The server configuration is defined in the [`config`][crate::config::Config]
+//! Struct.
 //!
 //! # Environment Variables
 //!
@@ -37,16 +45,21 @@
 //!
 //! # Database
 //!
-//! The Server uses a PostgreSQL database with the vector extension. There is a docker container available for the database called
-//! `pgvector` which can be found at: <https://hub.docker.com/r/pgvector/pgvector>. It needs the environment variable `POSTGRES_PASSWORD` to be set.
+//! The Server uses a PostgreSQL database with the vector extension.
+//! There is a docker container available for the database called
+//! `pgvector` which can be found at: <https://hub.docker.com/r/pgvector/pgvector>.
+//! That container needs the environment variable `POSTGRES_PASSWORD` to be set.
 
 /// This module contains the configuration settings for the server.
 pub mod config;
 
-/// This module contains utility functions used by the server.
+/// This module contains utility functions used by the server like
+/// basic database functions and python script execution.
 pub mod utils;
 
-/// This module contains the request handlers for the server.
+/// This module contains the request handlers, handling
+/// the requests from the chatbot frontend coming via HTTP
+/// to the Server.
 pub mod handlers;
 
 /// This module contains the data models used by the server.
