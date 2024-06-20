@@ -16,13 +16,13 @@
 // --------------------------------------------------------------------
 
 // Server URL where the server runs
-const serverURL = "http://localhost:3000/ai/prompt";
+const SERVER_URL = "http://localhost:3000/ai/prompt";
 //Sever URL where the server receives ratings
-const ratingURL = "http://localhost:3000/ai/rating";
+const RATING_URL = "http://localhost:3000/ai/rating";
 //Server URL where the server receives the regenerate prompt
-const regenerateURL="http://localhost:3000/ai/regenerate";
+const REGENERATE_URL = "http://localhost:3000/ai/regenerate";
 //Server URL where the server receives the eventStorming prompt
-const eventStormingURL="http://localhost:3000/ai/eventstorming";
+const EVENTSTORMING_URL = "http://localhost:3000/ai/eventstorming";
 //cached prompt map mapped from UUID(string) -> Message content(string)
 //this is important so that you can reload or give thumbs up or down so that you can find the specific message quickly
 const prompts = new Map();
@@ -31,10 +31,14 @@ const prompts = new Map();
 // responseUUID(string) -> promptUUID(string)
 const responseToPrompt = new Map();
 
+//a map that maps the responseUUID to the backendID so that it can be given back to the backend aswell as asure having unique identifier
+const responseUUIDtoID=new Map();
+
 //boolean to check if the eventStorming mode is activated
-var eventStormingModeActive=false;
+var eventStormingModeActive = false;
+
 //boolean to check if the user can send a message to the server
-var inputLock=false;
+var inputLock = false;
 
 const styleSheet = () => {
     const style = document.createElement('style');
@@ -282,183 +286,6 @@ const makeChatButton = () => {
     return chatButton;
 };
 
-// A User Message is a message on the right of the Chat that the User Typed
-const makeUserMessage = (text) => {
-    const userMessage = document.createElement("div");
-    userMessage.className = "userMessage";
-    userMessage.id = generateUUID();
-    userMessage.style.backgroundColor = "#A4A4AC";
-    userMessage.innerHTML = text;
-    userMessage.style.textOverflow = "wrap";
-    userMessage.style.alignSelf = "flex-end";
-    userMessage.style.border = "1px solid black";
-    userMessage.style.borderRadius = "10px";
-    userMessage.style.borderColor = "transparent";
-    userMessage.style.padding = "10px";
-    userMessage.style.wordWrap = "break-word"; // Zeilenumbruch bei langen Wörtern
-    userMessage.style.whiteSpace = "pre-wrap"; // Zeilenumbrüche bei normalen Leerzeichen
-    return userMessage;
-};
-
-// A Response Message is a message on the left of the Chat that the AI Typed
-const makeResponseMessage = (responseUUID, text, success) => {
-    const promptUUID = responseToPrompt.get(responseUUID);
-
-    const makeWrapperResponseMessageButtons = () => {
-        const createReloadButton = () => {
-            const reloadButton = document.createElement("button");
-            reloadButton.className = "reloadButton";
-            reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px" width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
-            reloadButton.style.backgroundColor = "transparent";
-            reloadButton.style.border = "none";
-            reloadButton.style.cursor = "pointer";
-            reloadButton.addEventListener("click", () => {
-                reloadPrompt(promptUUID);
-            });
-            return reloadButton;
-        }
-
-        const createThumbsUpButton = () => {
-            const thumbsUpButton = document.createElement("button");
-            thumbsUpButton.className = "thumbsUpButton";
-            thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
-            thumbsUpButton.style.backgroundColor = "transparent";
-            thumbsUpButton.style.border = "none";
-            thumbsUpButton.style.cursor = "pointer";
-            thumbsUpButton.addEventListener("click", () => {
-                if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
-                    switchSelectedButton()
-                    thumbsUp(responseUUID)
-                } else {
-                    if (thumbsUpButton.classList.contains("selected")) {
-                        thumbsNeutral(responseUUID);
-                    } else {
-                        thumbsUp(responseUUID);
-                    }
-                    thumbsUpButton.classList.toggle("selected");
-                }
-                thumbsUp(responseUUID);
-            });
-            return thumbsUpButton;
-        }
-
-        const createThumbsDownButton = () => {
-            const thumbsDownButton = document.createElement("button");
-            thumbsDownButton.className = "thumbsDownButton";
-            thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
-            thumbsDownButton.style.backgroundColor = "transparent";
-            thumbsDownButton.style.border = "none";
-            thumbsDownButton.style.cursor = "pointer";
-            thumbsDownButton.addEventListener("click", () => {
-                if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
-                    switchSelectedButton()
-                    thumbsDown(responseUUID);
-                } else {
-                    if (thumbsDownButton.classList.contains("selected")) {
-                        thumbsNeutral(responseUUID);
-                    } else {
-                        thumbsDown(responseUUID);
-                    }
-                    thumbsDownButton.classList.toggle("selected");
-                }
-            });
-            return thumbsDownButton;
-        }
-
-        const thumbsUpButton = createThumbsUpButton();
-        const thumbsDownButton = createThumbsDownButton();
-
-        function checkIfOtherButtonHasBeenPressed(button) {
-            if (thumbsUpButton.className === button.className) {
-                return thumbsDownButton.classList.contains("selected");
-            } else {
-                return thumbsUpButton.classList.contains("selected");
-            }
-        }
-
-        function switchSelectedButton() {
-            thumbsUpButton.classList.toggle("selected");
-            thumbsDownButton.classList.toggle("selected");
-        }
-
-        const wrapperResponseMessageButtons = document.createElement("div");
-        wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
-        wrapperResponseMessageButtons.style.height = "40px";
-        wrapperResponseMessageButtons.style.paddingTop = "10px";
-
-        wrapperResponseMessageButtons.appendChild(createReloadButton());
-
-        if (success) {
-            wrapperResponseMessageButtons.appendChild(thumbsUpButton);
-            wrapperResponseMessageButtons.appendChild(thumbsDownButton);
-        }
-
-        return wrapperResponseMessageButtons;
-    }
-
-
-    const responseMessage = document.createElement("div");
-    responseMessage.className = "responseMessage";
-    responseMessage.id = responseUUID;
-    responseMessage.innerHTML = text;
-    responseMessage.style.position = "relative";
-    responseMessage.style.alignSelf = "flex-start";
-    responseMessage.style.border = "1px solid black";
-    responseMessage.style.borderRadius = "10px";
-    responseMessage.style.padding = "10px";
-    responseMessage.style.borderColor = "transparent";
-    if (success) {
-        responseMessage.style.backgroundColor = "#A4A4AC";
-    } else {
-        responseMessage.style.backgroundColor = "#e37e8a";
-    }
-    const wrapperResponseMessage = document.createElement("div");
-    wrapperResponseMessage.appendChild(responseMessage);
-    wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
-
-    return wrapperResponseMessage;
-};
-
-//reloads the prompt and lets the ai generate a new response
-function reloadPrompt(promptUUID) {
-    //search the cached prompts to find the corresponding message
-    const prompt = prompts.get(promptUUID);
-    //sends the prompt to the server again to reload it
-    sendRegenerateMessage(promptUUID, prompt, regenerateURL);
-
-}
-
-//Thumbs up gives the server a positive respond to the answer of the coresponding prompt and adds them to hasBeenRated
-function thumbsUp(responseUUID) {
-    sendRating(responseUUID, 1);
-}
-
-//removes the rating for the prompt
-function thumbsNeutral(responseUUID) {
-    sendRating(responseUUID, 0);
-}
-
-//Thumbs up gives the server a negative respond to the answer of the coresponding prompt
-function thumbsDown(responseUUID) {
-    sendRating(responseUUID, -1);
-}
-
-// The Chat Window is the window that appears when the Chat button is clicked
-const makeLoadMessage = () => {
-    const loadMessage = document.createElement("div");
-    loadMessage.id = generateUUID();
-    loadMessage.className = "loadMessage";
-    loadMessage.innerHTML = '<div style=\"display: flex; justify-content: center; align-items: center;\"><svg id="ladebild" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480.52 471.13" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="80px" height="80px" style="background-color:transparent"><style><![CDATA[#ladebild-s-rect1_to {animation: ladebild-s-rect1_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_to__to { 0% {transform: translate(227.413141px,149.305825px)} 16.666667% {transform: translate(370.355789px,193.355788px)} 33.333333% {transform: translate(368.868828px,348.324813px)} 50% {transform: translate(257.471827px,426.72455px)} 66.666667% {transform: translate(138.314166px,348.365767px)} 83.333333% {transform: translate(114.307582px,223.307575px)} 100% {transform: translate(227.413141px,149.305825px)}} #ladebild-s-rect1_tr {animation: ladebild-s-rect1_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_tr__tr { 0% {transform: rotate(19deg)} 100% {transform: rotate(199deg)}} #ladebild-s-rect2_to {animation: ladebild-s-rect2_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_to__to { 0% {transform: translate(138.314161px,340.808123px)} 16.666667% {transform: translate(118.32111px,218.634813px)} 33.333333% {transform: translate(232.838032px,147.075828px)} 50% {transform: translate(380.784682px,192.220096px)} 66.666667% {transform: translate(373.817032px,352.248921px)} 83.333333% {transform: translate(255.000893px,441.149087px)} 100% {transform: translate(128.311303px,333.636613px)}} #ladebild-s-rect2_tr {animation: ladebild-s-rect2_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_tr__tr { 0% {transform: rotate(85deg)} 100% {transform: rotate(265deg)}} #ladebild-s-rect3_to {animation: ladebild-s-rect3_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_to__to { 0% {transform: translate(368.868823px,353.579698px)} 16.666667% {transform: translate(254.489853px,432.334834px)} 33.333333% {transform: translate(132.975658px,351.953105px)} 50% {transform: translate(107.954129px,224.242905px)} 66.666667% {transform: translate(221.785778px,147.965968px)} 83.333333% {transform: translate(380.78px,192.22px)} 100% {transform: translate(381.639179px,353.408155px)}} #ladebild-s-rect3_tr {animation: ladebild-s-rect3_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_tr__tr { 0% {transform: rotate(84deg)} 100% {transform: rotate(264deg)}}]]></style><g id="ladebild-s-g1" transform="translate(0-48.445569)"><g id="ladebild-s-rect1_to" transform="translate(227.413141,149.305825)"><g id="ladebild-s-rect1_tr" transform="rotate(19)"><rect id="ladebild-s-rect1" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-70.055,-70.055)" fill="#f8ca2e" stroke-width="0"/></g></g><g id="ladebild-s-rect2_to" transform="translate(138.314161,340.808123)"><g id="ladebild-s-rect2_tr" transform="rotate(85)"><rect id="ladebild-s-rect2" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-74.089278,-65.104962)" fill="#f5a051" stroke-width="0"/></g></g><g id="ladebild-s-rect3_to" transform="translate(368.868823,353.579698)"><g id="ladebild-s-rect3_tr" transform="rotate(84)"><rect id="ladebild-s-rect3" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-69.472912,-76.414198)" fill="#9ec6eb" stroke-width="0"/></g></g></g></svg></div>';
-    loadMessage.style.backgroundColor = "#A4A4AC";
-    loadMessage.style.alignSelf = "flex-start";
-    loadMessage.style.border = "1px solid black";
-    loadMessage.style.borderRadius = "10px";
-    loadMessage.style.borderColor = "transparent";
-    loadMessage.style.padding = "10px";
-    return loadMessage
-}
-
-//this whole method makes the chat window so every design choice
 const makeChatWindow = () => {
 
     const makeResizeHandle = (container) => {
@@ -536,7 +363,7 @@ const makeChatWindow = () => {
 // Chaty Name on top of the chat window
     const chatyName = document.createElement("h2");
     chatyName.id = "chatyName";
-    chatyName.className="chatyName";
+    chatyName.className = "chatyName";
     chatyName.style.userSelect = "none";
     chatyName.innerText = "Chaty";
     chatyName.style.color = "#D9D9D9";
@@ -548,7 +375,7 @@ const makeChatWindow = () => {
     closeButton.innerHTML =
         '<svg class="closeButtonSVG" id="closeButtonSVG" xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#D9D9D9"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
     closeButton.id = "closeButton";
-    closeButton.className="closeButton";
+    closeButton.className = "closeButton";
     closeButton.style.color = "#D9D9D9";
     closeButton.style.height = "40px";
     closeButton.style.width = "40px";
@@ -638,10 +465,10 @@ const makeChatWindow = () => {
         //add message to the cached prompts
         prompts.set(userMessage.id, message);
         //sends the message to the server
-        if(eventStormingModeActive){
+        if (eventStormingModeActive) {
             sendEventStormingMessage(userMessage.id, message);
-        }else{
-            sendPromptMessage(userMessage.id, message, serverURL);
+        } else {
+            sendPromptMessage(userMessage.id, message, SERVER_URL);
         }
     };
 
@@ -657,7 +484,7 @@ const makeChatWindow = () => {
     chatInputButton.style.cursor = "pointer";
     chatInputButton.style.backgroundColor = "transparent";
     chatInputButton.addEventListener("click", () => {
-        if(!inputLock){
+        if (!inputLock) {
             sendPrompt();
         }
     });
@@ -675,7 +502,7 @@ const makeChatWindow = () => {
     chatInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            if(!inputLock){
+            if (!inputLock) {
                 sendPrompt();
             }
         }
@@ -705,14 +532,14 @@ const makeChatWindow = () => {
             document.getElementById("chatyName").classList.toggle('active');
             document.getElementById("chatButton").classList.toggle('active');
             document.getElementById("chatButtonSVG").classList.toggle('active');
-            eventStormingModeActive=!eventStormingModeActive;
+            eventStormingModeActive = !eventStormingModeActive;
         });
 
         return switchContainer;
     };
     const createEventStormingHeading = () => {
-        const eventStormingHeading=document.createElement("h2");
-        eventStormingHeading.className="eventStormingHeading";
+        const eventStormingHeading = document.createElement("h2");
+        eventStormingHeading.className = "eventStormingHeading";
         eventStormingHeading.id = "eventStormingHeading";
         eventStormingHeading.style.userSelect = "none";
         eventStormingHeading.innerText = "Eventstorming-Mode";
@@ -720,7 +547,7 @@ const makeChatWindow = () => {
         return eventStormingHeading;
     }
     const wrapperEventStorming = document.createElement("div");
-    wrapperEventStorming.className="wrapperEventStorming";
+    wrapperEventStorming.className = "wrapperEventStorming";
     wrapperEventStorming.appendChild(createEventStormingSwitch());
     wrapperEventStorming.appendChild(createEventStormingHeading());
     wrapperChatInput.appendChild(wrapperEventStorming);
@@ -728,6 +555,200 @@ const makeChatWindow = () => {
     chatWindow.appendChild(wrapperChatInput);
     return chatWindow;
 };
+
+// A User Message is a message on the right of the Chat that the User Typed
+const makeUserMessage = (text) => {
+    const userMessage = document.createElement("div");
+    userMessage.className = "userMessage";
+    userMessage.id = generateUUID();
+    userMessage.style.backgroundColor = "#A4A4AC";
+    userMessage.innerHTML = text;
+    userMessage.style.textOverflow = "wrap";
+    userMessage.style.alignSelf = "flex-end";
+    userMessage.style.border = "1px solid black";
+    userMessage.style.borderRadius = "10px";
+    userMessage.style.borderColor = "transparent";
+    userMessage.style.padding = "10px";
+    userMessage.style.wordWrap = "break-word"; // Zeilenumbruch bei langen Wörtern
+    userMessage.style.whiteSpace = "pre-wrap"; // Zeilenumbrüche bei normalen Leerzeichen
+    return userMessage;
+};
+// A Response Message is a message on the left of the Chat that the AI Typed
+
+const makeResponseMessage = (responseUUID, text, success) => {
+    const promptUUID = responseToPrompt.get(responseUUID);
+
+    const makeWrapperResponseMessageButtons = () => {
+        const RATING_NEUTRAL_TO_POSITIVE = 1;
+        const RATING_NEUTRAL_TO_NEGATIVE = -1;
+        const RATING_POSITIVE_TO_NEUTRAL = -1;
+        const RATING_POSITIVE_TO_NEGATIVE = -2;
+        const RATING_NEGATIVE_TO_NEUTRAL = 1;
+        const RATING_NEGATIVE_TO_POSITIVE = 2;
+        const createReloadButton = () => {
+            const reloadButton = document.createElement("button");
+            reloadButton.className = "reloadButton";
+            reloadButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="30px" width="30px" fill="#A4A4AC"><path d="M164.67-160v-66.67H288l-15.33-12.66q-60-49.34-86.34-109Q160-408 160-477.33q0-107.67 63.83-192.84 63.84-85.16 167.5-115.83v69.33q-74 28-119.33 93.84-45.33 65.83-45.33 145.5 0 57 21.33 102.16 21.33 45.17 60 79.84L331.33-278v-115.33H398V-160H164.67Zm404.66-13.33v-70q74.67-28 119.34-93.84 44.66-65.83 44.66-145.5 0-47-21.33-94.16-21.33-47.17-58.67-84.5L630.67-682v115.33H564V-800h233.33v66.67h-124l15.34 14q56.33 53.66 83.83 115.5Q800-542 800-482.67 800-375 736.5-289.5 673-204 569.33-173.33Z"/></svg>';
+            reloadButton.style.backgroundColor = "transparent";
+            reloadButton.style.border = "none";
+            reloadButton.style.cursor = "pointer";
+            reloadButton.addEventListener("click", () => {
+                reloadPrompt(promptUUID);
+            });
+            return reloadButton;
+        }
+
+        const createThumbsUpButton = () => {
+            const thumbsUpButton = document.createElement("button");
+            thumbsUpButton.className = "thumbsUpButton";
+            thumbsUpButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M717.33-120H274.67v-514.67L553.33-920 596-882.67q6.33 5.67 9.83 15.67t3.5 22.33v11.34l-44.66 198.66H850q26.67 0 46.67 20t20 46.67v81.23q0 7.1.33 14.77t-2.33 14.67L790.67-170q-8.92 20.83-29.73 35.42Q740.13-120 717.33-120Zm-376-66.67H726l124-292.66V-568H481.33l53.34-239.33-193.34 200.66v420Zm0-420v420-420Zm-66.66-28V-568H146v381.33h128.67V-120H79.33v-514.67h195.34Z"/></svg>';
+            thumbsUpButton.style.backgroundColor = "transparent";
+            thumbsUpButton.style.border = "none";
+            thumbsUpButton.style.cursor = "pointer";
+            thumbsUpButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
+                    switchSelectedButton()
+                    sendRating(responseUUID, RATING_NEGATIVE_TO_POSITIVE);
+                } else {
+                    if (thumbsUpButton.classList.contains("selected")) {
+                        sendRating(responseUUID, RATING_POSITIVE_TO_NEUTRAL);
+                    } else {
+                        sendRating(responseUUID, RATING_NEUTRAL_TO_POSITIVE);
+                    }
+                    thumbsUpButton.classList.toggle("selected");
+                }
+            });
+            return thumbsUpButton;
+        }
+
+        const createThumbsDownButton = () => {
+            const thumbsDownButton = document.createElement("button");
+            thumbsDownButton.className = "thumbsDownButton";
+            thumbsDownButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
+            thumbsDownButton.style.backgroundColor = "transparent";
+            thumbsDownButton.style.border = "none";
+            thumbsDownButton.style.cursor = "pointer";
+            thumbsDownButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
+                    switchSelectedButton()
+                    sendRating(responseUUID, RATING_POSITIVE_TO_NEGATIVE);
+                } else {
+                    if (thumbsDownButton.classList.contains("selected")) {
+                        sendRating(responseUUID, RATING_NEGATIVE_TO_NEUTRAL);
+                    } else {
+                        sendRating(responseUUID, RATING_NEUTRAL_TO_NEGATIVE);
+                    }
+                    thumbsDownButton.classList.toggle("selected");
+                }
+            });
+            return thumbsDownButton;
+        }
+
+        const thumbsUpButton = createThumbsUpButton();
+        const thumbsDownButton = createThumbsDownButton();
+
+        //returns the selected status of the other rating button than the one given
+        function checkIfOtherButtonHasBeenPressed(button) {
+            if (thumbsUpButton.className === button.className) {
+                return thumbsDownButton.classList.contains("selected");
+            } else {
+                return thumbsUpButton.classList.contains("selected");
+            }
+        }
+
+        //switches the selected status of both rating buttons
+        function switchSelectedButton() {
+            thumbsUpButton.classList.toggle("selected");
+            thumbsDownButton.classList.toggle("selected");
+        }
+
+        //reloads the prompt and lets the ai generate a new response
+        function reloadPrompt(promptUUID) {
+            //search the cached prompts to find the corresponding message
+            const prompt = prompts.get(promptUUID);
+            //sends the prompt to the server again to reload it
+            sendRegenerateMessage(promptUUID, prompt, REGENERATE_URL);
+
+        }
+
+        const wrapperResponseMessageButtons = document.createElement("div");
+        wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
+        wrapperResponseMessageButtons.style.height = "40px";
+        wrapperResponseMessageButtons.style.paddingTop = "10px";
+
+        wrapperResponseMessageButtons.appendChild(createReloadButton());
+
+        if (success) {
+            wrapperResponseMessageButtons.appendChild(thumbsUpButton);
+            wrapperResponseMessageButtons.appendChild(thumbsDownButton);
+        }
+
+        return wrapperResponseMessageButtons;
+    }
+
+    const responseMessage = document.createElement("div");
+    responseMessage.className = "responseMessage";
+    responseMessage.id = responseUUID;
+    responseMessage.innerHTML = text;
+    responseMessage.style.position = "relative";
+    responseMessage.style.alignSelf = "flex-start";
+    responseMessage.style.border = "1px solid black";
+    responseMessage.style.borderRadius = "10px";
+    responseMessage.style.padding = "10px";
+    responseMessage.style.borderColor = "transparent";
+    if (success) {
+        responseMessage.style.backgroundColor = "#A4A4AC";
+    } else {
+        responseMessage.style.backgroundColor = "#e37e8a";
+    }
+    const wrapperResponseMessage = document.createElement("div");
+    wrapperResponseMessage.appendChild(responseMessage);
+    wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
+
+    return wrapperResponseMessage;
+};
+
+//generates the eventStorming message without the buttons
+const makeEventStormingMessage=(responseUUID, message, success)=>{
+    const promptUUID = responseToPrompt.get(responseUUID);
+
+    const responseMessage = document.createElement("div");
+    responseMessage.className = "responseMessage";
+    responseMessage.id = responseUUID;
+    responseMessage.innerHTML = text;
+    responseMessage.style.position = "relative";
+    responseMessage.style.alignSelf = "flex-start";
+    responseMessage.style.border = "1px solid black";
+    responseMessage.style.borderRadius = "10px";
+    responseMessage.style.padding = "10px";
+    responseMessage.style.borderColor = "transparent";
+    if (success) {
+        responseMessage.style.backgroundColor = "#A4A4AC";
+    } else {
+        responseMessage.style.backgroundColor = "#e37e8a";
+    }
+    const wrapperResponseMessage = document.createElement("div");
+    wrapperResponseMessage.appendChild(responseMessage);
+
+    return wrapperResponseMessage;
+};
+
+// The Chat Window is the window that appears when the Chat button is clicked
+
+const makeLoadMessage = () => {
+    const loadMessage = document.createElement("div");
+    loadMessage.id = generateUUID();
+    loadMessage.className = "loadMessage";
+    loadMessage.innerHTML = '<div style=\"display: flex; justify-content: center; align-items: center;\"><svg id="ladebild" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480.52 471.13" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="80px" height="80px" style="background-color:transparent"><style><![CDATA[#ladebild-s-rect1_to {animation: ladebild-s-rect1_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_to__to { 0% {transform: translate(227.413141px,149.305825px)} 16.666667% {transform: translate(370.355789px,193.355788px)} 33.333333% {transform: translate(368.868828px,348.324813px)} 50% {transform: translate(257.471827px,426.72455px)} 66.666667% {transform: translate(138.314166px,348.365767px)} 83.333333% {transform: translate(114.307582px,223.307575px)} 100% {transform: translate(227.413141px,149.305825px)}} #ladebild-s-rect1_tr {animation: ladebild-s-rect1_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect1_tr__tr { 0% {transform: rotate(19deg)} 100% {transform: rotate(199deg)}} #ladebild-s-rect2_to {animation: ladebild-s-rect2_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_to__to { 0% {transform: translate(138.314161px,340.808123px)} 16.666667% {transform: translate(118.32111px,218.634813px)} 33.333333% {transform: translate(232.838032px,147.075828px)} 50% {transform: translate(380.784682px,192.220096px)} 66.666667% {transform: translate(373.817032px,352.248921px)} 83.333333% {transform: translate(255.000893px,441.149087px)} 100% {transform: translate(128.311303px,333.636613px)}} #ladebild-s-rect2_tr {animation: ladebild-s-rect2_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect2_tr__tr { 0% {transform: rotate(85deg)} 100% {transform: rotate(265deg)}} #ladebild-s-rect3_to {animation: ladebild-s-rect3_to__to 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_to__to { 0% {transform: translate(368.868823px,353.579698px)} 16.666667% {transform: translate(254.489853px,432.334834px)} 33.333333% {transform: translate(132.975658px,351.953105px)} 50% {transform: translate(107.954129px,224.242905px)} 66.666667% {transform: translate(221.785778px,147.965968px)} 83.333333% {transform: translate(380.78px,192.22px)} 100% {transform: translate(381.639179px,353.408155px)}} #ladebild-s-rect3_tr {animation: ladebild-s-rect3_tr__tr 3000ms linear infinite normal forwards}@keyframes ladebild-s-rect3_tr__tr { 0% {transform: rotate(84deg)} 100% {transform: rotate(264deg)}}]]></style><g id="ladebild-s-g1" transform="translate(0-48.445569)"><g id="ladebild-s-rect1_to" transform="translate(227.413141,149.305825)"><g id="ladebild-s-rect1_tr" transform="rotate(19)"><rect id="ladebild-s-rect1" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-70.055,-70.055)" fill="#f8ca2e" stroke-width="0"/></g></g><g id="ladebild-s-rect2_to" transform="translate(138.314161,340.808123)"><g id="ladebild-s-rect2_tr" transform="rotate(85)"><rect id="ladebild-s-rect2" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-74.089278,-65.104962)" fill="#f5a051" stroke-width="0"/></g></g><g id="ladebild-s-rect3_to" transform="translate(368.868823,353.579698)"><g id="ladebild-s-rect3_tr" transform="rotate(84)"><rect id="ladebild-s-rect3" width="140.11" height="140.11" rx="0" ry="0" transform="scale(0.8,0.8) translate(-69.472912,-76.414198)" fill="#9ec6eb" stroke-width="0"/></g></g></g></svg></div>';
+    loadMessage.style.backgroundColor = "#A4A4AC";
+    loadMessage.style.alignSelf = "flex-start";
+    loadMessage.style.border = "1px solid black";
+    loadMessage.style.borderRadius = "10px";
+    loadMessage.style.borderColor = "transparent";
+    loadMessage.style.padding = "10px";
+    return loadMessage
+}
+//this whole method makes the chat window so every design choice
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -757,26 +778,28 @@ function getLastAnswerToPromptUUID(promptUUID) {
 }
 
 //sends the message to the eventStormingServer
-function sendEventStormingMessage(promptUUID, prompt){
-    handleSend(promptUUID,prompt,eventStormingURL,"eventStorming");
+function sendEventStormingMessage(promptUUID, prompt) {
+    handleSend(promptUUID, prompt, EVENTSTORMING_URL, "eventStorming");
 }
 
 //sends the prompt to the given server
 function sendPromptMessage(promptUUID, prompt, serverUrlToSendTo) {
-    handleSend(promptUUID,prompt,serverUrlToSendTo,"prompt");
+    handleSend(promptUUID, prompt, serverUrlToSendTo, "prompt");
 }
 
 //sends the regenerate Message to the server
-function sendRegenerateMessage(promptUUID, prompt){
-    handleSend(promptUUID, prompt, regenerateURL,"regenerate")
+function sendRegenerateMessage(promptUUID, prompt) {
+    handleSend(promptUUID, prompt, REGENERATE_URL, "regenerate")
 }
 
 //sends the rating to the corresponding server, the rating is a whole number from -1 to 1
 function sendRating(responseUUID, rating) {
+    //gets the backend ID
+    const responseID=responseUUIDtoID.get(responseUUID);
     GM_xmlhttpRequest({
         method: "POST",
-        url: ratingURL,
-        data: JSON.stringify({id: responseUUID, rating: rating}), // Send data as JSON
+        url: RATING_URL,
+        data: JSON.stringify({id: responseID, rating: rating}), // Send data as JSON
         headers: {
             "Content-Type": "application/json",
         },
@@ -784,11 +807,11 @@ function sendRating(responseUUID, rating) {
 }
 
 //handles the sending protocols and formats the window
-function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
+function handleSend(promptUUID, prompt, serverUrlToSendTo, type) {
     const chatWindow = document.getElementById("prompts-container");
     const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
     // set inputLock
-    inputLock=true;
+    inputLock = true;
     // loading animation until response
     const loadingMessage = makeLoadMessage();
     chatWindow.insertBefore(loadingMessage, getLastAnswerToPromptUUID(promptUUID).firstAnswer);
@@ -808,24 +831,22 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
             //generate a UUID for the response and link it to the prompt
             const responseUUID = generateUUID();
             var responseMessage = undefined;
-            //this is not allowed to move below the creating of the message otherwise the buttons dont have the UUID necessary
+
             responseToPrompt.set(responseUUID, promptUUID);
-            //check if the operation was a success
-            if(type==="prompt"||type==="regenerate"){
+            //checks the type of function
+            if (type === "prompt" || type === "regenerate") {
                 if (JSON.parse(response.responseText).Success !== undefined) {
-                    //TODO uncomment if backend is ready
-                    //responseUUID=JSON.parse(response.responseText).Success.answerID;
+                    responseUUIDtoID.set(responseUUID,JSON.parse(response.responseText).Success.id);
                     responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
                 } else {
-                    //TODO uncomment
-                    //responseUUID=JSON.parse(response.responseText).Error.answerID;
+                    responseUUIDtoID.set(responseUUID,JSON.parse(response.responseText).Error.id);
                     responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
                 }
-            }else if(type==="eventStorming"){
+            } else if (type === "eventStorming") {
                 if (JSON.parse(response.responseText).Success !== undefined) {
-                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.message, true);
+                    responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Success.message, true);
                 } else {
-                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error.message, false);
+                    responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Error.message, false);
                 }
             }
             //inserts the response in front of the loading message
@@ -833,7 +854,7 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo,type){
             //after loading the message remove loading message
             chatWindow.removeChild(loadingMessage);
             //remove inputLock
-            inputLock=false;
+            inputLock = false;
             responseMessage.scrollIntoView({behavior: "smooth"});
         },
     });
