@@ -53,7 +53,7 @@ pub async fn insert_answer(
 ///
 /// * `info` - The [DBConnectionInfo] struct containing the database connection details.
 /// * `answer_id` - The ID of the answer to update.
-/// * `rating` - The new rating of the answer.
+/// * `rating` - The rating value as number between -2 and 2 where 0 does nothing.
 ///
 /// # Returns
 ///
@@ -68,12 +68,14 @@ pub async fn insert_answer(
 pub async fn update_rating(info: &DBConnectionInfo, answer_id: i32, rating: i32) -> Result<()> {
   let client = get_connection(info).await?;
   let to_insert_rating: i32;
-  if rating >= 1 {
-    to_insert_rating = 1;
-  } else if rating <= -1 {
-    to_insert_rating = -1;
-  } else {
+  if rating >= 2 {
+    to_insert_rating = 2;
+  } else if rating <= -2 {
+    to_insert_rating = -2;
+  } else if rating == 0 {
     return Ok(()); // Do nothing if the rating is 0.
+  } else {
+    to_insert_rating = rating;
   }
 
   let query: &str;

@@ -2,6 +2,7 @@
 mod test {
   use rust_server::{ models::database::DBConnectionInfo, utils::postgres::* };
   use sequential_test::sequential;
+  use tokio::runtime::Runtime;
 
   fn dummy_postgres() -> DBConnectionInfo {
     return DBConnectionInfo::new(
@@ -26,8 +27,9 @@ mod test {
   #[sequential]
   fn test_db_connection() {
     let info = dummy_postgres();
+    let rt = Runtime::new().unwrap();
 
-    let conn = get_connection(&info);
+    let conn = rt.block_on(get_connection(&info));
     if let Err(e) = &conn {
       println!("Error: {}", e.log_message());
     }
@@ -38,49 +40,55 @@ mod test {
   #[sequential]
   fn test_insert_answer() {
     let info = dummy_postgres();
-    let res = insert_answer(&info, 1, &"test".to_string());
+    let rt = Runtime::new().unwrap();
+
+    let res = rt.block_on(insert_answer(&info, 1, &"test".to_string()));
     if let Err(e) = &res {
       println!("Error: {}", e.log_message());
     }
     assert_eq!(res.is_ok(), true);
-    drop_tables(&info);
+    rt.block_on(drop_tables(&info));
   }
 
   #[test]
   #[sequential]
   fn test_update_rating() {
     let info = dummy_postgres();
-    let _ = insert_answer(&info, 1, &"test1".to_string());
-    let _ = insert_answer(&info, 1, &"test2".to_string());
-    let res = update_rating(&info, 1, 1);
+    let rt = Runtime::new().unwrap();
+
+    let _ = rt.block_on(insert_answer(&info, 1, &"test1".to_string()));
+    let _ = rt.block_on(insert_answer(&info, 1, &"test2".to_string()));
+    let res = rt.block_on(update_rating(&info, 1, 1));
     if let Err(e) = &res {
       println!("Error: {}", e.log_message());
     }
     assert_eq!(res.is_ok(), true);
-    drop_tables(&info);
+    rt.block_on(drop_tables(&info));
   }
 
   #[test]
   #[sequential]
   fn test_find_answer() {
     let info = dummy_postgres();
-    let _ = insert_answer(&info, 1, &"test1".to_string());
-    let _ = insert_answer(&info, 1, &"test2".to_string());
-    let _ = insert_answer(&info, 2, &"test3".to_string());
-    let _ = insert_answer(&info, 2, &"test4".to_string());
-    let res = find_answer(&info, 1);
+    let rt = Runtime::new().unwrap();
+
+    let _ = rt.block_on(insert_answer(&info, 1, &"test1".to_string()));
+    let _ = rt.block_on(insert_answer(&info, 1, &"test2".to_string()));
+    let _ = rt.block_on(insert_answer(&info, 2, &"test3".to_string()));
+    let _ = rt.block_on(insert_answer(&info, 2, &"test4".to_string()));
+    let res = rt.block_on(find_answer(&info, 1));
     if let Err(e) = &res {
       println!("Error: {}", e.log_message());
       assert!(true);
     } else {
       assert!(false);
     }
-    let _ = update_rating(&info, 1, 1);
-    let res = find_answer(&info, 1);
+    let _ = rt.block_on(update_rating(&info, 1, 1));
+    let res = rt.block_on(find_answer(&info, 1));
     if let Err(e) = &res {
       println!("Error: {}", e.log_message());
     }
     assert_eq!(res.is_ok(), true);
-    drop_tables(&info);
+    rt.block_on(drop_tables(&info));
   }
 }

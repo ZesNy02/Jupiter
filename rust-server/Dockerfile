@@ -29,4 +29,11 @@ COPY . .
 VOLUME ["/app/data"]
 
 # # Run the server
-CMD ["setup.sh"]
+CMD apt-get update && \
+        apt-get install -y python3 python3-pip python3-venv && \
+        python3 -m venv /opt/venv && \
+        export PATH="/opt/venv/bin:$PATH" && \
+        pip install --upgrade -r requirements.txt --no-index && \
+        python3 ./scripts/python/vectorstore.py && \
+        cargo build && \
+        cargo run
