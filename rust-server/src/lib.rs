@@ -33,12 +33,13 @@
 //! # Environment Variables
 //!
 //! The following environment variables are used to load the configuration,
-//! please make a .env file in the root directory of the project and them:
-//! - `DB_HOST`: The host/ip of the PostgreSQL database.
-//! - `DB_NAME`: The name of the PostgreSQL database.
-//! - `DB_USER`: The username for the PostgreSQL database.
-//! - `DB_PASSWORD`: The password for the PostgreSQL database.
-//! - `LLM_SERVER`: The connection url for the LLM Server (Ollama).
+//! please make a .env file in the root directory of the project and put at
+//! least the **bold** ones in it:
+//! - **`DB_HOST`**: The host/ip of the PostgreSQL database.
+//! - **`DB_NAME`**: The name of the PostgreSQL database.
+//! - **`DB_USER`**: The username for the PostgreSQL database.
+//! - **`DB_PASSWORD`**: The password for the PostgreSQL database.
+//! - **`LLM_SERVER`**: The connection url for the LLM Server (Ollama).
 //! - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
 //! - `PORT`: The port of the server. Defaults to `3000`.
 //! - `DB_PORT`: The port of the PostgreSQL database. Defaults to `5432`.
