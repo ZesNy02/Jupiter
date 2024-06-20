@@ -1,6 +1,6 @@
 // Installation.tsx
 import React from 'react';
-import './Footer.css';
+import '../Components/Footer/Footer.css';
 
 const Installation: React.FC = () => {
   return (

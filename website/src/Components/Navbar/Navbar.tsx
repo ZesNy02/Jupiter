@@ -2,10 +2,26 @@ import { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
+import Document from "../../pages/Document.tsx";
+import About from "../../pages/About.tsx";
+import Start from "../../pages/Start.tsx";
+import Installation from "../../pages/Installation.tsx";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-
+    const [page, setPage] = useState("Home");
+    const renderPage = () => {
+        switch (page) {
+            case "Start":
+                return <Start />;
+            case "Document":
+                return <Document />;
+            case "About":
+                return <About />;
+            case "Installation":
+                return <Installation />;
+        }
+    };
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
@@ -21,29 +37,14 @@ const Navbar = () => {
         {isOpen ? <FaTimes /> : <FaBars />}
         </div>
         <ul className={isOpen ? 'nav-menu active' : 'nav-menu'}>
-    <li className="nav-item">
-    <a href="#" className="nav-links">
-        Home
-        </a>
-        </li>
-        <li className="nav-item">
-    <a href="#" className="nav-links">
-        About
-        </a>
-        </li>
-        <li className="nav-item">
-    <a href="#" className="nav-links">
-        Services
-        </a>
-        </li>
-        <li className="nav-item">
-    <a href="#" className="nav-links">
-        Contact
-        </a>
-        </li>
+        <li onClick={() => setPage('Start')}>Start</li>
+        <li onClick={() => setPage('Document')}>Dokumente</li>
+        <li onClick={() => setPage('About')}>Über uns</li>
+        <li onClick={() => setPage('Installation')}>Installation</li>
         </ul>
         </div>
         </nav>
+            {renderPage()}
     </>
     );
 };
