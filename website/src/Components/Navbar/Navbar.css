@@ -1,5 +1,5 @@
 /* Navbar.css */
-.navbar {
+.   navbar {
     padding: 1rem;
     width: 100%;
     background: #333;
@@ -40,7 +40,7 @@
 }
 
 .nav-item {
-    height: 80px;
+
 }
 
 .nav-links {
