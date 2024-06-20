@@ -1,5 +1,5 @@
 @echo off
 
-pip install --upgrade -r requirements.txt --no-index
+pip install --upgrade -r python_dependencies.txt --no-index
 python3 ./scripts/python/ai/vectorstore.py
 cargo build --release

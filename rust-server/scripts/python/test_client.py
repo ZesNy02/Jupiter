@@ -18,25 +18,25 @@ cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 cur.execute("DROP TABLE IF EXISTS prompts CASCADE;")
 cur.execute("DROP TABLE IF EXISTS answers CASCADE;")
 
-cur.execute(
-    """
-    CREATE TABLE IF NOT EXISTS prompts (
-        prompt_id SERIAL PRIMARY KEY,
-        prompt TEXT NOT NULL,
-        embedding vector(1024),
-        count INTEGER DEFAULT 1
-    );"""
-)
+# cur.execute(
+#     """
+#     CREATE TABLE IF NOT EXISTS prompts (
+#         prompt_id SERIAL PRIMARY KEY,
+#         prompt TEXT NOT NULL,
+#         embedding vector(1024),
+#         count INTEGER DEFAULT 1
+#     );"""
+# )
 
-cur.execute(
-    """
-    CREATE TABLE IF NOT EXISTS answers (
-        answer_id SERIAL PRIMARY KEY,
-        prompt_id integer REFERENCES prompts(prompt_id),
-        answer TEXT NOT NULL,
-        rating INTEGER DEFAULT 0
-    );"""
-)
+# cur.execute(
+#     """
+#     CREATE TABLE IF NOT EXISTS answers (
+#         answer_id SERIAL PRIMARY KEY,
+#         prompt_id integer REFERENCES prompts(prompt_id),
+#         answer TEXT NOT NULL,
+#         rating INTEGER DEFAULT 0
+#     );"""
+# )
 
 # Execute a query to select everything from a table
 # cur.execute("INSERT INTO prompts (prompt) VALUES ('test') RETURNING prompt_id;")

@@ -5,7 +5,3 @@ pgvector
 psycopg2
 numpy
 argparse
-shutil
-requests
-signal
-hashlib

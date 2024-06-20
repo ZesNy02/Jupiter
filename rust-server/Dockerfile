@@ -33,7 +33,7 @@ CMD apt-get update && \
         apt-get install -y python3 python3-pip python3-venv && \
         python3 -m venv /opt/venv && \
         export PATH="/opt/venv/bin:$PATH" && \
-        pip install --upgrade -r requirements.txt --no-index && \
+        pip install --upgrade -r python_dependencies.txt --no-index && \
         python3 ./scripts/python/vectorstore.py && \
         cargo build && \
         cargo run
