@@ -13,10 +13,10 @@ conn = psycopg2.connect(
 # Create a cursor object to interact with the database
 cur = conn.cursor()
 
-cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+# cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 
-cur.execute("DROP TABLE IF EXISTS prompts CASCADE;")
-cur.execute("DROP TABLE IF EXISTS answers CASCADE;")
+# cur.execute("DROP TABLE IF EXISTS prompts CASCADE;")
+# cur.execute("DROP TABLE IF EXISTS answers CASCADE;")
 
 # cur.execute(
 #     """
@@ -76,11 +76,11 @@ conn.close()
 # Send the POST request
 # response = requests.post(url, json=payload)
 
-# url = "http://localhost:3000/ai/prompt"
-# payload = {"prompt": "What is the prooph-board?"}
+url = "http://localhost:3000/ai/prompt"
+payload = {"prompt": "What is the prooph-board?"}
 
 # Send the POST request
-# response = requests.post(url, json=payload)
+response = requests.post(url, json=payload)
 
 # Check the response status code
 # print(response)

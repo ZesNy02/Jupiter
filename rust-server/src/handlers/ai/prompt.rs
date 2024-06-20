@@ -45,7 +45,7 @@ pub async fn testable_handle_prompt_post(
   let prompt = payload.prompt.clone();
 
   info!("Trying to find prompt in database.");
-  let search_result = handle_vector_search(&config, &prompt);
+  let search_result = handle_vector_search(&config, &prompt).await;
   match search_result {
     Ok(VectorSearchResult::Existing(id)) => {
       info!("Prompt found in database with id: {}", id);
