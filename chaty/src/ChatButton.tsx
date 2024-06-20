@@ -1,7 +1,12 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 import './chatButton.css';
 
-const ChatButton = ({ setIsChatOpen }) => {
+// Typdefinition für die Props
+interface ChatButtonProps {
+  setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ChatButton: React.FC<ChatButtonProps> = ({ setIsChatOpen }) => {
   const toggleChat = () => {
     setIsChatOpen(true);
   };
@@ -13,10 +18,6 @@ const ChatButton = ({ setIsChatOpen }) => {
       </svg>
     </button>
   );
-};
-
-ChatButton.propTypes = {
-  setIsChatOpen: PropTypes.func.isRequired,
 };
 
 export default ChatButton;
