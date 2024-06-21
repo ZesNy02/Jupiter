@@ -1,15 +1,10 @@
 import React from 'react';
-<<<<<<< HEAD
 import platzhalter from '../assets/platzhalter.png';
-import About from "./About.tsx"
-
-=======
 import './Start.css'
->>>>>>> refs/remotes/origin/Website
+
 const Start: React.FC = () => {
   
   return (
-<<<<<<< HEAD
     <div className="content">
       <div className="produkt-vorstellung">
         <h2>Willkommen bei ihrem neunen Helfer für das Prooph Board!</h2>
@@ -41,11 +36,6 @@ const Start: React.FC = () => {
       <img className="team-bild" src={platzhalter} alt="team-bild" />
       <p>Lerne uns kennen</p>
       </div>
-=======
-    <div className={"content"}>
-      <h1>Hallo Leute</h1>
-      <p>Das ist die erste Seite die ihr seht</p>
->>>>>>> refs/remotes/origin/Website
     </div>
   );
 }
