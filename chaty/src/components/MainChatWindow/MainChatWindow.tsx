@@ -51,6 +51,9 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
 
   return (
     <div className={`mainChatWindow${eventStormingState ? " active" : ""}`}>
+      <button className="chatWindowResizeButton">
+        <img src="/ResizeIcon.svg" className="chatWindowResizeIcon" />
+      </button>
       <ChatHeader onClick={onClose} />
       <ChatWrapper prompts={prompts} />
       <ESToggleButton
