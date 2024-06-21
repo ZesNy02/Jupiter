@@ -7,8 +7,7 @@
     overflow: hidden;
     box-sizing: border-box; 
   }
-
-  .chatWrapper {
+ .chatWrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -19,7 +18,7 @@
     border-radius: 6px;
     gap: 10px;
     padding: 10px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
   }
 
   .chatMessageActions button {
@@ -28,4 +27,3 @@
     border: none;
   }
 
-  
