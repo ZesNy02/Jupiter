@@ -1,0 +1,26 @@
+.chat-input-div {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: lightgray;
+    border-radius: 15px;
+    box-sizing: border-box; 
+  }
+  
+  .chat-input-div input {
+    height: 40px;
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+  }
+  
+  .chat-input-div button {
+    align-self: center;
+    border: none;
+    order: 1;
+    cursor: pointer;
+    background-color: transparent;
+  }
