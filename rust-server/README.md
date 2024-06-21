@@ -14,16 +14,13 @@
 
 ## Install dependencies
 
-TODO
-
-- To automatically install the required dependencies, run the `start_server.py` script in `rust-server/scripts/python`.
+- To setup the dependencies and build the server, run either the `windows_setup.bat` or `linux_setup.sh` file
+  depending on your operating system.
 
 ## Run the Server
 
 - To run the Server, go to the `rust-server` directory.
 - Then execute `cargo run`
-  TODO
-- Or do `cargo build` and run the executable build in the `rust-server/target` folder.
 
 ## See the Rust Documentation
 

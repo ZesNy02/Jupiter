@@ -12,3 +12,4 @@ value.txt
 
 # Other git ignores
 *.db
+node_modules
