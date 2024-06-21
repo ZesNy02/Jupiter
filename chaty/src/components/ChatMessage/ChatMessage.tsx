@@ -1,11 +1,13 @@
 import { FC } from "react";
 import "./ChatMessage.css";
+import ChatMessageButton from "../ChatMessageButton";
 
 interface ChatMessageProps {
   message: string;
-  answer: boolean;
+  answer?: boolean;
   count?: number;
   maxCount?: number;
+  error?: boolean;
 }
 
 const ChatMessage: FC<ChatMessageProps> = ({
@@ -13,6 +15,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   answer,
   count,
   maxCount,
+  error,
 }) => {
   return (
     <>
@@ -21,24 +24,34 @@ const ChatMessage: FC<ChatMessageProps> = ({
           answer ? "chatyMessage" : "userMessage"
         }`}
       >
-        <div className="chatMessage">
+        <div className={error ? "errorMessage" : "chatMessage"}>
           <p className="chatMessageContent">{message}</p>
-          {answer && <p>{`${count}/${maxCount}`}</p>}
+          {answer && !error && <p>{`${count}/${maxCount}`}</p>}
         </div>
         {answer && (
           <div className="chatMessageActions">
-            <button className="chatMessageActionButton">
-              <img src="/ReloadIcon.svg" className="chatMessageActionIcon" />
-            </button>
-            <button className="chatMessageActionButton">
-              <img src="/ThumbsUpIcon.svg" className="chatMessageActionIcon" />
-            </button>
-            <button className="chatMessageActionButton">
-              <img
-                src="/ThumbsDownIcon.svg"
-                className="chatMessageActionIcon"
-              />
-            </button>
+            <ChatMessageButton
+              iconPath="/ReloadIcon.svg"
+              onClick={() => {}}
+              active
+              activeColor="#141414"
+            />
+            {!error && (
+              <>
+                <ChatMessageButton
+                  iconPath="ThumbsUpIcon.svg"
+                  onClick={() => {}}
+                  active
+                  activeColor="#141414"
+                />
+                <ChatMessageButton
+                  iconPath="/ThumbsDownIcon.svg"
+                  onClick={() => {}}
+                  active
+                  activeColor="#141414"
+                />
+              </>
+            )}
           </div>
         )}
       </div>
