@@ -27,7 +27,7 @@
   background-color: transparent;
   color: white;
   border: none;
-  cursor: pointer;
+  cursor: nesw-resize;
 }
 
 .chatWindowResizeIcon {
