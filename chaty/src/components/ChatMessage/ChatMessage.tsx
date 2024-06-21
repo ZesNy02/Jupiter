@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import "./ChatMessage.css";
 import ChatMessageButton from "../ChatMessageButton";
 
@@ -10,6 +10,12 @@ interface ChatMessageProps {
   error?: boolean;
 }
 
+const enum MessageRating {
+  THUMB_UP,
+  THUMB_DOWN,
+  NEUTRAL,
+}
+
 const ChatMessage: FC<ChatMessageProps> = ({
   message,
   answer,
@@ -17,6 +23,24 @@ const ChatMessage: FC<ChatMessageProps> = ({
   maxCount,
   error,
 }) => {
+  const [ratingState, setRatingState] = useState(MessageRating.NEUTRAL);
+
+  const handleThumbClick = (rating: MessageRating) => {
+    return () => {
+      if (rating === MessageRating.NEUTRAL) {
+        return;
+      } else if (rating === ratingState) {
+        setRatingState(MessageRating.NEUTRAL);
+      } else {
+        setRatingState(rating);
+      }
+    };
+  };
+
+  const handleReload = () => {
+    console.log("Reload");
+  };
+
   return (
     <>
       <div
@@ -26,29 +50,31 @@ const ChatMessage: FC<ChatMessageProps> = ({
       >
         <div className={error ? "errorMessage" : "chatMessage"}>
           <p className="chatMessageContent">{message}</p>
-          {answer && !error && <p>{`${count}/${maxCount}`}</p>}
+          {answer && !error && (
+            <p className="chatMessageCount">{`${count}/${maxCount}`}</p>
+          )}
         </div>
         {answer && (
           <div className="chatMessageActions">
             <ChatMessageButton
               iconPath="/ReloadIcon.svg"
-              onClick={() => {}}
-              active
+              onClick={handleReload}
+              active={false}
               activeColor="#141414"
             />
             {!error && (
               <>
                 <ChatMessageButton
                   iconPath="ThumbsUpIcon.svg"
-                  onClick={() => {}}
-                  active
-                  activeColor="#141414"
+                  onClick={handleThumbClick(MessageRating.THUMB_UP)}
+                  active={ratingState === MessageRating.THUMB_UP}
+                  activeColor="#14ba38"
                 />
                 <ChatMessageButton
                   iconPath="/ThumbsDownIcon.svg"
-                  onClick={() => {}}
-                  active
-                  activeColor="#141414"
+                  onClick={handleThumbClick(MessageRating.THUMB_DOWN)}
+                  active={ratingState === MessageRating.THUMB_DOWN}
+                  activeColor="#a30709"
                 />
               </>
             )}
