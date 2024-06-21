@@ -1,6 +1,9 @@
+import './Document.css'
+
+// Cedric macht diese
 const Document = () => {
   return (
-    <div style={{margin: "3em", padding: "3em"}}>
+    <div className={"content"}>
       <h1>Dokumente</h1>
       <p>Hier sind die Dokumente abgelegt</p>
     </div>
