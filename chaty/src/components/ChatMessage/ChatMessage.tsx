@@ -9,6 +9,7 @@ interface ChatMessageProps {
   maxCount?: number;
   error?: boolean;
   eventStorming?: boolean;
+  loading?: boolean;
 }
 
 const enum MessageRating {
@@ -24,6 +25,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   maxCount,
   error,
   eventStorming,
+  loading,
 }) => {
   const [ratingState, setRatingState] = useState(MessageRating.NEUTRAL);
 
@@ -50,13 +52,23 @@ const ChatMessage: FC<ChatMessageProps> = ({
           answer ? "chatyMessage" : "userMessage"
         }`}
       >
-        <div className={error ? "errorMessage" : "chatMessage"}>
-          <p className="chatMessageContent">{message}</p>
-          {answer && !error && (
-            <p className="chatMessageCount">{`${count}/${maxCount}`}</p>
+        <div className={error && !loading ? "errorMessage" : "chatMessage"}>
+          {loading && (
+            <div className="chatMessageLoading">
+              <img src="/LoadingIcon.svg" className="chatMessageLoadingIcon" />
+            </div>
+          )}
+
+          {!loading && (
+            <>
+              <p className="chatMessageContent">{message}</p>
+              {answer && !error && (
+                <p className="chatMessageCount">{`${count}/${maxCount}`}</p>
+              )}
+            </>
           )}
         </div>
-        {answer && !eventStorming && (
+        {answer && !eventStorming && !loading && (
           <div className="chatMessageActions">
             <ChatMessageButton
               iconPath="/ReloadIcon.svg"

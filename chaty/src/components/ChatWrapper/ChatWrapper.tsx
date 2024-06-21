@@ -1,9 +1,10 @@
-import { FC } from "react";
+import React, { FC, useEffect } from "react";
 import "./ChatWrapper.css";
 import ChatMessage from "../ChatMessage";
 
 export interface Prompt {
   message: string;
+  id: number;
   answers: Answer[];
 }
 
@@ -14,6 +15,7 @@ export interface Answer {
   eventStorming: boolean;
   count: number;
   maxCount: number;
+  loading: boolean;
 }
 
 interface ChatWrapperProps {
@@ -21,6 +23,12 @@ interface ChatWrapperProps {
 }
 
 const ChatWrapper: FC<ChatWrapperProps> = ({ prompts }) => {
+  const endOfMessagesRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [prompts]);
+
   const getAnswers = (answers: Answer[]) => {
     return answers.map((answer, answerIndex) => (
       <ChatMessage key={answerIndex} {...answer} />
@@ -36,6 +44,7 @@ const ChatWrapper: FC<ChatWrapperProps> = ({ prompts }) => {
             {getAnswers(prompt.answers)}
           </>
         ))}
+        <div ref={endOfMessagesRef} />
       </div>
     </>
   );

@@ -10,44 +10,72 @@ interface MainChatWindowProps {
   onClose: () => void;
 }
 
+const example: Prompt[] = [
+  {
+    message: "What is the Prooph-Board?",
+    id: 1,
+    answers: [
+      {
+        message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        answer: true,
+        error: false,
+        eventStorming: false,
+        count: 1,
+        maxCount: 4,
+        loading: false,
+      },
+      {
+        message: "Error message",
+        answer: true,
+        error: true,
+        eventStorming: false,
+        count: 2,
+        maxCount: 4,
+        loading: false,
+      },
+      {
+        message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        answer: true,
+        error: false,
+        eventStorming: true,
+        count: 3,
+        maxCount: 4,
+        loading: false,
+      },
+      {
+        message: "",
+        answer: true,
+        error: false,
+        eventStorming: false,
+        count: 4,
+        maxCount: 4,
+        loading: true,
+      },
+    ],
+  },
+];
+
 const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
   const [eventStormingState, setEventStormingState] = useState(false);
+  const [prompts, setPrompts] = useState<Prompt[]>(example);
 
   const handleToggleEventStorming = () => {
     setEventStormingState(!eventStormingState);
   };
 
-  const prompts: Prompt[] = [
-    {
-      message: "What is the Prooph-Board?",
-      answers: [
+  const handlePromptRequest = (prompt: string) => {
+    // TODO: implement
+    setPrompts((prev) => {
+      return [
+        ...prev,
         {
-          message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-          answer: true,
-          error: false,
-          eventStorming: false,
-          count: 1,
-          maxCount: 3,
+          message: prompt,
+          id: prev.length + 1,
+          answers: [],
         },
-        {
-          message: "Error message",
-          answer: true,
-          error: true,
-          eventStorming: false,
-          count: 2,
-          maxCount: 3,
-        },
-        {
-          message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-          answer: true,
-          error: false,
-          eventStorming: true,
-          count: 3,
-          maxCount: 3,
-        },
-      ],
-    },
-  ];
+      ];
+    });
+  };
 
   return (
     <div className={`mainChatWindow${eventStormingState ? " active" : ""}`}>
@@ -60,7 +88,7 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
         onClick={handleToggleEventStorming}
         eventStorming={eventStormingState}
       />
-      <ChatInput />
+      <ChatInput onSend={handlePromptRequest} />
     </div>
   );
 };
