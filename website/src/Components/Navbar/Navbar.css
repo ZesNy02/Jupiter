@@ -1,5 +1,5 @@
 /* Navbar.css */
-.   navbar {
+.navbar {
     padding: 1rem;
     width: 100%;
     background: #333;
@@ -36,7 +36,8 @@
     display: flex;
     align-items: center;
     list-style: none;
-    text-align: center;
+    width: 40%;
+    justify-content: space-evenly;
 }
 
 .nav-item {
@@ -74,7 +75,7 @@
         height: 90vh;
         position: absolute;
         top: 80px;
-        left: -100%;
+        left: -120%;
         opacity: 1;
         transition: all 0.5s ease;
         background: #333;

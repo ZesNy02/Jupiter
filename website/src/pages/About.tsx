@@ -1,9 +1,9 @@
 import React from 'react';
-
+import './About.css'
 
 const About: React.FC = () => {
   return (
-    <div>
+    <div className={"content"}>
       <h1>Über uns</h1>
       <p>Information about us.</p>
       <table>
