@@ -1,16 +1,12 @@
-import { useState } from 'react'
-import ChatButton from './ChatButton'
-import ChatWindow from './ChatWindow'
-import './App.css'
+import "./App.css";
+import ChatButton from "./components/ChatButton";
 
 function App() {
-  const [isChatOpen, setIsChatOpen] = useState<boolean>(false)
   return (
     <>
-      {!isChatOpen && <ChatButton setIsChatOpen={setIsChatOpen} />}
-      <ChatWindow isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+      <ChatButton onClick={() => {}}></ChatButton>
     </>
   );
 }
 
-export default App
+export default App;
