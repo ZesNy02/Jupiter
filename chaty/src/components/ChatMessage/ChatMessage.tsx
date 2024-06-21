@@ -8,6 +8,7 @@ interface ChatMessageProps {
   count?: number;
   maxCount?: number;
   error?: boolean;
+  eventStorming?: boolean;
 }
 
 const enum MessageRating {
@@ -22,6 +23,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   count,
   maxCount,
   error,
+  eventStorming,
 }) => {
   const [ratingState, setRatingState] = useState(MessageRating.NEUTRAL);
 
@@ -54,7 +56,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
             <p className="chatMessageCount">{`${count}/${maxCount}`}</p>
           )}
         </div>
-        {answer && (
+        {answer && !eventStorming && (
           <div className="chatMessageActions">
             <ChatMessageButton
               iconPath="/ReloadIcon.svg"

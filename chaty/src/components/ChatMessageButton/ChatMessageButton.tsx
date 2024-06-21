@@ -16,7 +16,7 @@ const ChatMessageButton: FC<ChatMessageButtonProps> = ({
 }) => {
   const activeStyle = active
     ? {
-        color: activeColor,
+        fill: activeColor,
       }
     : {};
 

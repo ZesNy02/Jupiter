@@ -2,21 +2,39 @@ import { FC } from "react";
 import "./ChatWrapper.css";
 import ChatMessage from "../ChatMessage";
 
-interface ChatWrapperProps {}
+export interface Prompt {
+  message: string;
+  answers: Answer[];
+}
 
-const ChatWrapper: FC<ChatWrapperProps> = ({}) => {
-  const list = ["message", "message", "message"];
+export interface Answer {
+  message: string;
+  answer: boolean;
+  error: boolean;
+  eventStorming: boolean;
+  count: number;
+  maxCount: number;
+}
+
+interface ChatWrapperProps {
+  prompts: Prompt[];
+}
+
+const ChatWrapper: FC<ChatWrapperProps> = ({ prompts }) => {
+  const getAnswers = (answers: Answer[]) => {
+    return answers.map((answer, answerIndex) => (
+      <ChatMessage key={answerIndex} {...answer} />
+    ));
+  };
+
   return (
     <>
       <div className="chatWrapper">
-        {list.map((message, index) => (
-          <ChatMessage
-            key={index}
-            message={message}
-            answer={index % 2 === 0}
-            count={index}
-            maxCount={list.length}
-          />
+        {prompts.map((prompt, promptIndex) => (
+          <>
+            <ChatMessage key={promptIndex} message={prompt.message} />
+            {getAnswers(prompt.answers)}
+          </>
         ))}
       </div>
     </>
