@@ -9,7 +9,7 @@ import Installation from "../../pages/Installation.tsx";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [page, setPage] = useState("Home");
+    const [page, setPage] = useState("Start");
     const renderPage = () => {
         switch (page) {
             case "Start":

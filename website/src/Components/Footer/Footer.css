@@ -1,8 +1,9 @@
 .footer {
   background-color: #333;
+  padding: 1em 20vw;
   color: #fff;
-  width: 100%;
   padding: 1em 20% 1em 20%;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  overflow-x: hidden;
 }

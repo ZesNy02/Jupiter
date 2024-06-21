@@ -3,7 +3,6 @@ import './Footer.css';
 
 const Footer: React.FC = () => {
   return (
-    <footer>
       <div className="footer">
         <div>
             <h2>Impressum</h2>
@@ -21,7 +20,6 @@ const Footer: React.FC = () => {
             <p>E-Mail: wnikjadjowandk</p>
         </div>
       </div>
-    </footer>
   );
 };
 
