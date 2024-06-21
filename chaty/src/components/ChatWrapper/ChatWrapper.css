@@ -8,7 +8,7 @@
     box-sizing: border-box; 
   }
 
-  .prompts-container {
+  .chatWrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -22,13 +22,10 @@
     box-sizing: border-box; 
   }
 
-  .wrapper-chat-input {
-    width: 100%;
-    height: 50px;
-    order: 5;
-    z-index: 101;
-    padding: 10px;
-    padding-top: 0px;
-    margin-top: auto;
-    box-sizing: border-box; 
+  .chatMessageActions button {
+    background: transparent;
+    padding: 2px;
+    border: none;
   }
+
+  

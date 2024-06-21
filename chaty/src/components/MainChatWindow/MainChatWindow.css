@@ -1,0 +1,19 @@
+.mainChatWindow {
+    position: fixed;
+  bottom: 10px;
+  left: 270px;
+  width: 587px;
+  height: 548px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  gap: 10px;
+  overflow: auto;
+  min-width: 250px;
+  min-height: 250px;
+  max-width: 80vw;
+  max-height: 80vh;
+  background-color: #448CEB;
+  box-sizing: border-box;
+}
