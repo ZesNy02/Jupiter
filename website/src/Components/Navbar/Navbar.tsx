@@ -37,10 +37,10 @@ const Navbar = () => {
         {isOpen ? <FaTimes /> : <FaBars />}
         </div>
         <ul className={isOpen ? 'nav-menu active' : 'nav-menu'}>
-        <li onClick={() => setPage('Start')}>Start</li>
-        <li onClick={() => setPage('Document')}>Dokumente</li>
-        <li onClick={() => setPage('About')}>Über uns</li>
-        <li onClick={() => setPage('Installation')}>Installation</li>
+        <li className={"nav-item"} onClick={() => setPage('Start')}>Start</li>
+        <li className={"nav-item"} onClick={() => setPage('Document')}>Dokumente</li>
+        <li className={"nav-item"} onClick={() => setPage('About')}>Über uns</li>
+        <li className={"nav-item"} onClick={() => setPage('Installation')}>Installation</li>
         </ul>
         </div>
         </nav>
