@@ -18,6 +18,13 @@
   max-height: 80vh;
   background-color: #448ceb;
   padding: 0.75rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ .mainChatWindow.active {
+  
+  background-color: #EBA360;
+  color: black;
 }
 
 .chatWindowResizeButton {
