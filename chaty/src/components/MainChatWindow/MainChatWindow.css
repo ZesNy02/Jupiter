@@ -1,5 +1,6 @@
 .mainChatWindow {
-    position: fixed;
+  position: fixed;
+  padding: 10px;
   bottom: 10px;
   left: 270px;
   width: 587px;
