@@ -9,7 +9,7 @@ const ChatHeader: FC<ChatHeaderProps> = ({ onClick }) => {
   return (
     <>
       <div className="chatHeader">
-        <h2>Chaty</h2>
+        <h2 className="chatHeaderTitle">Chaty</h2>
         <button onClick={onClick} className="chatCloseButton">
           <img src="/ChatCloseIcon.svg" className="chatCloseIcon" />
         </button>
