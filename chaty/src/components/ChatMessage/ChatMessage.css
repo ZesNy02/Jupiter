@@ -1,27 +1,40 @@
-.chatMessageWrapper {
-    background: transparent;
-}
+.chatyMessage {
+    text-overflow: wrap;
+    align-self: flex-start;
+    border: 1px solid black;
+    border-radius: 10px;
+    border-color: transparent;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+} 
 
-.chatMessageWrapper .chatyMessage {
-    position: relative;
+
+ .chatyMessage .errorMessage {
+    background-color: #e37e8a;
+    text-overflow: wrap;
     align-self: flex-start;
     border: 1px solid black;
     border-radius: 10px;
     border-color: transparent;
     padding: 10px;
-} 
-
-
-.chatMessageWrapper .chatyMessage .errorMessage {
-    background-color: #e37e8a;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
-.chatMessageWrapper .chatyMessage .chatMessage {
+ .chatyMessage .chatMessage {
     background-color: #A4A4AC ;
+    text-overflow: wrap;
+    align-self: flex-start;
+    border: 1px solid black;
+    border-radius: 10px;
+    border-color: transparent;
+    padding: 10px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 
-.chatMessageWrapper .userMessage {
+ .userMessage {
     background-color: #A4A4AC;
     text-overflow: wrap;
     align-self: flex-end;
