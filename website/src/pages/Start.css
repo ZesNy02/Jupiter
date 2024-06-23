@@ -1,0 +1,36 @@
+.produkt-vorstellung{
+  color: #fff;
+  padding: 1em 1em 1em 10%;
+  background-color: #232020;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.team-vorstellung {
+  color: #000;
+  background-color: #fff;
+  padding: 1em 1em 1em 10%;
+}
+
+.intro-box {
+  display: flex;
+  align-items: center;
+  margin-right: 0;
+}
+
+.produktbild {
+  width: 60%;
+}
+
+.team-bild {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.absatz-style1 {
+  width: 40%;
+  padding: 1em;
+}
+

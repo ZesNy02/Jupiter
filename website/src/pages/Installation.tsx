@@ -18,26 +18,26 @@ const Installation: React.FC = () => {
       </div>
       <div className={"grey-box"}>
         <h2>Server</h2>
-        <img className={"installation-images"} src={platzhalter}/>
+        <img className={"installation-images"} src={platzhalter} alt='tool-image'/>
         <p>Docker</p>
         <ul>
           <li>Ein Beispiel für ein Docker Compose ist <a href={"https://www.google.com/"}>hier</a> zu finden</li>
         </ul>
-        <img className={"installation-images"} src={platzhalter}/>
+        <img className={"installation-images"} src={platzhalter} alt='tool-image'/>
         <p>Benötigt:</p>
         <ul>
           <li>Server mit Ollama und LLaMA3</li>
           <li>Server mit Postgres Datenbank</li>
           <li>Beides über Docker möglich</li>
         </ul>
-        <img className={"installation-images"} src={platzhalter}/>
+        <img className={"installation-images"} src={platzhalter} alt='tool-image'/>
         <p>Nativ:</p>
         <ul>
           <li>Installiere Python 3.10 oder höher</li>
           <li>Installiere Rust von <a href={"https://www.google.com/"}>hier</a></li>
           <li>Klone folgendes <a href={"https://www.google.com/"}>Repository</a></li>
         </ul>
-        <img className={"installation-images"} src={platzhalter}/>
+        <img className={"installation-images"} src={platzhalter} alt='tool-image'/>
         <ul>
           <li>Gehe in den "rust-server" Ordner</li>
           <li>Erstelle eine .env Datei, ein Beipiel ist <a href={"https://www.google.com/"}>hier</a> zu finden</li>
@@ -52,7 +52,7 @@ const Installation: React.FC = () => {
             <h3 style={{width: "100%"}}>IDE</h3>
             {//Es tut mir leid für diese Hurensöhnigkeit
             }
-            <img className={"tool-images solo"} src={platzhalter}/>
+            <img className={"tool-images solo"} src={platzhalter} alt='tool-image'/>
             <ul className={"soloText"}>
               <li>Visual Studio Code</li>
             </ul>
@@ -61,19 +61,19 @@ const Installation: React.FC = () => {
 
           <div className={"tool-box"}>
             <h3 style={{width: "100%"}}>Organinsation und Kommunikation</h3>
-            <img className={"tool-images"} src={platzhalter}/>
+            <img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>GitHub</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>GitHub Projects</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Discord</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Microsoft Teams</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Clockify</li>
             </ul>
@@ -81,13 +81,13 @@ const Installation: React.FC = () => {
 
           <div className={"tool-box"}>
             <h3 style={{width: "100%"}}>Dokumente</h3>
-            <img className={"tool-images"} src={platzhalter}/>
+            <img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Google Docs</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Google Sheets</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Google Slides</li>
             </ul>
@@ -95,13 +95,13 @@ const Installation: React.FC = () => {
 
           <div className={"tool-box"}>
             <h3 style={{width: "100%"}}>Sonstiges</h3>
-            <img className={"tool-images"} src={platzhalter}/>
+            <img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Figma</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Docker</li>
-            </ul><img className={"tool-images"} src={platzhalter}/>
+            </ul><img className={"tool-images"} src={platzhalter} alt='tool-image'/>
             <ul>
               <li>Drawio</li>
             </ul>
