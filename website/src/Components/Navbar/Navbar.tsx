@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemText, ListItemButton, Box } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 import Document from "../../pages/Document.tsx";
@@ -10,6 +12,7 @@ import Installation from "../../pages/Installation.tsx";
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [page, setPage] = useState("Start");
+
     const renderPage = () => {
         switch (page) {
             case "Start":
@@ -22,30 +25,61 @@ const Navbar = () => {
                 return <Installation />;
         }
     };
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
+
+    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+            return;
+        }
+        setIsOpen(open);
     };
+
+    const handlePageChange = (newPage: string) => {
+        setPage(newPage);
+        setIsOpen(false);
+    };
+
+    const menuItems = [
+        { text: 'Start', onClick: () => handlePageChange('Start') },
+        { text: 'Dokumente', onClick: () => handlePageChange('Document') },
+        { text: 'Über uns', onClick: () => handlePageChange('About') },
+        { text: 'Installation', onClick: () => handlePageChange('Installation') },
+    ];
 
     return (
         <>
-        <nav className="navbar">
-        <div className="navbar-container">
+            <AppBar position="static" sx={{ bgcolor: '#333' }}>
+                <Toolbar>
 
-            <img className="navbar-logo" src={logo} alt="logo" />
+                <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                <img className="navbar-logo" src={logo} alt="logo" style={{ height: '40px' }} />
+                </Box>
 
-            <div className="menu-icon" onClick={toggleMenu}>
-        {isOpen ? <FaTimes /> : <FaBars />}
-        </div>
-        <ul className={isOpen ? 'nav-menu active' : 'nav-menu'}>
-        <li className={"nav-item"} onClick={() => setPage('Start')}>Start</li>
-        <li className={"nav-item"} onClick={() => setPage('Document')}>Dokumente</li>
-        <li className={"nav-item"} onClick={() => setPage('About')}>Über uns</li>
-        <li className={"nav-item"} onClick={() => setPage('Installation')}>Installation</li>
-        </ul>
-        </div>
-        </nav>
+                    <IconButton
+                        edge="end"
+                        color="inherit"
+                        aria-label="menu"
+                        onClick={toggleDrawer(true)}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            <Drawer anchor="right" open={isOpen} onClose={toggleDrawer(false)}>
+                <IconButton onClick={toggleDrawer(false)} sx={{ alignSelf: 'flex-end', margin: 1 }}>
+                    <CloseIcon />
+                </IconButton>
+                <List>
+                    {menuItems.map((item) => (
+                        <ListItem key={item.text} disablePadding>
+                            <ListItemButton onClick={item.onClick}>
+                                <ListItemText primary={item.text} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+            </Drawer>
             {renderPage()}
-    </>
+        </>
     );
 };
 
