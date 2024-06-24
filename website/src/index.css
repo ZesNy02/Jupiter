@@ -1,11 +1,15 @@
+
 #root {
   width: 100%;
   overflow-x: hidden;
 }
+
 .content {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
+  /*display: grid;
+  grid-template-columns: 1fr;*/
+  padding: 0px;
+  font-size: 16px;
 }
 
 :root {
@@ -21,6 +25,23 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.white-box, .grey-box, .black-box {
+  padding: 2em 8em 2em 18%;
+}
+
+.white-box {
+  background-color: white;
+}
+
+.grey-box {
+  background-color: #f0f0f0;
+}
+
+.black-box{
+  background-color: #333;
+  color: white;
 }
 
 a {
@@ -39,8 +60,15 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2.5em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5em;
 }
 
 button {
@@ -72,5 +100,28 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+      font-size: 14px;
+      padding: 0px;
+  }
+
+  .white-box, .grey-box, .black-box {
+      padding: 15px;
+  }
+}
+
+/* Small screens (smartphones) */
+@media (max-width: 480px) {
+  .content {
+      font-size: 12px;
+      padding: 0px;
+  }
+
+  .white-box, .grey-box, .black-box {
+      padding: 10px;
   }
 }

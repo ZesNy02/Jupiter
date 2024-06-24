@@ -1,36 +1,22 @@
-.produkt-vorstellung{
-  color: #fff;
-  padding: 2em 8em 2em 18%;
-  background-color: #232020;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.team-vorstellung {
-  color: #000;
-  background-color: #fff;
-  padding: 2em 8em 2em 18%;
-}
-
 .intro-box {
   display: flex;
   align-items: center;
   margin-right: 0;
 }
 
-.produktbild {
-  width: 60%;
+.intro-images {
+  width: 50%;
+  padding: 2em;
+}
+
+.team-images {
+  width: 80%;
+  padding: 2em;
 }
 
 .team-bild {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-left: auto;
   margin-right: auto;
 }
-
-.absatz-style1 {
-  width: 40%;
-  padding: 1em;
-}
-

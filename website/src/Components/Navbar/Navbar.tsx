@@ -51,21 +51,31 @@ const Navbar = () => {
                 <Toolbar>
 
                 <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-                <img className="navbar-logo" src={logo} alt="logo" style={{ height: '40px' }} />
+
+                <img className="navbar-logo" src={logo} alt="logo" style={{ height: '40px', width: 'auto' }} />
                 </Box>
 
                     <IconButton
                         edge="end"
                         color="inherit"
                         aria-label="menu"
-                        onClick={toggleDrawer(true)}
+                        onClick={toggleDrawer(true)
+                            
+                        }
                     >
-                        <MenuIcon />
-                    </IconButton>
+                        <MenuIcon fontSize="large" />
+                    </IconButton >
                 </Toolbar>
             </AppBar>
-            <Drawer anchor="right" open={isOpen} onClose={toggleDrawer(false)}>
-                <IconButton onClick={toggleDrawer(false)} sx={{ alignSelf: 'flex-end', margin: 1 }}>
+            <Drawer 
+            anchor="right" 
+            open={isOpen} 
+            onClose={toggleDrawer(false)}
+            sx={{
+                width: '25%', 
+                '& .MuiDrawer-paper': { width: 'inherit', bgcolor: 'white' } 
+            }}>
+                <IconButton onClick={toggleDrawer(false)} sx={{ alignSelf: 'flex-end', margin: 1}}>
                     <CloseIcon />
                 </IconButton>
                 <List>

@@ -1,9 +1,21 @@
+.profiles-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; 
+}
+
 .profile {
-  width: 20%;
-}
-.vorstellung {
-  padding: 2em 8em 2em 18%;
-}
-/* .Uberschrift-About {
+  padding: 10px;
   text-align: center;
-} */
+  margin: 10px;
+  flex: 1 1 200px;
+  max-width: 200px;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  height: 8em;
+  line-height: 8em;
+  width: 8em
+}
+

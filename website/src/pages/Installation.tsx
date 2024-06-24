@@ -10,6 +10,7 @@ const Installation: React.FC = () => {
   return (
     <>  
     <div className={"content"}>
+      <div className={"installationsbox"}>
       <div className={"white-box"}>
         <h1>Installation</h1>
         <p>Client:</p>
@@ -107,6 +108,7 @@ const Installation: React.FC = () => {
             </ul>
           </div>
         </div>
+      </div>
       </div>
     </div>
     </>
