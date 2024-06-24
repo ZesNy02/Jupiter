@@ -1,10 +1,14 @@
 import argparse
+import os
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
-import setup
+import lib.constants as constants
 from embedding import get_embedding_function
-from call_ai import ask_ai
+from lib.call_ai import ask_ai
+
+dirname = os.path.dirname(__file__)
+CHROMA_PATH = os.path.join(dirname, constants.CHROMA_PATH)
 
 def main():
     #Cli, Handles the input through the command line, in our case its going to be the question asked by the user
@@ -18,14 +22,14 @@ def main():
 def query_rag(url: str, query_text: str):
     # Prepare the DB.
     embedding_function = get_embedding_function()
-    db = Chroma(persist_directory=setup.CHROMA_PATH, embedding_function=embedding_function)
+    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
 
     # Search the DB.
     results = db.similarity_search_with_score(query_text, k=5)
 
     #merges the context from the documents in the db and the question asked by the user with a template
     context_text = "\n\n".join([doc.page_content for doc, _score in results])
-    prompt_template = ChatPromptTemplate.from_template(setup.PROMPT_TEMPLATE)
+    prompt_template = ChatPromptTemplate.from_template(constants.PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
     
 

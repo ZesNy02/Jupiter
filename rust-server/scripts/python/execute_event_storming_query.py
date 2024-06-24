@@ -1,9 +1,9 @@
 from langchain.prompts import ChatPromptTemplate
 import argparse
-import setup
+import constants
 import requests
 import json
-from call_ai import ask_ai
+from lib.call_ai import ask_ai
 
 
 
@@ -20,7 +20,7 @@ def main():
 def place_event(event: str,x: int, y: int):
         data = {
             'elementId': f'{event}',
-            'boardId': f'{setup.CLIENT_ID}',
+            'boardId': f'{constants.CLIENT_ID}',
             'type': 'event',
             'name': f'{event}',
             'content': '',
@@ -38,16 +38,16 @@ def place_event(event: str,x: int, y: int):
 
         headers = {
             'accept': '*/*',
-            'X-Auth-Secret': f'{setup.CLIENT_SECRET}',
+            'X-Auth-Secret': f'{constants.CLIENT_SECRET}',
             'Content-Type': 'application/json'
         }
 
         # Send a POST request with JSON data
-        requests.post(setup.PROOPH_URL, headers=headers, json=data)
+        requests.post(constants.PROOPH_URL, headers=headers, json=data)
     
 
 def generate_events(url: str, topic: str):
-    prompt_template = ChatPromptTemplate.from_template(setup.STORM_TEMPLATE)
+    prompt_template = ChatPromptTemplate.from_template(constants.STORM_TEMPLATE)
     prompt = prompt_template.format(topic=topic)
     response = ask_ai(url, prompt)
     #print(response)

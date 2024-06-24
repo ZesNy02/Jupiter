@@ -1,8 +1,10 @@
 import psycopg2
-from embedding import get_embedding_function
+import sys
+import os
 import argparse
 from pgvector.psycopg2 import register_vector
 import numpy as np
+from lib.embedding import get_embedding_function
 
 def getanswer(dburl: str, prompt: str):
     conn = psycopg2.connect(dburl)
