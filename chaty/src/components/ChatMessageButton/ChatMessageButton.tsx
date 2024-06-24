@@ -22,10 +22,10 @@ const ChatMessageButton: FC<ChatMessageButtonProps> = ({
 
   return (
     <>
-      <button className="chatMessageActionButton" onClick={onClick}>
+      <button className="chat-message-action-button" onClick={onClick}>
         <img
           src={iconPath}
-          className={`chatMessageActionIcon`}
+          className={`chat-message-action-icon`}
           style={activeStyle}
         />
       </button>

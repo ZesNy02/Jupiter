@@ -12,22 +12,22 @@ const ESToggleButton: FC<ESToggleButtonProps> = ({
 }) => {
   return (
     <>
-      <div className="eventstormingWrapper">
+      <div className="eventstorming-wrapper">
         <button
-          className={`toggleButtonWrapper${eventStorming ? " active" : ""}`}
+          className={`toggle-button-wrapper${eventStorming ? " active" : ""}`}
           onClick={onClick}
         >
           <div
-            className={`toggleButtonBackground${
+            className={`toggle-button-background${
               eventStorming ? " active" : ""
             }`}
           >
             <span
-              className={`toggleButtonPoint${eventStorming ? " active" : ""}`}
+              className={`toggle-button-point${eventStorming ? " active" : ""}`}
             ></span>
           </div>
         </button>
-        <h2 className="eventstormingTitle">
+        <h2 className="eventstorming-title">
           {eventStorming ? "Event Storming" : "Chat"}
         </h2>
       </div>

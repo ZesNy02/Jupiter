@@ -1,4 +1,4 @@
-.mainChatWindow {
+.main-chat-window {
   position: fixed;
   bottom: 10px;
   /*left: 270px;
@@ -21,23 +21,7 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
- .mainChatWindow.active {
-  
-  background-color: #EBA360;
+.main-chat-window.active {
+  background-color: #eba360;
   color: black;
-}
-
-.chatWindowResizeButton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: transparent;
-  color: white;
-  border: none;
-  cursor: nesw-resize;
-}
-
-.chatWindowResizeIcon {
-  height: 1.5rem;
-  width: 1.5rem;
 }

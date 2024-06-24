@@ -8,8 +8,8 @@ interface ChatButtonProps {
 const ChatButton: FC<ChatButtonProps> = ({ onClick }) => {
   return (
     <>
-      <button onClick={onClick} className="chatButton">
-        <img src="/ChatButtonIcon.svg" className="chatButtonIcon" />
+      <button onClick={onClick} className="chat-button">
+        <img src="/ChatButtonIcon.svg" className="chat-button-icon" />
       </button>
     </>
   );

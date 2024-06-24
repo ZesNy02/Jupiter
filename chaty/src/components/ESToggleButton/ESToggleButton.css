@@ -1,15 +1,15 @@
-.eventstormingWrapper {
+.eventstorming-wrapper {
   display: flex;
   align-items: center;
   justify-content: left;
   gap: 1rem;
 }
 
-.eventstormingTitle {
+.eventstorming-title {
   line-height: 1;
 }
 
-.toggleButtonWrapper {
+.toggle-button-wrapper {
   width: 4rem;
   height: 2rem;
   position: relative;
@@ -25,24 +25,24 @@
   border: none;
 }
 
-.toggleButtonWrapper:focus {
+.toggle-button-wrapper:focus {
   outline: none;
   border: none;
 }
-.toggleButtonWrapper:hover {
+.toggle-button-wrapper:hover {
   outline: 1px solid rgba(0, 0, 0, 0.5);
   border: none;
 }
-.toggleButtonWrapper:active {
+.toggle-button-wrapper:active {
   outline: 1px solid rgba(0, 0, 0, 0.5);
   border: none;
 }
 
-.toggleButtonWrapper.active {
+.toggle-button-wrapper.active {
   background-color: #a6a6a6;
 }
 
-.toggleButtonBackground {
+.toggle-button-background {
   width: 100%;
   height: 100%;
   background-color: #a6a6a6;
@@ -54,11 +54,11 @@
   position: relative;
 }
 
-.toggleButtonBackground.active {
+.toggle-button-background.active {
   background-color: #d3d3d3;
 }
 
-.toggleButtonPoint {
+.toggle-button-point {
   width: 1.5rem;
   height: 1.5rem;
   background-color: #434343;
@@ -69,7 +69,7 @@
   right: calc(100% - 1.5rem);
 }
 
-.toggleButtonPoint.active {
+.toggle-button-point.active {
   right: 0px;
   background-color: #ffa500;
 }

@@ -1,19 +1,18 @@
-.chatButtonIcon {
+.chat-button-icon {
   width: 30px;
   height: 30px;
 }
 
-.chatButton {
+.chat-button {
   position: fixed;
   bottom: 10px;
   left: 270px;
   width: 48px;
   height: 48px;
-  background-color: #448CEB;
+  background-color: #448ceb;
   border-radius: 100%;
   border: none;
   z-index: 80;
   cursor: pointer;
   padding: 4px;
 }
-

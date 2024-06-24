@@ -8,10 +8,10 @@ interface ChatHeaderProps {
 const ChatHeader: FC<ChatHeaderProps> = ({ onClick }) => {
   return (
     <>
-      <div className="chatHeader">
-        <h2 className="chatHeaderTitle">Chaty</h2>
-        <button onClick={onClick} className="chatCloseButton">
-          <img src="/ChatCloseIcon.svg" className="chatCloseIcon" />
+      <div className="chat-header">
+        <h2 className="chat-header-title">Chaty</h2>
+        <button onClick={onClick} className="chat-close-button">
+          <img src="/ChatCloseIcon.svg" className="chat-close-icon" />
         </button>
       </div>
     </>

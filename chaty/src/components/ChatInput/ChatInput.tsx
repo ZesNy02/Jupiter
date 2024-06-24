@@ -19,17 +19,17 @@ const ChatInput: FC<ChatInputProps> = ({ eventStorming, onSend }) => {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     onSend(inputText);
     setInputText("");
   };
 
   return (
     <>
-      <div className="chatInputWrapper">
+      <div className="chat-input-wrapper">
         <input
           type="text"
-          className="chatInput"
+          className="chat-input"
           placeholder={
             eventStorming
               ? "Write your topic here..."
@@ -39,8 +39,11 @@ const ChatInput: FC<ChatInputProps> = ({ eventStorming, onSend }) => {
           onKeyUp={handlePressEnter}
           onChange={handleTextChange}
         />
-        <button className="chatInputSendButton" onClick={handleSend}>
-          <img src="/ChatInputIcon.svg" className="chatInputSendButtonIcon" />
+        <button className="chat-input-send.button" onClick={handleSend}>
+          <img
+            src="/ChatInputIcon.svg"
+            className="chat-input-send-button-icon"
+          />
         </button>
       </div>
     </>
