@@ -6,7 +6,7 @@ const Document = () => {
   return (
     <div className={"content"}>
         <div className={"white-box"}>
-            <h1>Dokumente</h1>
+            <h1 style={{marginLeft: "20%"}}>Dokumente</h1>
             <br/>
             <h2>Jour Fixe</h2>
             <div className={"button-box"}>

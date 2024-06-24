@@ -5,6 +5,7 @@ import platzhalter from '../assets/platzhalter.png';
 const About: React.FC = () => {
   return (
     <div className={"content"}>
+      <div className={"vorstellung"}>
       <div className='Uberschrift-About'>
         <h1>Über uns</h1>
       </div>
@@ -51,6 +52,7 @@ const About: React.FC = () => {
           </td>
         </tr>
       </table>
+    </div>
     </div>
   );
 }
