@@ -48,10 +48,15 @@ const THUMBS_UP_BUTTON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" height="30
 const THUMBS_DOWN_BUTTON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#A4A4AC"><path d="M241.33-840H684v514.67L405.33-40l-42.66-37.33Q356.33-83 352.83-93t-3.5-22.33v-11.34L394-325.33H108.67q-26.67 0-46.67-20T42-392v-81.23q0-7.1-.33-14.77-.34-7.67 2.33-14.67L168-790q8.92-20.83 29.73-35.42Q218.54-840 241.33-840Zm376 66.67H232.67l-124 292.66V-392h368.66L424-152.67l193.33-200.66v-420Zm0 420v-420 420Zm66.67 28V-392h128.67v-381.33H684V-840h195.33v514.67H684Z"/></svg>';
 const CLOSE_BUTTON_SVG = '<svg class="closeButtonSVG" id="closeButtonSVG" xmlns="http://www.w3.org/2000/svg" height="120%" viewBox="0 -960 960 960" width="120%" fill="#D9D9D9"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
 const CHAT_INPUT_BUTTON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>';
-
+const RATING_NEUTRAL_TO_POSITIVE = 1;
+const RATING_NEUTRAL_TO_NEGATIVE = -1;
+const RATING_POSITIVE_TO_NEUTRAL = -1;
+const RATING_POSITIVE_TO_NEGATIVE = -2;
+const RATING_NEGATIVE_TO_NEUTRAL = 1;
+const RATING_NEGATIVE_TO_POSITIVE = 2;
 const styleSheet = () => {
-  const style = document.createElement('style');
-  style.innerHTML = `
+    const style = document.createElement('style');
+    style.innerHTML = `
    .chatWindow {
     background-color: #448CEB;
     transition: background-color 0.3s;
@@ -245,6 +250,7 @@ background-color: #EEE;
  transition: all 0.3s;
 
 }
+
 .eventStormingHeading,
 .chatyName{
  transition: all 0.3s;
@@ -258,11 +264,13 @@ background-color: #EEE;
  transition: all 0.3s;
 
 }
+
 .eventStormingHeading.active,
 .chatyName.active{
  color:#434343 !important;
  transition: all 0.3s;
 }
+
 .responseMessage {
   position: relative;
   align-self: flex-start;
@@ -270,6 +278,7 @@ background-color: #EEE;
   border-radius: 10px;
   padding: 10px;
 }
+
 #chatButton {
   position: fixed;
   bottom: 20px;
@@ -285,6 +294,7 @@ background-color: #EEE;
   align-items: center;
   justify-content: center;
 }
+
 #chatHeader {
   display: flex;
   align-items: center;
@@ -297,12 +307,14 @@ background-color: #EEE;
   padding-top: 20px;
   padding-bottom: 0px;
 }
+
 #chatyName {
   user-select: none;
   color: #D9D9D9;
   margin: 0;
   flex-grow: 1;
 }
+
 #closeButton {
   color: #D9D9D9;
   height: 40px;
@@ -312,25 +324,25 @@ background-color: #EEE;
   background-color: transparent;
   cursor: pointer;
 }
+
 #wrapper-prompts-container {
   width: 100%;
-  flex-grow: 1; /* Allow it to grow and take available space */
+  flex-grow: 1;
   order: 1;
   z-index: 100;
   padding: 10px;
-  overflow: hidden; /* Hide overflow to ensure container stays within bounds */
-}
-/* Wrapper Prompts Container */
-#wrapper-prompts-container {
-  width: 100%;
-  flex-grow: 1; /* Allow it to grow and take available space */
-  order: 1;
-  z-index: 100;
-  padding: 10px;
-  overflow: hidden; /* Hide overflow to ensure container stays within bounds */
+  overflow: hidden;
 }
 
-/* Prompts Container */
+#wrapper-prompts-container {
+  width: 100%;
+  flex-grow: 1;
+  order: 1;
+  z-index: 100;
+  padding: 10px;
+  overflow: hidden;
+}
+
 #prompts-container {
   display: flex;
   flex-direction: column;
@@ -344,7 +356,6 @@ background-color: #EEE;
   padding: 10px;
 }
 
-/* Wrapper Chat Input */
 #wrapperChatInput {
   width: 100%;
   height: 90px;
@@ -364,10 +375,12 @@ background-color: #EEE;
   background-color: white;
   border-radius: 15px;
 }
+
 .eventStormingHeading {
   user-select: none;
   color: #D9D9D9;
 }
+
 .userMessage {
   background-color: #A4A4AC;
   align-self: flex-end;
@@ -378,6 +391,7 @@ background-color: #EEE;
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+
 .loadMessage {
   background-color: #A4A4AC;
   align-self: flex-start;
@@ -386,6 +400,7 @@ background-color: #EEE;
   border-color: transparent;
   padding: 10px;
 }
+
 .responseMessage {
   position: relative;
   align-self: flex-start;
@@ -394,613 +409,629 @@ background-color: #EEE;
   padding: 10px;
   border-color: transparent;
 }
+
+.eventStormingHeading {
+  user-select: none;
+  color: #D9D9D9;
+}
+
+#chatInput {
+  height: 40px;
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.reloadButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.thumbsUpButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.thumbsDownButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.loadMessage {
+  background-color: #A4A4AC;
+  align-self: flex-start;
+  border: 1px solid black;
+  border-radius: 10px;
+  border-color: transparent;
+  padding: 10px;
+}
+
+.wrapperResponseMessageButtons {
+  height: 40px;
+  padding-top: 10px;
+}
+
 `;
-  return style;
+    return style;
 }
 // The Chat button is the blue button that appears on the bottom left of the screen
 // When clicked, it opens the chat window
 const makeChatButton = () => {
-  const chatButton = document.createElement("button");
-  chatButton.id = "chatButton";
-  chatButton.className = "chatButton";
-  chatButton.innerHTML = CHAT_BUTTON_SVG;
-  chatButton.addEventListener("click", () => {
-    const chatWindow = document.getElementById("chatWindow");
-    chatWindow.style.display =
-      chatWindow.style.display === "none" ? "flex" : "none";
-  });
-  return chatButton;
+    const chatButton = document.createElement("button");
+    chatButton.id = "chatButton";
+    chatButton.className = "chatButton";
+    chatButton.innerHTML = CHAT_BUTTON_SVG;
+    chatButton.addEventListener("click", () => {
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.style.display =
+            chatWindow.style.display === "none" ? "flex" : "none";
+    });
+    return chatButton;
 };
 //creates the chat Window with everything that needs to be loaded the moment the site is loaded
 const makeChatWindow = () => {
 
-  const makeResizeHandle = (container) => {
-    const resizeHandle = document.createElement("div");
-    resizeHandle.className = "resizeHandle";
-    resizeHandle.id = "resizeHandle";
-    resizeHandle.innerHTML = RESIZE_HANDLE_SVG;
-    let isResizing = false;
-    let startX, startY, startWidth, startHeight;
+    const makeResizeHandle = (container) => {
+        const resizeHandle = document.createElement("div");
+        resizeHandle.className = "resizeHandle";
+        resizeHandle.id = "resizeHandle";
+        resizeHandle.innerHTML = RESIZE_HANDLE_SVG;
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
 
-    resizeHandle.addEventListener('mousedown', (e) => {
-      isResizing = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      startWidth = parseInt(getComputedStyle(container, null).getPropertyValue('width'));
-      startHeight = parseInt(getComputedStyle(container, null).getPropertyValue('height'));
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = parseInt(getComputedStyle(container, null).getPropertyValue('width'));
+            startHeight = parseInt(getComputedStyle(container, null).getPropertyValue('height'));
 
-      document.addEventListener('mousemove', resize);
-      document.addEventListener('mouseup', stopResize);
-    });
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+        });
 
-    function resize(e) {
-      if (isResizing) {
-        const width = startWidth + (e.clientX - startX);
-        let height = startHeight + (startY - e.clientY);
+        function resize(e) {
+            if (isResizing) {
+                const width = startWidth + (e.clientX - startX);
+                let height = startHeight + (startY - e.clientY);
 
-        container.style.width = `${width}px`;
-        container.style.height = `${height}px`;
-      }
+                container.style.width = `${width}px`;
+                container.style.height = `${height}px`;
+            }
+        }
+
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        return resizeHandle;
     }
 
-    function stopResize() {
-      isResizing = false;
-      document.removeEventListener('mousemove', resize);
-      document.removeEventListener('mouseup', stopResize);
-    }
-
-    return resizeHandle;
-  }
-
-  // -------------------------- Chat Window --------------------------
-  const chatWindow = document.createElement("div");
-  //if this is refactored to css it will load slower and it can be that the chat window does not open in time
-  chatWindow.id = "chatWindow";
-  chatWindow.className = "chatWindow";
-  chatWindow.style.position = "fixed";
-  chatWindow.style.bottom = "1.42rem";
-  chatWindow.style.left = "270px";
-  chatWindow.style.width = "30vw";
-  chatWindow.style.height = "50vh";
-  chatWindow.style.zIndex = "100";
-  chatWindow.style.display = "none";
-  chatWindow.style.flexDirection = "column";
-  chatWindow.style.borderRadius = "10px";
-  chatWindow.style.gap = "10px";
-  chatWindow.style.overflow = "auto"; // Ensure content is scrollable if the window is resized smaller
-  chatWindow.style.minWidth = "250px"; // Set minimum width
-  chatWindow.style.minHeight = "250px"; // Set minimum height
-  chatWindow.style.maxWidth = "80vw"; // Set maximum width
-  chatWindow.style.maxHeight = "80vh"; // Set maximum height
+    // -------------------------- Chat Window --------------------------
+    const chatWindow = document.createElement("div");
+    //if this is refactored to css it will load slower and it can be that the chat window does not open in time
+    chatWindow.id = "chatWindow";
+    chatWindow.className = "chatWindow";
+    chatWindow.style.position = "fixed";
+    chatWindow.style.bottom = "1.42rem";
+    chatWindow.style.left = "270px";
+    chatWindow.style.width = "30vw";
+    chatWindow.style.height = "50vh";
+    chatWindow.style.zIndex = "100";
+    chatWindow.style.display = "none";
+    chatWindow.style.flexDirection = "column";
+    chatWindow.style.borderRadius = "10px";
+    chatWindow.style.gap = "10px";
+    chatWindow.style.overflow = "auto"; // Ensure content is scrollable if the window is resized smaller
+    chatWindow.style.minWidth = "250px"; // Set minimum width
+    chatWindow.style.minHeight = "250px"; // Set minimum height
+    chatWindow.style.maxWidth = "80vw"; // Set maximum width
+    chatWindow.style.maxHeight = "80vh"; // Set maximum height
 
 // chatHeader is a the header of the chat window
-  const chatHeader = document.createElement("div");
-  chatHeader.id = "chatHeader";
+    const chatHeader = document.createElement("div");
+    chatHeader.id = "chatHeader";
 
 // Chaty Name on top of the chat window
-  const chatyName = document.createElement("h2");
-  chatyName.id = "chatyName";
-  chatyName.className = "chatyName";
-  chatyName.innerText = "Chaty";
+    const chatyName = document.createElement("h2");
+    chatyName.id = "chatyName";
+    chatyName.className = "chatyName";
+    chatyName.innerText = "Chaty";
 
 // Chat Close Button
-  const closeButton = document.createElement("button");
-  closeButton.innerHTML = CLOSE_BUTTON_SVG;
-  closeButton.id = "closeButton";
-  closeButton.className = "closeButton";
-  closeButton.addEventListener("click", () => {
-    chatWindow.style.display = "none";
-  });
-
-// Append elements to the chat header
-  chatHeader.appendChild(chatyName);
-  chatHeader.appendChild(closeButton);
-  chatHeader.appendChild(makeResizeHandle(chatWindow));
-  chatWindow.appendChild(chatHeader);
-  // -------------------------- Wrapper Prompts Container --------------------------
-  const wrapperPromptsContainer = document.createElement("div");
-  wrapperPromptsContainer.id = "wrapper-prompts-container";
-
-  // -------------------------- Prompts Container --------------------------
-  const promptsContainer = document.createElement("div");
-  promptsContainer.id = "prompts-container";
-  wrapperPromptsContainer.appendChild(promptsContainer);
-  chatWindow.appendChild(wrapperPromptsContainer);
-
-  // -------------------------- Wrapper Chat Input --------------------------
-  const wrapperChatInput = document.createElement("div");
-  wrapperChatInput.id = "wrapperChatInput";
-
-  // -------------------------- Chat Input Div --------------------------
-  const chatInputDiv = document.createElement("div");
-  chatInputDiv.id = "chatInputDiv";
-  // -------------------------- Send Prompt --------------------------
-  // Function to send the prompt to the server
-  // The server will respond with a message
-  // The message and response will be displayed in the chat window
-  const sendPrompt = () => {
-    const message = chatInput.value;
-    //TODO: check if message is javascript or other hazardous code
-    if (message === "" || message.replaceAll(" ", "") === "") {
-      return
-    }
-    //TODO: cleanup of the message, no white spaces
-    const chatWindow = document.getElementById("prompts-container");
-    const wrapperPromptsContainer = document.getElementById(
-      "wrapper-prompts-container"
-    );
-    //clears chat
-    chatInput.value = "";
-
-    // Add message to the chat window
-    const userMessage = makeUserMessage(message);
-    chatWindow.appendChild(userMessage);
-
-    //add message to the cached prompts
-    prompts.set(userMessage.id, message);
-    //sends the message to the server
-    if (eventStormingModeActive) {
-      sendEventStormingMessage(userMessage.id, message);
-    } else {
-      sendPromptMessage(userMessage.id, message, SERVER_URL);
-    }
-  };
-
-  // -------------------------- Chat Input Button --------------------------
-  const chatInputButton = document.createElement("button");
-  chatInputButton.innerHTML = CHAT_INPUT_BUTTON_SVG;
-  chatInputButton.id = "chatInputButton";
-  chatInputButton.class = "chatInputButton";
-  chatInputButton.style.alignSelf = "center";
-  chatInputButton.style.border = "none";
-  chatInputButton.style.order = "1";
-  chatInputButton.style.cursor = "pointer";
-  chatInputButton.style.backgroundColor = "transparent";
-  chatInputButton.addEventListener("click", () => {
-    if (!inputLock) {
-      sendPrompt();
-    }
-  });
-  chatInputDiv.appendChild(chatInputButton);
-
-  // -------------------------- Chat Input --------------------------
-  const chatInput = document.createElement("input");
-  chatInput.id = "chat-input";
-  chatInput.style.height = "40px";
-  chatInput.style.width = "100%";
-  chatInput.placeholder = "Type your message here";
-  chatInput.style.border = "none";
-  chatInput.style.outline = "none";
-  chatInput.style.backgroundColor = "transparent";
-  chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (!inputLock) {
-        sendPrompt();
-      }
-    }
-  });
-  chatInputDiv.appendChild(chatInput);
-
-  //eventStormingButton
-  const createEventStormingSwitch = () => {
-    const switchContainer = document.createElement('div');
-    switchContainer.className = 'eventStormingSwitchContainer';
-
-    const switchKnob = document.createElement('div');
-    switchKnob.className = 'eventStormingSwitchKnob';
-
-    const switchInner = document.createElement("div");
-    switchInner.className = 'eventStormingSwitchInner';
-    switchContainer.appendChild(switchInner);
-    switchContainer.appendChild(switchKnob);
-
-    switchContainer.addEventListener('click', () => {
-      switchContainer.classList.toggle('active');
-      chatWindow.classList.toggle('active');
-      switchInner.classList.toggle('active');
-      document.getElementById("resizeHandlePath").classList.toggle('active');
-      document.getElementById("closeButtonSVG").classList.toggle('active');
-      document.getElementById("eventStormingHeading").classList.toggle('active');
-      document.getElementById("chatyName").classList.toggle('active');
-      document.getElementById("chatButton").classList.toggle('active');
-      document.getElementById("chatButtonSVG").classList.toggle('active');
-      eventStormingModeActive = !eventStormingModeActive;
+    const closeButton = document.createElement("button");
+    closeButton.innerHTML = CLOSE_BUTTON_SVG;
+    closeButton.id = "closeButton";
+    closeButton.className = "closeButton";
+    closeButton.addEventListener("click", () => {
+        chatWindow.style.display = "none";
     });
 
-    return switchContainer;
-  };
-  const createEventStormingHeading = () => {
-    const eventStormingHeading = document.createElement("h2");
-    eventStormingHeading.className = "eventStormingHeading";
-    eventStormingHeading.id = "eventStormingHeading";
-    eventStormingHeading.style.userSelect = "none";
-    eventStormingHeading.innerText = "Eventstorming-Mode";
-    eventStormingHeading.style.color = "#D9D9D9";
-    return eventStormingHeading;
-  }
-  const wrapperEventStorming = document.createElement("div");
-  wrapperEventStorming.className = "wrapperEventStorming";
-  wrapperEventStorming.appendChild(createEventStormingSwitch());
-  wrapperEventStorming.appendChild(createEventStormingHeading());
-  wrapperChatInput.appendChild(wrapperEventStorming);
-  wrapperChatInput.appendChild(chatInputDiv);
-  chatWindow.appendChild(wrapperChatInput);
-  return chatWindow;
+// Append elements to the chat header
+    chatHeader.appendChild(chatyName);
+    chatHeader.appendChild(closeButton);
+    chatHeader.appendChild(makeResizeHandle(chatWindow));
+    chatWindow.appendChild(chatHeader);
+    // -------------------------- Wrapper Prompts Container --------------------------
+    const wrapperPromptsContainer = document.createElement("div");
+    wrapperPromptsContainer.id = "wrapper-prompts-container";
+
+    // -------------------------- Prompts Container --------------------------
+    const promptsContainer = document.createElement("div");
+    promptsContainer.id = "prompts-container";
+    wrapperPromptsContainer.appendChild(promptsContainer);
+    chatWindow.appendChild(wrapperPromptsContainer);
+
+    // -------------------------- Wrapper Chat Input --------------------------
+    const wrapperChatInput = document.createElement("div");
+    wrapperChatInput.id = "wrapperChatInput";
+
+    // -------------------------- Chat Input Div --------------------------
+    const chatInputDiv = document.createElement("div");
+    chatInputDiv.id = "chatInputDiv";
+    // -------------------------- Send Prompt --------------------------
+    // Function to send the prompt to the server
+    // The server will respond with a message
+    // The message and response will be displayed in the chat window
+    const sendPrompt = () => {
+        const message = chatInput.value;
+        if (message === "" || message.replaceAll(" ", "") === "") {
+            return
+        }
+        const chatWindow = document.getElementById("prompts-container");
+        const wrapperPromptsContainer = document.getElementById(
+            "wrapper-prompts-container"
+        );
+        //clears chat
+        chatInput.value = "";
+
+        // Add message to the chat window
+        const userMessage = makeUserMessage(message);
+        chatWindow.appendChild(userMessage);
+
+        //add message to the cached prompts
+        prompts.set(userMessage.id, message);
+        //sends the message to the server
+        if (eventStormingModeActive) {
+            sendEventStormingMessage(userMessage.id, message);
+        } else {
+            sendPromptMessage(userMessage.id, message, SERVER_URL);
+        }
+    };
+
+    // -------------------------- Chat Input Button --------------------------
+    const chatInputButton = document.createElement("button");
+    chatInputButton.innerHTML = CHAT_INPUT_BUTTON_SVG;
+    chatInputButton.id = "chatInputButton";
+    chatInputButton.class = "chatInputButton";
+    chatInputButton.style.alignSelf = "center";
+    chatInputButton.style.border = "none";
+    //if the order is exported into a stylesheet the site messes the order up and the button is left instead of right
+    chatInputButton.style.order = "1";
+    chatInputButton.style.cursor = "pointer";
+    chatInputButton.style.backgroundColor = "transparent";
+    chatInputButton.addEventListener("click", () => {
+        if (!inputLock) {
+            sendPrompt();
+        }
+    });
+    chatInputDiv.appendChild(chatInputButton);
+    // -------------------------- Chat Input --------------------------
+
+    const chatInput = document.createElement("input");
+    chatInput.placeholder = "Type your message here";
+    chatInput.id = "chatInput";
+    chatInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (!inputLock) {
+                sendPrompt();
+            }
+        }
+    });
+    chatInputDiv.appendChild(chatInput);
+
+    //eventStormingButton
+    const createEventStormingSwitch = () => {
+        const switchContainer = document.createElement('div');
+        switchContainer.className = 'eventStormingSwitchContainer';
+
+        const switchKnob = document.createElement('div');
+        switchKnob.className = 'eventStormingSwitchKnob';
+
+        const switchInner = document.createElement("div");
+        switchInner.className = 'eventStormingSwitchInner';
+        switchContainer.appendChild(switchInner);
+        switchContainer.appendChild(switchKnob);
+
+        switchContainer.addEventListener('click', () => {
+            switchContainer.classList.toggle('active');
+            chatWindow.classList.toggle('active');
+            switchInner.classList.toggle('active');
+            document.getElementById("resizeHandlePath").classList.toggle('active');
+            document.getElementById("closeButtonSVG").classList.toggle('active');
+            document.getElementById("eventStormingHeading").classList.toggle('active');
+            document.getElementById("chatyName").classList.toggle('active');
+            document.getElementById("chatButton").classList.toggle('active');
+            document.getElementById("chatButtonSVG").classList.toggle('active');
+            eventStormingModeActive = !eventStormingModeActive;
+        });
+
+        return switchContainer;
+    };
+    const createEventStormingHeading = () => {
+        const eventStormingHeading = document.createElement("h2");
+        eventStormingHeading.className = "eventStormingHeading";
+        eventStormingHeading.id = "eventStormingHeading";
+        eventStormingHeading.innerText = "Eventstorming-Mode";
+        return eventStormingHeading;
+    }
+    const wrapperEventStorming = document.createElement("div");
+    wrapperEventStorming.className = "wrapperEventStorming";
+    wrapperEventStorming.appendChild(createEventStormingSwitch());
+    wrapperEventStorming.appendChild(createEventStormingHeading());
+    wrapperChatInput.appendChild(wrapperEventStorming);
+    wrapperChatInput.appendChild(chatInputDiv);
+    chatWindow.appendChild(wrapperChatInput);
+    return chatWindow;
 };
 
 // A User Message is a message on the right of the Chat that the User Typed
 const makeUserMessage = (text) => {
-  const userMessage = document.createElement("div");
-  userMessage.className = "userMessage";
-  userMessage.id = generateUUID();
-  userMessage.innerHTML = text;
-  return userMessage;
+    const userMessage = document.createElement("div");
+    userMessage.className = "userMessage";
+    userMessage.id = generateUUID();
+    userMessage.innerHTML = text;
+    return userMessage;
 };
 // A Response Message is a message on the left of the Chat that the AI Typed
 const makeResponseMessage = (responseUUID, text, success) => {
-  const promptUUID = responseToPrompt.get(responseUUID);
-  console.log(promptUUID);
+    const promptUUID = responseToPrompt.get(responseUUID);
+    console.log(promptUUID);
 
-  const makeWrapperResponseMessageButtons = () => {
-    const RATING_NEUTRAL_TO_POSITIVE = 1;
-    const RATING_NEUTRAL_TO_NEGATIVE = -1;
-    const RATING_POSITIVE_TO_NEUTRAL = -1;
-    const RATING_POSITIVE_TO_NEGATIVE = -2;
-    const RATING_NEGATIVE_TO_NEUTRAL = 1;
-    const RATING_NEGATIVE_TO_POSITIVE = 2;
-    const createReloadButton = () => {
-      const reloadButton = document.createElement("button");
-      reloadButton.className = "reloadButton";
-      reloadButton.innerHTML = RELOAD_BUTTON_SVG;
-      reloadButton.style.backgroundColor = "transparent";
-      reloadButton.style.border = "none";
-      reloadButton.style.cursor = "pointer";
-      reloadButton.addEventListener("click", () => {
-        reloadPrompt(promptUUID);
-      });
-      return reloadButton;
-    }
+    const makeWrapperResponseMessageButtons = () => {
 
-    const createThumbsUpButton = () => {
-      const thumbsUpButton = document.createElement("button");
-      thumbsUpButton.className = "thumbsUpButton";
-      thumbsUpButton.innerHTML = THUMBS_UP_BUTTON_SVG;
-      thumbsUpButton.style.backgroundColor = "transparent";
-      thumbsUpButton.style.border = "none";
-      thumbsUpButton.style.cursor = "pointer";
-      thumbsUpButton.addEventListener("click", () => {
-        if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
-          switchSelectedButton()
-          sendRating(responseUUID, RATING_NEGATIVE_TO_POSITIVE);
-        } else {
-          if (thumbsUpButton.classList.contains("selected")) {
-            sendRating(responseUUID, RATING_POSITIVE_TO_NEUTRAL);
-          } else {
-            sendRating(responseUUID, RATING_NEUTRAL_TO_POSITIVE);
-          }
-          thumbsUpButton.classList.toggle("selected");
+        const createReloadButton = () => {
+            const reloadButton = document.createElement("button");
+            reloadButton.className = "reloadButton";
+            reloadButton.innerHTML = RELOAD_BUTTON_SVG;
+            reloadButton.addEventListener("click", () => {
+                reloadPrompt(promptUUID);
+            });
+            return reloadButton;
         }
-      });
-      return thumbsUpButton;
-    }
 
-    const createThumbsDownButton = () => {
-      const thumbsDownButton = document.createElement("button");
-      thumbsDownButton.className = "thumbsDownButton";
-      thumbsDownButton.innerHTML = THUMBS_DOWN_BUTTON_SVG;
-      thumbsDownButton.style.backgroundColor = "transparent";
-      thumbsDownButton.style.border = "none";
-      thumbsDownButton.style.cursor = "pointer";
-      thumbsDownButton.addEventListener("click", () => {
-        if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
-          switchSelectedButton()
-          sendRating(responseUUID, RATING_POSITIVE_TO_NEGATIVE);
-        } else {
-          if (thumbsDownButton.classList.contains("selected")) {
-            sendRating(responseUUID, RATING_NEGATIVE_TO_NEUTRAL);
-          } else {
-            sendRating(responseUUID, RATING_NEUTRAL_TO_NEGATIVE);
-          }
-          thumbsDownButton.classList.toggle("selected");
+        const createThumbsUpButton = () => {
+            const thumbsUpButton = document.createElement("button");
+            thumbsUpButton.className = "thumbsUpButton";
+            thumbsUpButton.innerHTML = THUMBS_UP_BUTTON_SVG;
+            thumbsUpButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsUpButton)) {
+                    switchSelectedButton()
+                    sendRating(responseUUID, RATING_NEGATIVE_TO_POSITIVE);
+                } else {
+                    if (thumbsUpButton.classList.contains("selected")) {
+                        sendRating(responseUUID, RATING_POSITIVE_TO_NEUTRAL);
+                    } else {
+                        sendRating(responseUUID, RATING_NEUTRAL_TO_POSITIVE);
+                    }
+                    thumbsUpButton.classList.toggle("selected");
+                }
+            });
+            return thumbsUpButton;
         }
-      });
-      return thumbsDownButton;
+
+        const createThumbsDownButton = () => {
+            const thumbsDownButton = document.createElement("button");
+            thumbsDownButton.className = "thumbsDownButton";
+            thumbsDownButton.innerHTML = THUMBS_DOWN_BUTTON_SVG;
+            thumbsDownButton.addEventListener("click", () => {
+                if (checkIfOtherButtonHasBeenPressed(thumbsDownButton)) {
+                    switchSelectedButton()
+                    sendRating(responseUUID, RATING_POSITIVE_TO_NEGATIVE);
+                } else {
+                    if (thumbsDownButton.classList.contains("selected")) {
+                        sendRating(responseUUID, RATING_NEGATIVE_TO_NEUTRAL);
+                    } else {
+                        sendRating(responseUUID, RATING_NEUTRAL_TO_NEGATIVE);
+                    }
+                    thumbsDownButton.classList.toggle("selected");
+                }
+            });
+            return thumbsDownButton;
+        }
+
+        const thumbsUpButton = createThumbsUpButton();
+        const thumbsDownButton = createThumbsDownButton();
+
+        //returns the selected status of the other rating button than the one given
+        function checkIfOtherButtonHasBeenPressed(button) {
+            if (thumbsUpButton.className === button.className) {
+                return thumbsDownButton.classList.contains("selected");
+            } else {
+                return thumbsUpButton.classList.contains("selected");
+            }
+        }
+
+        //switches the selected status of both rating buttons
+        function switchSelectedButton() {
+            thumbsUpButton.classList.toggle("selected");
+            thumbsDownButton.classList.toggle("selected");
+        }
+
+        //reloads the prompt and lets the ai generate a new response
+        function reloadPrompt(promptUUID) {
+            //search the cached prompts to find the corresponding message
+            const prompt = prompts.get(promptUUID);
+            //sends the prompt to the server again to reload it
+            sendRegenerateMessage(promptUUID, prompt, REGENERATE_URL);
+
+        }
+
+        const wrapperResponseMessageButtons = document.createElement("div");
+        wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
+
+        wrapperResponseMessageButtons.appendChild(createReloadButton());
+
+        if (success) {
+            wrapperResponseMessageButtons.appendChild(thumbsUpButton);
+            wrapperResponseMessageButtons.appendChild(thumbsDownButton);
+        }
+
+        return wrapperResponseMessageButtons;
     }
 
-    const thumbsUpButton = createThumbsUpButton();
-    const thumbsDownButton = createThumbsDownButton();
-
-    //returns the selected status of the other rating button than the one given
-    function checkIfOtherButtonHasBeenPressed(button) {
-      if (thumbsUpButton.className === button.className) {
-        return thumbsDownButton.classList.contains("selected");
-      } else {
-        return thumbsUpButton.classList.contains("selected");
-      }
-    }
-
-    //switches the selected status of both rating buttons
-    function switchSelectedButton() {
-      thumbsUpButton.classList.toggle("selected");
-      thumbsDownButton.classList.toggle("selected");
-    }
-
-    //reloads the prompt and lets the ai generate a new response
-    function reloadPrompt(promptUUID) {
-      //search the cached prompts to find the corresponding message
-      const prompt = prompts.get(promptUUID);
-      //sends the prompt to the server again to reload it
-      sendRegenerateMessage(promptUUID, prompt, REGENERATE_URL);
-
-    }
-
-    const wrapperResponseMessageButtons = document.createElement("div");
-    wrapperResponseMessageButtons.className = "wrapperResponseMessageButtons";
-    wrapperResponseMessageButtons.style.height = "40px";
-    wrapperResponseMessageButtons.style.paddingTop = "10px";
-
-    wrapperResponseMessageButtons.appendChild(createReloadButton());
-
+    const responseMessage = document.createElement("div");
+    responseMessage.className = "responseMessage";
+    responseMessage.id = responseUUID;
+    responseMessage.innerHTML = text;
     if (success) {
-      wrapperResponseMessageButtons.appendChild(thumbsUpButton);
-      wrapperResponseMessageButtons.appendChild(thumbsDownButton);
+        responseMessage.style.backgroundColor = "#A4A4AC";
+    } else {
+        responseMessage.style.backgroundColor = "#e37e8a";
     }
+    const wrapperResponseMessage = document.createElement("div");
+    wrapperResponseMessage.appendChild(responseMessage);
+    wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
 
-    return wrapperResponseMessageButtons;
-  }
-
-  const responseMessage = document.createElement("div");
-  responseMessage.className = "responseMessage";
-  responseMessage.id = responseUUID;
-  responseMessage.innerHTML = text;
-  if (success) {
-    responseMessage.style.backgroundColor = "#A4A4AC";
-  } else {
-    responseMessage.style.backgroundColor = "#e37e8a";
-  }
-  const wrapperResponseMessage = document.createElement("div");
-  wrapperResponseMessage.appendChild(responseMessage);
-  wrapperResponseMessage.appendChild(makeWrapperResponseMessageButtons());
-
-  return wrapperResponseMessage;
+    return wrapperResponseMessage;
 };
 
 //generates the eventStorming message without the buttons
 const makeEventStormingMessage = (responseUUID, message, success) => {
-  const promptUUID = responseToPrompt.get(responseUUID);
+    const promptUUID = responseToPrompt.get(responseUUID);
 
-  const responseMessage = document.createElement("div");
-  responseMessage.className = "responseMessage";
-  responseMessage.id = responseUUID;
-  responseMessage.innerHTML = text;
-  if (success) {
-    responseMessage.style.backgroundColor = "#A4A4AC";
-  } else {
-    responseMessage.style.backgroundColor = "#e37e8a";
-  }
-  const wrapperResponseMessage = document.createElement("div");
-  wrapperResponseMessage.appendChild(responseMessage);
+    const responseMessage = document.createElement("div");
+    responseMessage.className = "responseMessage";
+    responseMessage.id = responseUUID;
+    responseMessage.innerHTML = text;
+    if (success) {
+        responseMessage.style.backgroundColor = "#A4A4AC";
+    } else {
+        responseMessage.style.backgroundColor = "#e37e8a";
+    }
+    const wrapperResponseMessage = document.createElement("div");
+    wrapperResponseMessage.appendChild(responseMessage);
 
-  return wrapperResponseMessage;
+    return wrapperResponseMessage;
 };
 
 
 // The Chat Window is the window that appears when the Chat button is clicked
 const makeLoadMessage = () => {
-  const loadMessage = document.createElement("div");
-  loadMessage.id = generateUUID();
-  loadMessage.className = "loadMessage";
-  loadMessage.innerHTML = LOAD_MESSAGE_SVG;
-  loadMessage.style.backgroundColor = "#A4A4AC";
-  loadMessage.style.alignSelf = "flex-start";
-  loadMessage.style.border = "1px solid black";
-  loadMessage.style.borderRadius = "10px";
-  loadMessage.style.borderColor = "transparent";
-  loadMessage.style.padding = "10px";
-  return loadMessage
+    const loadMessage = document.createElement("div");
+    loadMessage.id = generateUUID();
+    loadMessage.className = "loadMessage";
+    loadMessage.innerHTML = LOAD_MESSAGE_SVG;
+    return loadMessage
 }
 
 //this whole method makes the chat window so every design choice
 
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 //finds and returns the first prompt after the prompt with the given UUID and the number of answers it had to scroll through
 //returns the div element of the next answer or null if there are no next answers yet
 function getLastAnswerToPromptUUID(promptUUID) {
-  //gets the prompt in question
-  const prompt = document.getElementById(promptUUID);
-  let numberOfAnswers = 0;
-  let currentSibling = prompt.nextSibling;
-  while (currentSibling !== null) {
-    //if the currentSibling is a prompt written by the user return currentSibling
-    if (prompts.get(currentSibling.id)) {
-      return {firstAnswer: currentSibling, numberOfAnswers: numberOfAnswers};
-    } else {
-      numberOfAnswers++;
-      currentSibling = currentSibling.nextSibling;
+    //gets the prompt in question
+    const prompt = document.getElementById(promptUUID);
+    let numberOfAnswers = 0;
+    let currentSibling = prompt.nextSibling;
+    while (currentSibling !== null) {
+        //if the currentSibling is a prompt written by the user return currentSibling
+        if (prompts.get(currentSibling.id)) {
+            return {firstAnswer: currentSibling, numberOfAnswers: numberOfAnswers};
+        } else {
+            numberOfAnswers++;
+            currentSibling = currentSibling.nextSibling;
+        }
     }
-  }
-  //if while loop is exited without currentSibling being undefined return undefined
-  return {firstAnswer: null, numberOfAnswers: numberOfAnswers};
+    //if while loop is exited without currentSibling being undefined return undefined
+    return {firstAnswer: null, numberOfAnswers: numberOfAnswers};
 }
 
 //sends the message to the eventStormingServer
 function sendEventStormingMessage(promptUUID, prompt) {
-  handleSend(promptUUID, prompt, EVENTSTORMING_URL, "eventStorming");
+    handleSend(promptUUID, prompt, EVENTSTORMING_URL, "eventStorming");
 }
 
 //sends the prompt to the given server
 function sendPromptMessage(promptUUID, prompt, serverUrlToSendTo) {
-  handleSend(promptUUID, prompt, serverUrlToSendTo, "prompt");
+    handleSend(promptUUID, prompt, serverUrlToSendTo, "prompt");
 }
 
 //sends the regenerate Message to the server
 function sendRegenerateMessage(promptUUID, prompt) {
-  handleSend(promptUUID, prompt, REGENERATE_URL, "regenerate")
+    handleSend(promptUUID, prompt, REGENERATE_URL, "regenerate")
 }
 
 //sends the rating to the corresponding server, the rating is a whole number from -1 to 1
 function sendRating(responseUUID, rating) {
-  //gets the backend ID
-  const responseID = responseUUIDtoID.get(responseUUID);
-  GM_xmlhttpRequest({
-    method: "POST",
-    url: RATING_URL,
-    data: JSON.stringify({id: responseID, rating: rating}), // Send data as JSON
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+    //gets the backend ID
+    const responseID = responseUUIDtoID.get(responseUUID);
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: RATING_URL,
+        data: JSON.stringify({id: responseID, rating: rating}), // Send data as JSON
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
 }
 
 //handles the sending protocols and formats the window
 function handleSend(promptUUID, prompt, serverUrlToSendTo, type) {
-  const chatWindow = document.getElementById("prompts-container");
-  const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
-  // set inputLock so you cannot enter a new message while the other one is loading
-  inputLock = true;
+    const chatWindow = document.getElementById("prompts-container");
+    const wrapperPromptsContainer = document.getElementById("wrapper-prompts-container");
+    // set inputLock so you cannot enter a new message while the other one is loading
+    inputLock = true;
 
-  // loading animation until response
-  const loadingMessage = makeLoadMessage();
-  chatWindow.insertBefore(loadingMessage, getLastAnswerToPromptUUID(promptUUID).firstAnswer);
+    // loading animation until response
+    const loadingMessage = makeLoadMessage();
+    chatWindow.insertBefore(loadingMessage, getLastAnswerToPromptUUID(promptUUID).firstAnswer);
 
-  //scrolls to the loading message
-  loadingMessage.scrollIntoView({behavior: "smooth"});
+    //scrolls to the loading message
+    loadingMessage.scrollIntoView({behavior: "smooth"});
 
-  // Flag to check if timeout has been reached
-  let timeoutReached = false;
+    // Flag to check if timeout has been reached
+    let timeoutReached = false;
 
-  // Set a timeout to handle cases where the server does not respond
-  const timeout = setTimeout(() => {
-    // Set the flag to indicate timeout has reached so that a message that was late will not be displayed
-    timeoutReached = true;
-    // remove inputLock
-    inputLock = false;
+    // Set a timeout to handle cases where the server does not respond
+    const timeout = setTimeout(() => {
+        // Set the flag to indicate timeout has reached so that a message that was late will not be displayed
+        timeoutReached = true;
+        // remove inputLock
+        inputLock = false;
 
-    const responseUUID = generateUUID();
-    responseToPrompt.set(responseUUID, promptUUID);
+        const responseUUID = generateUUID();
+        responseToPrompt.set(responseUUID, promptUUID);
 
-    // show error message
-    const errorMessage = makeResponseMessage(responseUUID, "Server did not respond in time. Please try again later.", false);
+        // show error message
+        const errorMessage = makeResponseMessage(responseUUID, "Server did not respond in time. Please try again later.", false);
 
-    chatWindow.insertBefore(errorMessage,loadingMessage);
-    chatWindow.removeChild(loadingMessage);
-    errorMessage.scrollIntoView({behavior: "smooth"});
-  }, 60000); // 60 seconds timeout
+        chatWindow.insertBefore(errorMessage, loadingMessage);
+        chatWindow.removeChild(loadingMessage);
+        errorMessage.scrollIntoView({behavior: "smooth"});
+    }, 60000); // 60 seconds timeout
 
-  // Send the message to the server
-  // When Server responds, add the response to the chat window
-  GM_xmlhttpRequest({
-    method: "POST",
-    url: serverUrlToSendTo,
-    data: JSON.stringify({prompt: prompt}), // Send data as JSON
-    headers: {
-      "Content-Type": "application/json",
-    },
-    onload: function (response) {
-      // If timeout reached, do not process the response
-      if (timeoutReached) return;
+    // Send the message to the server
+    // When Server responds, add the response to the chat window
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: serverUrlToSendTo,
+        data: JSON.stringify({prompt: prompt}), // Send data as JSON
+        headers: {
+            "Content-Type": "application/json",
+        },
+        onload: function (response) {
+            // If timeout reached, do not process the response
+            if (timeoutReached) return;
 
-      // Clear the timeout if the server responds in time
-      clearTimeout(timeout);
+            // Clear the timeout if the server responds in time
+            clearTimeout(timeout);
 
-      //generate a UUID for the response and link it to the prompt
-      const responseUUID = generateUUID();
-      let responseMessage = undefined;
+            //generate a UUID for the response and link it to the prompt
+            const responseUUID = generateUUID();
+            let responseMessage = undefined;
 
-      responseToPrompt.set(responseUUID, promptUUID);
-      //checks the type of function
-      if (type === "prompt" || type === "regenerate") {
-        if (JSON.parse(response.responseText).Success !== undefined) {
-          responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Success.id);
-          responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
-        } else {
-          responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Error.id);
-          responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
+            responseToPrompt.set(responseUUID, promptUUID);
+            //checks the type of function
+            if (type === "prompt" || type === "regenerate") {
+                if (JSON.parse(response.responseText).Success !== undefined) {
+                    responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Success.id);
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
+                } else {
+                    responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Error.id);
+                    responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Error, false);
+                }
+            } else if (type === "eventStorming") {
+                if (JSON.parse(response.responseText).Success !== undefined) {
+                    responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Success.message, true);
+                } else {
+                    responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Error.message, false);
+                }
+            }
+
+            //inserts the response in front of the loading message
+            chatWindow.insertBefore(responseMessage, loadingMessage);
+            //after loading the message remove loading message
+            chatWindow.removeChild(loadingMessage);
+            //remove inputLock
+            inputLock = false;
+            responseMessage.scrollIntoView({behavior: "smooth"});
+        },
+        onerror: function () {
+            // Clear the timeout if there's an error response from the server
+            clearTimeout(timeout);
+            // remove inputLock
+            inputLock = false;
+
+            const responseUUID = generateUUID();
+            responseToPrompt.set(responseUUID, promptUUID);
+
+            // show error message
+            const errorMessage = makeResponseMessage(responseUUID, "An error occurred while communicating with the server. Please try again later.", false);
+            chatWindow.insertBefore(errorMessage, loadingMessage);
+            chatWindow.removeChild(loadingMessage);
+            errorMessage.scrollIntoView({behavior: "smooth"});
         }
-      } else if (type === "eventStorming") {
-        if (JSON.parse(response.responseText).Success !== undefined) {
-          responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Success.message, true);
-        } else {
-          responseMessage = makeEventStormingMessage(responseUUID, JSON.parse(response.responseText).Error.message, false);
-        }
-      }
-
-      //inserts the response in front of the loading message
-      chatWindow.insertBefore(responseMessage, loadingMessage);
-      //after loading the message remove loading message
-      chatWindow.removeChild(loadingMessage);
-      //remove inputLock
-      inputLock = false;
-      responseMessage.scrollIntoView({behavior: "smooth"});
-    },
-    onerror: function () {
-      // Clear the timeout if there's an error response from the server
-      clearTimeout(timeout);
-      // remove inputLock
-      inputLock = false;
-
-      const responseUUID = generateUUID();
-      responseToPrompt.set(responseUUID, promptUUID);
-
-      // show error message
-      const errorMessage = makeResponseMessage(responseUUID, "An error occurred while communicating with the server. Please try again later.", false);
-      chatWindow.insertBefore(errorMessage, loadingMessage);
-      chatWindow.removeChild(loadingMessage);
-      errorMessage.scrollIntoView({behavior: "smooth"});
-    }
-  });
+    });
 }
 
 // Add the Chat Button and Chat Window to the page when the window loads
 window.onload = () => {
-  document.head.appendChild(styleSheet());
-  document.body.appendChild(makeChatButton());
-  document.body.appendChild(makeChatWindow());
-  // function checks if the padding of the topmenu changes
-  const domObserver = new MutationObserver(handleDOMChange);
+    document.head.appendChild(styleSheet());
+    document.body.appendChild(makeChatButton());
+    document.body.appendChild(makeChatWindow());
+    // function checks if the padding of the topmenu changes
+    const domObserver = new MutationObserver(handleDOMChange);
 // configuration for the observer
-  const domConfig = {childList: true, subtree: true};
+    const domConfig = {childList: true, subtree: true};
 // starting the observer
-  domObserver.observe(document.documentElement, domConfig);
+    domObserver.observe(document.documentElement, domConfig);
 };
 
 // the function checks if the DOM is generated so that we can start the other observer to observe the padding
 const handleDOMChange = (mutationsList, observer) => {
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'childList') {
-      // Überprüfen, ob das Element mit der ID "topMenu" existiert
-      const topMenu = document.getElementById('topmenu');
-      if (topMenu) {
-        // Ein MutationObserver erstellen, um Änderungen am Padding-Left zu überwachen
-        const paddingLeftObserver = new MutationObserver(handlePaddingLeftChange);
-        // Konfiguration für den Observer festlegen
-        const config = {attributes: true, attributeFilter: ['style']};
-        // Den Observer starten und das Element mit der ID "topMenu" beobachten
-        paddingLeftObserver.observe(topMenu, config);
-        // Observer beenden, sobald das Element gefunden wurde
-        observer.disconnect();
-      }
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            // Überprüfen, ob das Element mit der ID "topMenu" existiert
+            const topMenu = document.getElementById('topmenu');
+            if (topMenu) {
+                // Ein MutationObserver erstellen, um Änderungen am Padding-Left zu überwachen
+                const paddingLeftObserver = new MutationObserver(handlePaddingLeftChange);
+                // Konfiguration für den Observer festlegen
+                const config = {attributes: true, attributeFilter: ['style']};
+                // Den Observer starten und das Element mit der ID "topMenu" beobachten
+                paddingLeftObserver.observe(topMenu, config);
+                // Observer beenden, sobald das Element gefunden wurde
+                observer.disconnect();
+            }
+        }
     }
-  }
 };
 
 // function is getting called when the topmenu is found and the padding is changed
 const handlePaddingLeftChange = (mutationsList, observer) => {
-  const chatWindow = document.getElementById("chatWindow");
-  const chatButton = document.getElementById("chatButton");
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-      const paddingLeftValue = mutation.target.style.paddingLeft;
-      chatWindow.style.left = paddingLeftValue;
-      chatButton.style.left = paddingLeftValue;
+    const chatWindow = document.getElementById("chatWindow");
+    const chatButton = document.getElementById("chatButton");
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const paddingLeftValue = mutation.target.style.paddingLeft;
+            chatWindow.style.left = paddingLeftValue;
+            chatButton.style.left = paddingLeftValue;
+        }
     }
-  }
 
 };
