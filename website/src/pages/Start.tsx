@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import platzhalter from '../assets/platzhalter.png';
 import './Start.css'
-import About from './About';
 
 const Start: React.FC = () => {    
   

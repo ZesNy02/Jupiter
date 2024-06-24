@@ -11,7 +11,7 @@ const Installation: React.FC = () => {
     <>  
     <div className={"content"}>
       <div className={"white-box"}>
-        <h1 style={{marginLeft: "20%"}}>Installation</h1>
+        <h1>Installation</h1>
         <p>Client:</p>
         <ul><li>Lade die Tampermonkey Extension für deinen Browser runter</li>
         <li><a href={"https://www.google.com/"}>Klick hier</a> um das Script zu installieren</li></ul>
