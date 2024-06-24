@@ -2,6 +2,16 @@ import { FC, useState } from "react";
 import "./ChatMessage.css";
 import ChatMessageButton from "../ChatMessageButton";
 
+export interface Prompt {
+  message: string;
+  id: number;
+  answers: Answer[];
+}
+
+export interface Answer extends ChatMessageProps {
+  answer: true;
+}
+
 interface ChatMessageProps {
   message: string;
   answer?: boolean;

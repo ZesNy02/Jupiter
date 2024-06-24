@@ -1,22 +1,7 @@
 import React, { FC, useEffect } from "react";
 import "./ChatWrapper.css";
 import ChatMessage from "../ChatMessage";
-
-export interface Prompt {
-  message: string;
-  id: number;
-  answers: Answer[];
-}
-
-export interface Answer {
-  message: string;
-  answer: boolean;
-  error: boolean;
-  eventStorming: boolean;
-  count: number;
-  maxCount: number;
-  loading: boolean;
-}
+import { Answer, Prompt } from "../ChatMessage/ChatMessage";
 
 interface ChatWrapperProps {
   prompts: Prompt[];
