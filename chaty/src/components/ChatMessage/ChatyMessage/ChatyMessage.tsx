@@ -77,13 +77,13 @@ const ChatyMessage: FC<ChatyMessageProps> = ({
                   iconPath="ThumbsUpIcon.svg"
                   onClick={handleThumbClick(MessageRating.THUMB_UP)}
                   active={ratingState === MessageRating.THUMB_UP}
-                  activeColor="#14ba38"
+                  activeColor="#14ba38 !important"
                 />
                 <ChatMessageButton
                   iconPath="/ThumbsDownIcon.svg"
                   onClick={handleThumbClick(MessageRating.THUMB_DOWN)}
                   active={ratingState === MessageRating.THUMB_DOWN}
-                  activeColor="#a30709"
+                  activeColor="#a30709 !important"
                 />
               </>
             )}
