@@ -69,7 +69,7 @@ const ChatyMessage: FC<ChatyMessageProps> = ({
               iconPath="/ReloadIcon.svg"
               onClick={handleReload}
               active={false}
-              activeColor="#141414"
+              activeColor="0%" // You can change this value to your desired color
             />
             {!error && (
               <>
@@ -77,13 +77,13 @@ const ChatyMessage: FC<ChatyMessageProps> = ({
                   iconPath="ThumbsUpIcon.svg"
                   onClick={handleThumbClick(MessageRating.THUMB_UP)}
                   active={ratingState === MessageRating.THUMB_UP}
-                  activeColor="#14ba38 !important"
+                  activeColor="50%" // You can change this value to your desired color
                 />
                 <ChatMessageButton
                   iconPath="/ThumbsDownIcon.svg"
                   onClick={handleThumbClick(MessageRating.THUMB_DOWN)}
                   active={ratingState === MessageRating.THUMB_DOWN}
-                  activeColor="#a30709 !important"
+                  activeColor="0%" // You can change this value to your desired color
                 />
               </>
             )}

@@ -1,23 +1,26 @@
-/* ChatMessageButton.css */
-
-/* Standardstil für den Button */
 .chat-message-action-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-  }
-  
-  /* Stil für das Icon im Button */
-  .chat-message-action-icon {
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    background-size: cover;
-    transition: background-color 0.3s ease, filter 0.3s ease;
-  }
-  
-  /* Hover-Effekt für das SVG */
-  .chat-message-action-button:hover .chat-message-action-icon {
-    filter: brightness(0) saturate(100%) invert(28%) sepia(100%) saturate(746%) hue-rotate(195deg) brightness(91%) contrast(95%);
-  }
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* Stil für das Icon im Button */
+.chat-message-action-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  background-size: cover;
+  transition: background-color 0.3s ease, filter 0.3s ease;
+}
+
+/* Hover-Effekt für das SVG */
+.chat-message-action-button:hover .chat-message-action-icon {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(100%) saturate(746%) hue-rotate(195deg) brightness(91%) contrast(95%);
+}
+
+/* Stil für das aktive SVG */
+.chat-message-action-icon.active {
+  /* You can change this filter value to your desired color */
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(746%) hue-rotate(100deg) brightness(90%) contrast(90%);
+}
