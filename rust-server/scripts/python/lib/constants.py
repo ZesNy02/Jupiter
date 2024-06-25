@@ -8,10 +8,10 @@ load_env_variables(PATH_TO_ENV)
 
 # Path were the local vectorstore is stored
 # TODO
-CHROMA_PATH = "lib/chroma"
+CHROMA_PATH = os.path.abspath(__file__ + "/../chroma")
 # Path were the data as pdf is stored for the AI to refer to
 # TODO
-DATA_PATH = "scripts/python/lib/data"
+DATA_PATH = os.path.abspath(__file__ + "/../data")
 
 # Template for the chat prompt for better outputs
 PROMPT_TEMPLATE = """

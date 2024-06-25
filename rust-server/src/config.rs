@@ -40,6 +40,9 @@ impl Config {
     /// - **`DB_USER`**: The username for the PostgreSQL database.
     /// - **`DB_PASSWORD`**: The password for the PostgreSQL database.
     /// - **`LLM_SERVER`**: The connection url for the LLM Server (Ollama).
+    /// - **`LLM_TOKEN`**: The authentication token for the LLM Server (Ollama).
+    /// - **`CLIENT_SECRET`**: The client secret for the prooph-board api.
+    /// - **`PROOPH_URL`**: The url for the prooph-board api.
     /// - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
     /// - `PORT`: The port of the server. Defaults to `3000`.
     /// - `DB_PORT`The port of the PostgreSQL database. Defaults to `5432`.
