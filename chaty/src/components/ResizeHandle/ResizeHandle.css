@@ -6,7 +6,7 @@
   color: white;
   border: none;
   cursor: nesw-resize;
-  transition: filter 0.3s;
+  transition: filter 0.3s ease;
 }
 
 .chat-window-resize-icon {
