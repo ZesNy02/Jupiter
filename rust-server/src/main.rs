@@ -38,6 +38,7 @@ async fn main() {
   let app = get_router(config);
 
   // Bind the server to the address
+  info!("Binding server to: {}", addr);
   let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
   info!("Server listining on: {}", listener.local_addr().unwrap());
 

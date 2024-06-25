@@ -14,3 +14,4 @@ test_env/
 # Other git ignores
 *.db
 node_modules
+compose.yml

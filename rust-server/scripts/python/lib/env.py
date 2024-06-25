@@ -11,4 +11,23 @@ def load_env_variables(env_file_path: str):
                 value = value.strip('"').strip("'")
                 os.environ[key] = value
     except FileNotFoundError:
-        print(f"Could not find .env file, better have docker running.")
+        # If the .env file is not found, try to load the environment variables from the system
+        env_vars = [
+            "CLIENT_SECRET",
+            "CLIENT_ID",
+            "DB_HOST",
+            "DB_PORT",
+            "DB_NAME",
+            "DB_USER",
+            "DB_PASSWORD",
+            "LLM_SERVER",
+            "LLM_TOKEN",
+        ]
+        for env_var in env_vars:
+            some = os.getenv(env_var)
+            if some is None:
+                # If the environment variable is not set, print an error message and return
+                print(
+                    f"Error while loading environment variables: {env_var} is not set."
+                )
+                return

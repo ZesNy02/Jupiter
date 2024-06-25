@@ -78,11 +78,11 @@ import requests
 # Send the POST request
 # response = requests.post(url, json=payload)
 
-url = "http://localhost:3000/ai/prompt"
+url = "http://127.0.0.1:3000/ai/prompt"
 payload = {"prompt": "What is the prooph-board?"}
 
 # Send the POST request
 response = requests.post(url, json=payload)
 
 # Check the response status code
-# print(response)
+print(response)

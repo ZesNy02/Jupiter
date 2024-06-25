@@ -1,0 +1,45 @@
+services:
+  rustserver:
+    container_name: chaty_backend_server
+    image: rust-server
+    ports:
+      - "3000:3000"
+    networks:
+      private_network:
+        ipv4_address: 172.20.0.11
+    environment:
+      - DB_HOST=172.20.0.10
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=your_password
+      - LLM_SERVER=https://your.llm.server.address
+      - LLM_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - CLIENT_ID=_board_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    depends_on:
+      pgvector:
+        condition: service_healthy
+
+  pgvector:
+    container_name: chaty_db
+    image: pgvector/pgvector:0.7.2-pg16
+    restart: on-failure
+    networks:
+      private_network:
+        ipv4_address: 172.20.0.10
+    environment:
+      - POSTGRES_PASSWORD=your_password
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  private_network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

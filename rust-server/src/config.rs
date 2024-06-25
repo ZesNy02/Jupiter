@@ -47,7 +47,7 @@ impl Config {
   /// - **`CLIENT_SECRET`**: The client secret for the prooph-board api.
   /// - **`CLIENT_ID`**: The ID of the prooph-board api.
   /// Something like `_board_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
-  /// - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
+  /// - `IP`: The IP address of the server. Defaults to `0.0.0.0`.
   /// - `PORT`: The port of the server. Defaults to `3000`.
   /// - `DB_PORT`: The port of the PostgreSQL database. Defaults to `5432`.
   ///
@@ -75,13 +75,13 @@ impl Config {
       ::var("LLM_SERVER")
       .expect("Couldn't find LLM_SERVER in environment variables");
 
-    // load IP of the Server from the environment variables or default to 127.0.0.1
+    // load IP of the Server from the environment variables or default to 0.0.0.0
     let ip = env
       ::var("IP")
       .ok()
       .unwrap_or_else(|| {
-        info!("IP not found in .env file. Using default IP 127.0.0.1.");
-        return "127.0.0.1".to_string();
+        info!("IP not found in .env file. Using default IP 0.0.0.0.");
+        return "0.0.0.0".to_string();
       });
 
     // load Port of the Server from the environment variables or default to 3000
