@@ -1,6 +1,8 @@
 import psycopg2
 import requests
 
+# A Python test client used solely for testing the Rust Server
+
 # Establish a connection to the PostgreSQL database
 conn = psycopg2.connect(
     host="localhost",

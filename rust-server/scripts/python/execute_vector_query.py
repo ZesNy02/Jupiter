@@ -1,60 +1,36 @@
 import psycopg2
-import sys
-import os
+import lib.constants as constants
+import lib.database_handlers as db_handlers
 import argparse
 from pgvector.psycopg2 import register_vector
-import numpy as np
-from lib.embedding import get_embedding_function
 
-def getanswer(dburl: str, prompt: str):
-    conn = psycopg2.connect(dburl)
+db_url = constants.DB_URL
+
+
+def get_prompt_id(prompt: str):
+    # Get the database connection
+    conn = psycopg2.connect(db_url)
+    # Setup the vector extension
     cur = conn.cursor()
-    cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
+    cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
     register_vector(conn)
 
-
     # Check if the prompt already exists
-    cur.execute("SELECT prompt_id, count FROM prompts WHERE LOWER(prompt) = LOWER(%s)", (prompt,))
-    result = cur.fetchone()
+    exact_match_result = db_handlers.check_exact_match(prompt, conn)
+    if exact_match_result:
+        return exact_match_result
 
-    if result:
-        # If the prompt exists, increment the count
-        cur.execute("UPDATE prompts SET count = count + 1 WHERE prompt_id = %s", (result[0],))
-        conn.commit()
-        return f"Existing {result[0]}"
+    # Check if the prompt has a similar embedding
+    match_embedding_result = db_handlers.check_embedding_match(prompt, conn)
+    return match_embedding_result
 
-
-    # If the prompt does not exist, generate the embedding
-    prompt_embedding = get_embedding_function().embed_query(prompt)
-    prompt_embedding = np.array(prompt_embedding)
-
-
-    # Check if a similar embedding already exists
-    cur.execute("SELECT prompt_id, 1 - (embedding <=> %s) AS cosine_similarity FROM prompts ORDER BY cosine_similarity DESC LIMIT 1",(prompt_embedding,))
-    result = cur.fetchall()
-    if len(result) > 0 and len(result[0]) > 1:
-        if  result[0][1] > 0.98:
-        # If a similar embedding exists, increment the count
-            prompt_id = result[0][0]
-            cur.execute("UPDATE prompts SET count = count + 1 WHERE prompt_id = %s", (prompt_id,))
-            conn.commit()
-            return f"Existing {prompt_id}"
-
-    # If a similar embedding does not exist, insert a new ro
-    cur.execute("INSERT INTO prompts (prompt,embedding) VALUES (%s, %s) RETURNING prompt_id", (prompt, prompt_embedding))
-    new_id = cur.fetchone()[0]
-    conn.commit()
-
-    return f"New {new_id}"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("dburl", type=str)
     parser.add_argument("prompt", type=str)
     args = parser.parse_args()
-    dburl = args.dburl
     prompt = args.prompt
-    print(getanswer(dburl, prompt))
+    print(get_prompt_id(prompt))
 
 
 if __name__ == "__main__":

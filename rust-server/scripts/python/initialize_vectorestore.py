@@ -4,13 +4,13 @@ import shutil
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from lib.embedding import get_embedding_function
 from langchain_community.vectorstores import Chroma
 import lib.constants as constants
+from lib.request_handlers import get_embedding_function
 
-dirname = os.path.dirname(__file__)
-CHROMA_PATH = os.path.join(dirname, constants.CHROMA_PATH)
+CHROMA_PATH = constants.CHROMA_PATH
 DATA_PATH = constants.DATA_PATH
+
 
 def main():
     # Check if the database should be cleared (using the --clear flag).
@@ -20,6 +20,7 @@ def main():
     if args.reset:
         print("✨ Clearing Database")
         clear_database()
+
     # Create (or update) the data store.
     documents = load_documents()
     chunks = split_documents(documents)
@@ -35,8 +36,8 @@ def load_documents():
 # splits the documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=600,
-        chunk_overlap=20,
+        chunk_size=constants.CHUNK_SIZE,
+        chunk_overlap=constants.CHUNK_OVERLAP,
         length_function=len,
         is_separator_regex=False,
     )
@@ -49,12 +50,15 @@ def add_to_chroma(chunks: list[Document]):
     db = Chroma(
         persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
     )
+
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
+
     # Add or Update the documents.
     existing_items = db.get(include=[])  # IDs are always included by default
     existing_ids = set(existing_items["ids"])
     print(f"Number of existing documents in DB: {len(existing_ids)}")
+
     # Only add documents that don't exist in the DB.
     new_chunks = []
     for chunk in chunks_with_ids:
@@ -69,9 +73,9 @@ def add_to_chroma(chunks: list[Document]):
         print("✅ No new documents to add")
 
 
+# Creates a unique ID for each chunk in the format:
+# Page Source : Page Number : Chunk Index
 def calculate_chunk_ids(chunks):
-    # Creates a unique ID for each chunk in the format:
-    # Page Source : Page Number : Chunk Index
     last_page_id = None
     current_chunk_index = 0
     for chunk in chunks:
@@ -91,6 +95,7 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
+# Function to clear the existing database
 def clear_database():
     if os.path.exists(constants.CHROMA_PATH):
         shutil.rmtree(constants.CHROMA_PATH)
