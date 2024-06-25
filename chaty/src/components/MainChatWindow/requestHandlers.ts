@@ -100,19 +100,18 @@ export const ratingRequestHandler = (prompts: Prompt[]) => {
 };
 
 export const eventStormingRequestHandler = (
-  addPrompt: (prompt: string) => number,
-  addAnswer: (promptIndex: number, answer: Answer) => number,
+  addPrompt: (prompt: string, answer: Answer) => number,
   editAnswer: (promptIndex: number, answerIndex: number, answer: Answer) => void
 ) => {
   return (prompt: string) => {
-    const promptIndex = addPrompt(prompt);
-    const answerIndex = addAnswer(promptIndex, {
+    const promptIndex = addPrompt(prompt, {
       message: "",
       answer: true,
       loading: true,
       eventStorming: true,
       id: -1,
     });
+    const answerIndex = 0;
     sendRequest("/ai/prompt", {
       prompt,
     }).then((response) => {
