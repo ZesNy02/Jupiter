@@ -17,7 +17,7 @@ def get_prompt_id(prompt: str):
 
     # Check if the prompt already exists
     exact_match_result = db_handlers.check_exact_match(prompt, conn)
-    if exact_match_result:
+    if exact_match_result is not None:
         return exact_match_result
 
     # Check if the prompt has a similar embedding

@@ -4,16 +4,16 @@ import requests
 # A Python test client used solely for testing the Rust Server
 
 # Establish a connection to the PostgreSQL database
-conn = psycopg2.connect(
-    host="localhost",
-    port=5432,
-    database="postgres",
-    user="postgres",
-    password="password",
-)
+# conn = psycopg2.connect(
+#     host="localhost",
+#     port=5432,
+#     database="postgres",
+#     user="postgres",
+#     password="password",
+# )
 
 # Create a cursor object to interact with the database
-cur = conn.cursor()
+# cur = conn.cursor()
 
 # cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
 
@@ -67,9 +67,9 @@ cur = conn.cursor()
 # cur.execute("UPDATE answers SET rating = rating + 1 WHERE answer_id = -1")
 
 # Commit the changes and close the connection
-conn.commit()
-cur.close()
-conn.close()
+# conn.commit()
+# cur.close()
+# conn.close()
 
 # Define the URL and payload for the POST request
 # url = "http://localhost:3000/ai/rating"
