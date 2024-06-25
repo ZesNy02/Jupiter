@@ -12,21 +12,6 @@ CHROMA_PATH = constants.CHROMA_PATH
 DATA_PATH = constants.DATA_PATH
 
 
-def main():
-    # Check if the database should be cleared (using the --clear flag).
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--reset", action="store_true", help="Reset the database.")
-    args = parser.parse_args()
-    if args.reset:
-        print("✨ Clearing Database")
-        clear_database()
-
-    # Create (or update) the data store.
-    documents = load_documents()
-    chunks = split_documents(documents)
-    add_to_chroma(chunks)
-
-
 # retrieves the data from a pdf in the data folder
 def load_documents():
     document_loader = PyPDFDirectoryLoader(DATA_PATH)
@@ -99,6 +84,22 @@ def calculate_chunk_ids(chunks):
 def clear_database():
     if os.path.exists(constants.CHROMA_PATH):
         shutil.rmtree(constants.CHROMA_PATH)
+
+
+def main():
+    # Check if the database should be cleared (using the --clear flag).
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reset", action="store_true", help="Reset the database.")
+    args = parser.parse_args()
+    if args.reset:
+        print("✨ Clearing Database")
+        clear_database()
+
+    # Create (or update) the data store.
+    documents = load_documents()
+    chunks = split_documents(documents)
+    add_to_chroma(chunks)
+    print("✅ Done!")
 
 
 if __name__ == "__main__":

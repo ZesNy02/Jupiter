@@ -5,3 +5,7 @@ pgvector
 psycopg2
 numpy
 argparse
+sentence_transformers
+chromadb
+pypdf
+python-dateutil
