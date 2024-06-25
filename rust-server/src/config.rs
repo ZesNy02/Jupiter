@@ -21,6 +21,8 @@ pub struct Config {
   pub vector_query_script: String,
   /// The path to the Python event storming script file.
   pub event_storming_script: String,
+  /// The path to the Python init vectorstore script file.
+  pub init_vectorstore_script: String,
 }
 
 impl Config {
@@ -118,6 +120,7 @@ impl Config {
       rag_script: "./scripts/python/execute_rag_query.py".to_string(),
       vector_query_script: "./scripts/python/execute_vector_query.py".to_string(),
       event_storming_script: "./scripts/python/execute_event_storming_query.py".to_string(),
+      init_vectorstore_script: "./scripts/python/initialize_vectorstore.py".to_string(),
     }
   }
 

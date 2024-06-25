@@ -1,4 +1,4 @@
-use rust_server::{ config::Config, handlers::router::get_router };
+use rust_server::{ config::Config, handlers::router::get_router, utils::python::run_script };
 use tokio::signal;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
@@ -23,6 +23,12 @@ async fn main() {
   // Get the configuration
   info!("Loading configuration...");
   let config = Config::load_from_env();
+  info!("Configuration loaded.");
+
+  // Initialize the vectorstore
+  info!("Initializing vectorstore...");
+  let _ = run_script(config.init_vectorstore_script.clone(), vec![]).unwrap();
+  info!("Vectorstore initialized.");
 
   // Start the server
   info!("Starting server...");

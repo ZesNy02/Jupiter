@@ -71,7 +71,13 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>rust_server::{ config::Config, handlers::router::get_router };
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>rust_server::{ config::Config, handlers::router::get_router, utils::python::run_script };
 <span class="kw">use </span>tokio::signal;
 <span class="kw">use </span>tracing::info;
 <span class="kw">use </span>tracing_subscriber::EnvFilter;
@@ -96,6 +102,12 @@
   <span class="comment">// Get the configuration
   </span><span class="macro">info!</span>(<span class="string">&quot;Loading configuration...&quot;</span>);
   <span class="kw">let </span>config = Config::load_from_env();
+  <span class="macro">info!</span>(<span class="string">&quot;Configuration loaded.&quot;</span>);
+
+  <span class="comment">// Initialize the vectorstore
+  </span><span class="macro">info!</span>(<span class="string">&quot;Initializing vectorstore...&quot;</span>);
+  <span class="kw">let _ </span>= run_script(config.init_vectorstore_script.clone(), <span class="macro">vec!</span>[]).unwrap();
+  <span class="macro">info!</span>(<span class="string">&quot;Vectorstore initialized.&quot;</span>);
 
   <span class="comment">// Start the server
   </span><span class="macro">info!</span>(<span class="string">&quot;Starting server...&quot;</span>);

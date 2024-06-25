@@ -35,5 +35,5 @@ CMD apt-get update && \
         export PATH="/opt/venv/bin:$PATH" && \
         pip install --upgrade -r python_dependencies.txt --no-index && \
         python3 ./scripts/python/vectorstore.py && \
-        cargo build && \
+        cargo build --release && \
         cargo run

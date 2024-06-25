@@ -11,3 +11,4 @@ dbs
 **/*.db
 **/*.md
 call_test.py
+__pycache__

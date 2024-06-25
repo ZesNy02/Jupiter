@@ -123,6 +123,19 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>dotenv::dotenv;
 <span class="kw">use </span>tracing::{ error, info };
 <span class="kw">use </span>std::env;
@@ -146,6 +159,8 @@
   </span><span class="kw">pub </span>vector_query_script: String,
   <span class="doccomment">/// The path to the Python event storming script file.
   </span><span class="kw">pub </span>event_storming_script: String,
+  <span class="doccomment">/// The path to the Python init vectorstore script file.
+  </span><span class="kw">pub </span>init_vectorstore_script: String,
 }
 
 <span class="kw">impl </span>Config {
@@ -165,9 +180,14 @@
   /// - **`DB_USER`**: The username for the PostgreSQL database.
   /// - **`DB_PASSWORD`**: The password for the PostgreSQL database.
   /// - **`LLM_SERVER`**: The connection url for the LLM Server (Ollama).
+  /// Only the host and port are needed. For Example: `http://localhost:3000`, no more.
+  /// - **`LLM_TOKEN`**: The authentication token for the LLM Server (Ollama).
+  /// - **`CLIENT_SECRET`**: The client secret for the prooph-board api.
+  /// - **`CLIENT_ID`**: The ID of the prooph-board api.
+  /// Something like `_board_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
   /// - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
   /// - `PORT`: The port of the server. Defaults to `3000`.
-  /// - `DB_PORT`The port of the PostgreSQL database. Defaults to `5432`.
+  /// - `DB_PORT`: The port of the PostgreSQL database. Defaults to `5432`.
   ///
   /// # Panics
   ///
@@ -177,6 +197,11 @@
   /// from the environment variables.
   </span><span class="kw">pub fn </span>load_from_env() -&gt; Config {
     dotenv().ok();
+    <span class="kw">let _ </span>= env::var(<span class="string">&quot;LLM_TOKEN&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find LLM_TOKEN in environment variables&quot;</span>);
+    <span class="kw">let _ </span>= env
+      ::var(<span class="string">&quot;CLIENT_SECRET&quot;</span>)
+      .expect(<span class="string">&quot;Couldn&#39;t find CLIENT_SECRET in environment variables&quot;</span>);
+    <span class="kw">let _ </span>= env::var(<span class="string">&quot;CLIENT_ID&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find CLIENT_ID in environment variables&quot;</span>);
     <span class="kw">let </span>db_host = env::var(<span class="string">&quot;DB_HOST&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_HOST in environment variables&quot;</span>);
     <span class="kw">let </span>db_name = env::var(<span class="string">&quot;DB_NAME&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_NAME in environment variables&quot;</span>);
     <span class="kw">let </span>db_user = env::var(<span class="string">&quot;DB_USER&quot;</span>).expect(<span class="string">&quot;Couldn&#39;t find DB_USER in environment variables&quot;</span>);
@@ -230,9 +255,10 @@
       port,
       db_connection: DBConnectionInfo::new(db_host, db_port, db_name, db_user, db_password),
       llm_connection: llm_server,
-      rag_script: <span class="string">&quot;./scripts/python/ai/run_rag.py&quot;</span>.to_string(),
-      vector_query_script: <span class="string">&quot;./scripts/python/ai/vector_query.py&quot;</span>.to_string(),
-      event_storming_script: <span class="string">&quot;./scripts/python/ai/storming.py&quot;</span>.to_string(),
+      rag_script: <span class="string">&quot;./scripts/python/execute_rag_query.py&quot;</span>.to_string(),
+      vector_query_script: <span class="string">&quot;./scripts/python/execute_vector_query.py&quot;</span>.to_string(),
+      event_storming_script: <span class="string">&quot;./scripts/python/execute_event_storming_query.py&quot;</span>.to_string(),
+      init_vectorstore_script: <span class="string">&quot;./scripts/python/initialize_vectorstore.py&quot;</span>.to_string(),
     }
   }
 

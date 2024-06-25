@@ -65,6 +65,11 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The Rust Axum AI Server for the Prooph-Board Chatbot **Chaty**.
 //!
 //! This server is used to run the AI model for the chatbot
@@ -100,13 +105,18 @@
 //! # Environment Variables
 //!
 //! The following environment variables are used to load the configuration,
-//! please make a .env file in the root directory of the project and put at
+//! please make the file `rust-server/.env` and put at
 //! least the **bold** ones in it:
 //! - **`DB_HOST`**: The host/ip of the PostgreSQL database.
 //! - **`DB_NAME`**: The name of the PostgreSQL database.
 //! - **`DB_USER`**: The username for the PostgreSQL database.
 //! - **`DB_PASSWORD`**: The password for the PostgreSQL database.
 //! - **`LLM_SERVER`**: The connection url for the LLM Server (Ollama).
+//! Only the host and port are needed. For Example: `http://localhost:3000`, no more.
+//! - **`LLM_TOKEN`**: The authentication token for the LLM Server (Ollama).
+//! - **`CLIENT_SECRET`**: The client secret for the prooph-board api.
+//! - **`CLIENT_ID`**: The ID of the prooph-board api.
+//! Something like `_board_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 //! - `IP`: The IP address of the server. Defaults to `127.0.0.1`.
 //! - `PORT`: The port of the server. Defaults to `3000`.
 //! - `DB_PORT`: The port of the PostgreSQL database. Defaults to `5432`.
