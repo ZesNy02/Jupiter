@@ -57,11 +57,10 @@ pub fn testable_handle_eventstorming_post(
 ) -> (StatusCode, Json<AIEventStormingResponse>) {
   let prompt = payload.prompt.clone();
   let script = config.event_storming_script.clone();
-  let llm_url = config.llm_connection.clone();
 
   info!("Trying to run event storming script.");
 
-  let result = run_script(script, vec![llm_url, prompt]);
+  let result = run_script(script, vec![prompt]);
 
   match result {
     Ok(_response) => {

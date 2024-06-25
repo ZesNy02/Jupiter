@@ -1,12 +1,13 @@
 import psycopg2
-from request_handlers import get_embedding_function
+import psycopg2.extras
+from lib.request_handlers import get_embedding_function
 import numpy as np
 
 
 # This function checks if the exact prompt already exists in the
 # database, ignoring the case. If it does, it increments the count
 # and returns the prompt_id. If it does not, it returns None.
-def check_exact_match(prompt: str, conn: psycopg2.connection):
+def check_exact_match(prompt: str, conn):
     cur = conn.cursor()
     cur.execute(
         "SELECT prompt_id, count FROM prompts WHERE LOWER(prompt) = LOWER(%s)",
@@ -25,7 +26,7 @@ def check_exact_match(prompt: str, conn: psycopg2.connection):
 # This function checks if a similar embedding already exists in the
 # database. If it does, it increments the count and returns the prompt_id.
 # If it does not, it inserts a new row and returns the new prompt_id.
-def check_embedding_match(prompt: str, conn: psycopg2.connection):
+def check_embedding_match(prompt: str, conn):
     cur = conn.cursor()
     # Generate the embedding for the prompt
     prompt_embedding = get_embedding_function().embed_query(prompt)

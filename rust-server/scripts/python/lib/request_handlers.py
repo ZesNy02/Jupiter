@@ -1,6 +1,6 @@
 import requests
 import json
-import constants
+import lib.constants as constants
 from langchain_community.embeddings import OllamaEmbeddings
 
 llm_embedding_url = constants.EMBEDDING_URL

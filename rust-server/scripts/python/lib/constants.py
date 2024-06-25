@@ -1,5 +1,5 @@
 import os
-from env import load_env_variables
+from lib.env import load_env_variables
 
 # Path to the .env file
 PATH_TO_ENV = os.path.abspath(__file__ + "/../../../../.env")
@@ -7,10 +7,8 @@ PATH_TO_ENV = os.path.abspath(__file__ + "/../../../../.env")
 load_env_variables(PATH_TO_ENV)
 
 # Path were the local vectorstore is stored
-# TODO
 CHROMA_PATH = os.path.abspath(__file__ + "/../chroma")
 # Path were the data as pdf is stored for the AI to refer to
-# TODO
 DATA_PATH = os.path.abspath(__file__ + "/../data")
 
 # Template for the chat prompt for better outputs
@@ -41,14 +39,14 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 # Example: CLIENT_SECRET = "nM5B5EdSaC59MfW4C4f2o4L0a6Vvu8OA"
 
+# The client id of the prooph-board url, found after "board-agent/" in the url
+CLIENT_ID = os.getenv("CLIENT_ID").split("_")[2]
+# Example: CLIENT_ID =  "4544590e-e0e5-466e-a34e-72d83cffc692"
+
 # The url of the prooph-board api to add elements to the board
-PROOPH_URL = os.getenv("PROOPH_URL")
+PROOPH_URL = f"https://app.prooph-board.com/board/api/v1/board-agent/{CLIENT_ID}/tasks/add-element-at-position"
 
 # Example: PROOPH_URL = "https://app.prooph-board.com/board/api/v1/board-agent/4544590e-e0e5-466e-a34e-72d83cffc692/tasks/add-element-at-position"
-
-# The client id of the prooph-board url, found after "board-agent/" in the url
-CLIENT_ID = PROOPH_URL.split("board-agent/")[1].split("/")[0]
-# Example: CLIENT_ID =  "4544590e-e0e5-466e-a34e-72d83cffc692"
 
 # Database information from the .env
 DB_HOST = os.getenv("DB_HOST")
@@ -62,8 +60,8 @@ DB_URL = f"host={DB_HOST} port={DB_PORT} dbname={DB_NAME} user={DB_USER} passwor
 
 # LLM Server Url
 LLM_SERVER_URL = os.getenv("LLM_SERVER")
-EMBEDDING_URL = f"{LLM_SERVER_URL}/embeddings"
-GENERATE_URL = f"{LLM_SERVER_URL}/generate"
+EMBEDDING_URL = f"{LLM_SERVER_URL}/api/embeddings"
+GENERATE_URL = f"{LLM_SERVER_URL}/api/generate"
 
 # LLM Constants
 EMBEDDING_MODEL = "mxbai-embed-large"

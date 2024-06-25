@@ -5,14 +5,6 @@ import requests
 from lib.request_handlers import handle_generate_request
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("query_text", type=str, help="The query text.")
-    args = parser.parse_args()
-    generate_events(args.query_text)
-    print("Succes!")
-
-
 # Function to place the events from the AI on the prooph-board
 def place_event(event: str, x: int, y: int):
     data = {
@@ -62,6 +54,14 @@ def generate_events(topic: str):
         if x > 960:
             x = 0
             y = y + 100
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("query_text", type=str, help="The query text.")
+    args = parser.parse_args()
+    generate_events(args.query_text)
+    print("Succes!")
 
 
 if __name__ == "__main__":
