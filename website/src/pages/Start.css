@@ -7,6 +7,7 @@
 .intro-images {
   width: 50%;
   padding: 2em;
+  z-index: 1;
 }
 
 .komisches-ding {

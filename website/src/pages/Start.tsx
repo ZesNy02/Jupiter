@@ -2,14 +2,14 @@ import React from 'react';
 import platzhalter from '../assets/RectangleOrange.png';
 import macbild from '../assets/MacBookProMockupLeft.png';
 import chatbild from '../assets/ai-bot-chat.png';
-import gruppenbild from '../assets/istockphoto.jpg';
+import gruppenbild from '../assets/group-picture.png';
 import './Start.css'
 
 const Start: React.FC = () => {    
   
   return (
       <div className="content">
-          <img className="komisches-ding" src={platzhalter}/>
+          <img className="komisches-ding" src={platzhalter} alt='orange'/>
           <div className="black-box">
 
               <h1>Willkommen bei Chaty!</h1>

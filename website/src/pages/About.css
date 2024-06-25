@@ -13,6 +13,7 @@
 }
 
 .profile-pic {
+  object-fit: cover;
   border-radius: 50%;
   height: 8em;
   line-height: 8em;
