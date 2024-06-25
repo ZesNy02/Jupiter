@@ -9,6 +9,19 @@
   padding: 2em;
 }
 
+.komisches-ding {
+  overflow: hidden;
+  position: absolute;
+  top: 12rem;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+}
+
+p, h2, h3, h1 {
+  position: relative;
+  z-index: 1;
+}
 .team-images {
   width: 80%;
   padding: 2em;

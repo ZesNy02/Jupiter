@@ -52,7 +52,7 @@ const Navbar = () => {
 
                 <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
 
-                <img className="navbar-logo" src={logo} alt="logo" style={{ height: '40px', width: 'auto' }} />
+                <img className="navbar-logo" src={logo} alt="logo"/>
                 </Box>
 
                     <IconButton
