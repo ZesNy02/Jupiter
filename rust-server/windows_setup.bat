@@ -1,4 +1,4 @@
 @echo off
 
-pip install --upgrade -r python_dependencies.txt --no-index
+pip install --upgrade -r requirements.txt --no-index
 cargo build --release

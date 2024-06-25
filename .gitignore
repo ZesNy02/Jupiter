@@ -9,6 +9,7 @@ Cargo.lock
 __pycache__/
 chroma/
 value.txt
+test_env/
 
 # Other git ignores
 *.db
