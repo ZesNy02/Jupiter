@@ -94,6 +94,7 @@ const styleSheet = () => {
 
 .reloadButton svg {
     fill: #A4A4AC; /* Default color */
+    transition: all 0.2s;
 }
 
 .reloadButton:hover svg {
@@ -110,6 +111,7 @@ const styleSheet = () => {
 
 .thumbsUpButton svg {
     fill: #A4A4AC; /* Default color */
+    transition: all 0.2s;
 }
 
 .thumbsUpButton:hover svg {
@@ -126,6 +128,7 @@ const styleSheet = () => {
 
 .thumbsDownButton svg {
     fill: #A4A4AC; /* Default color */
+    transition: all 0.2s;
 }
 
 .thumbsDownButton:hover svg {
@@ -810,7 +813,7 @@ const makeEventStormingMessage = (responseUUID, message, success) => {
     const responseMessage = document.createElement("div");
     responseMessage.className = "responseMessage";
     responseMessage.id = responseUUID;
-    responseMessage.innerHTML = text;
+    responseMessage.innerHTML = message;
     if (success) {
         responseMessage.style.backgroundColor = "#A4A4AC";
     } else {
