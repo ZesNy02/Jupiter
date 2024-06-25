@@ -810,7 +810,7 @@ const makeEventStormingMessage = (responseUUID, message, success) => {
     const responseMessage = document.createElement("div");
     responseMessage.className = "responseMessage";
     responseMessage.id = responseUUID;
-    responseMessage.innerHTML = text;
+    responseMessage.innerHTML = message;
     if (success) {
         responseMessage.style.backgroundColor = "#A4A4AC";
     } else {
