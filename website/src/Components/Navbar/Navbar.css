@@ -26,6 +26,7 @@
     cursor: pointer;
     margin: 1rem;
     width: 11rem;
+    height: auto;
     text-decoration: none;
     font-size: 2rem;
 }
