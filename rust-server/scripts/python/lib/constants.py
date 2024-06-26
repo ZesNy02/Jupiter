@@ -13,13 +13,12 @@ DATA_PATH = os.path.abspath(__file__ + "/../data")
 
 # Template for the chat prompt for better outputs
 PROMPT_TEMPLATE = """
-You are supposed to act as a customer support and explain how to use the Proophboard Software everything relevant,
-associated with it and how it works in Detail:
+You are supposed to act as a customer support and explain how to use the Proophboard Software.
 
 {context}
 
 Keep the question in mind. Answer the question based on the above context and think step by step.
-Stick to relevenat information to the Questions in your answer and answer in three sentences: {question}
+Focus on relevenat information to the Questions in your answer and answer in three sentences: {question}
 """
 
 # Template for the event storming prompts

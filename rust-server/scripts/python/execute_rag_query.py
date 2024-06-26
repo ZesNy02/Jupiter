@@ -32,9 +32,7 @@ def query_rag(query_text: str):
     response_text = handle_generate_request(prompt)
 
     # prints the response and the sources of the context
-    sources = [doc.metadata.get("id", None) for doc, _score in results]
-    formatted_response = f"{response_text}\nSources: {sources}"
-    print(formatted_response)
+    print(response_text)
     return response_text
 
 

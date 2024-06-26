@@ -41,7 +41,7 @@ def check_embedding_match(prompt: str, conn):
 
     # If a similar embedding exists, increment the count
     if len(result) > 0 and len(result[0]) > 1:
-        if result[0][1] > 0.98:
+        if result[0][1] > 0.90:
             prompt_id = result[0][0]
             cur.execute(
                 "UPDATE prompts SET count = count + 1 WHERE prompt_id = %s",
