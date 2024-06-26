@@ -15,14 +15,15 @@
 
 // --------------------------------------------------------------------
 
+const BASE_SERVER_URL="https://test.dev-tonka.com";
 // Server URL where the server runs
-const SERVER_URL = "http://localhost:3000/ai/prompt";
+const SERVER_URL = BASE_SERVER_URL+"/ai/prompt";
 //Sever URL where the server receives ratings
-const RATING_URL = "http://localhost:3000/ai/rating";
+const RATING_URL = BASE_SERVER_URL+"/ai/rating";
 //Server URL where the server receives the regenerate prompt
-const REGENERATE_URL = "http://localhost:3000/ai/regenerate";
+const REGENERATE_URL =BASE_SERVER_URL+"/ai/regenerate";
 //Server URL where the server receives the eventStorming prompt
-const EVENTSTORMING_URL = "http://localhost:3000/ai/eventstorming";
+const EVENTSTORMING_URL =BASE_SERVER_URL+"/ai/eventstorming";
 //cached prompt map mapped from UUID(string) -> Message content(string)
 //this is important so that you can reload or give thumbs up or down so that you can find the specific message quickly
 const prompts = new Map();
@@ -696,7 +697,6 @@ const makeUserMessage = (text) => {
 // A Response Message is a message on the left of the Chat that the AI Typed
 const makeResponseMessage = (responseUUID, text, success) => {
     const promptUUID = responseToPrompt.get(responseUUID);
-    console.log(promptUUID);
 
     const makeWrapperResponseMessageButtons = () => {
 
@@ -953,6 +953,7 @@ function handleSend(promptUUID, prompt, serverUrlToSendTo, type) {
             if (type === "prompt" || type === "regenerate") {
                 if (JSON.parse(response.responseText).Success !== undefined) {
                     responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Success.id);
+                    const formatedResponseText=
                     responseMessage = makeResponseMessage(responseUUID, JSON.parse(response.responseText).Success.response, true);
                 } else {
                     responseUUIDtoID.set(responseUUID, JSON.parse(response.responseText).Error.id);
