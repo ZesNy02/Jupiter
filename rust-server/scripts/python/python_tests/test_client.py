@@ -78,7 +78,7 @@ import requests
 # Send the POST request
 # response = requests.post(url, json=payload)
 
-url = "http://127.0.0.1:3000/ai/prompt"
+url = "https://test.dev-tonka.com/ai/prompt"
 payload = {"prompt": "What is the prooph-board?"}
 
 # Send the POST request
