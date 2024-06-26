@@ -1,15 +1,15 @@
 use std::time::Duration;
 
-use axum::{ http::{ HeaderValue, Method }, routing::post, Router };
-use tower_http::{ cors::CorsLayer, timeout::TimeoutLayer, trace::TraceLayer };
+use axum::{ http::{ header::CONTENT_TYPE, HeaderValue, Method }, routing::post, Router };
+use tower_http::{ cors::{ Any, CorsLayer }, timeout::TimeoutLayer, trace::TraceLayer };
 
 use crate::config::Config;
 
 use super::ai::{
-  eventstorming::handle_eventstorming_post,
-  prompt::handle_prompt_post,
-  rating::handle_rating_post,
-  regenerate::handle_regenerate_post,
+    eventstorming::handle_eventstorming_post,
+    prompt::handle_prompt_post,
+    rating::handle_rating_post,
+    regenerate::handle_regenerate_post,
 };
 
 /// Constructs and returns the axum router for the server.
@@ -37,23 +37,26 @@ use super::ai::{
 /// - [`ai/eventstorming`][handle_eventstorming_post] - **POST** -
 /// Handles the AI Eventstorming request.
 pub fn get_router(config: Config) -> Router {
-  let router = Router::new()
-    .route("/ai/prompt", post(handle_prompt_post))
-    .route("/ai/rating", post(handle_rating_post))
-    .route("/ai/regenerate", post(handle_regenerate_post))
-    .route("/ai/eventstorming", post(handle_eventstorming_post))
-    .layer((
-      TraceLayer::new_for_http(),
-      // Set a timeout for all requests after 30 seconds
-      TimeoutLayer::new(Duration::from_secs(30)),
-      // Enable CORS
-      CorsLayer::new()
-        .allow_origin("*".parse::<HeaderValue>().unwrap())
-        .allow_methods([Method::POST]),
-    ))
-    .with_state(config);
+    let cors = CorsLayer::new()
+        .allow_methods([Method::POST])
+        .allow_origin(Any)
+        .allow_headers([CONTENT_TYPE]);
 
-  let r = router.clone();
+    let router = Router::new()
+        .route("/ai/prompt", post(handle_prompt_post))
+        .route("/ai/rating", post(handle_rating_post))
+        .route("/ai/regenerate", post(handle_regenerate_post))
+        .route("/ai/eventstorming", post(handle_eventstorming_post))
+        .layer((
+            TraceLayer::new_for_http(),
+            // Set a timeout for all requests after 30 seconds
+            TimeoutLayer::new(Duration::from_secs(30)),
+            // Enable CORS
+            cors,
+        ))
+        .with_state(config);
 
-  return r;
+    let r = router.clone();
+
+    return r;
 }
