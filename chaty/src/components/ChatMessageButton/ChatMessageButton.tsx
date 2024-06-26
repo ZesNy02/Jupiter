@@ -16,7 +16,7 @@ const ChatMessageButton: FC<ChatMessageButtonProps> = ({
 }) => {
   const activeStyle = active
     ? {
-        fill: activeColor,
+        filter: `brightness(0) saturate(100%) invert(${activeColor}) sepia(100%) saturate(746%) hue-rotate(195deg) brightness(91%) contrast(95%)`,
       }
     : {};
 
@@ -25,7 +25,7 @@ const ChatMessageButton: FC<ChatMessageButtonProps> = ({
       <button className="chat-message-action-button" onClick={onClick}>
         <img
           src={iconPath}
-          className={`chat-message-action-icon`}
+          className={`chat-message-action-icon ${active ? 'active' : ''}`}
           style={activeStyle}
         />
       </button>

@@ -64,8 +64,14 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
         height: size.height,
       }}
     >
-      <ResizeHandle onMouseDown={resizeHandler} />
-      <ChatHeader onClick={onClose} />
+      <ResizeHandle
+       onMouseDown={resizeHandler}
+       eventStorming={eventStormingState}
+       />
+      <ChatHeader 
+      onClick={onClose}
+      eventStorming={eventStormingState}
+       />
       <RequestContext.Provider value={requestHandlers}>
         <ChatWrapper prompts={prompts} />
       </RequestContext.Provider>
