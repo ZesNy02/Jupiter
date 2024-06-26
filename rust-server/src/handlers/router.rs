@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use axum::{ http::{ header::CONTENT_TYPE, HeaderValue, Method }, routing::post, Router };
+use axum::{ http::{ header::CONTENT_TYPE, Method }, routing::post, Router };
 use tower_http::{ cors::{ Any, CorsLayer }, timeout::TimeoutLayer, trace::TraceLayer };
 
 use crate::config::Config;
