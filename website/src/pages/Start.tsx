@@ -5,7 +5,8 @@ import chatbild from '../assets/ai-bot-chat.png';
 import gruppenbild from '../assets/group-picture.png';
 import './Start.css'
 
-const Start: React.FC = () => {    
+const Start: React.FC = () => {  
+
   
   return (
       <div className="content">

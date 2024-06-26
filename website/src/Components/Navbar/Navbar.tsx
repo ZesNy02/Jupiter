@@ -3,7 +3,7 @@ import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemText, List
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import './Navbar.css';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo_weiss.png';
 import Document from "../../pages/Document.tsx";
 import About from "../../pages/About.tsx";
 import Start from "../../pages/Start.tsx";
