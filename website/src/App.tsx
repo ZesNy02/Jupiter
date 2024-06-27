@@ -1,8 +1,8 @@
 import Navbar from "./Components/Navbar/Navbar.tsx";
 import Footer from "./Components/Footer/Footer.tsx";
 
-//todo: Startseite: dem FIGMA anpassen, link einfügen
-//todo: Installation: Bilder einfügen und links einfügen / anpassen
+//todo: Dokumente: Abschlusspräsentation einfügen
+//todo: Installation: Bilder einfügen (Server) und links anpassen
 
 const App = () => {
 
