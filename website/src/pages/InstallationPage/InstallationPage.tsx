@@ -7,8 +7,13 @@ interface InstallationPageProps {}
 const InstallationPage: FC<InstallationPageProps> = ({}) => {
   return (
     <>
-      <Typography variant="h2">Installations Anleitung</Typography>
-      <Typography variant="body1" sx={{ fontSize: "1.5rem" }}>
+      <Typography variant="h2" sx={{ textAlign: "center" }}>
+        Installations Anleitung
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{ fontSize: "1.5rem", px: "10%", textAlign: "center" }}
+      >
         Willkommen zur Installationsanleitung für Chaty, deinem neuen Chatbot
         für die Prooph-Board App. Bitte folge den unten stehenden Schritten, um
         Chaty erfolgreich zu installieren und in Betrieb zu nehmen.
@@ -17,6 +22,10 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
         sx={{
           backgroundColor: "background.light",
           width: "100%",
+          m: "0",
+          "& .MuiTypography-root": {
+            textAlign: "center",
+          },
         }}
       >
         <Box
@@ -82,7 +91,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <Typography variant="body1">
                 4. Kopiere das Script von{" "}
-                <Link href="https://drive.google.com/uc?export=download&id=18uRDdC-4G_th7kuPquCj1He7ZBjGVj05HwI6jRZLv0k">
+                <Link href="https://github.com/ZesNy02/Jupiter/blob/main/Frontend/Tampermonkey/script.js">
                   hier
                 </Link>{" "}
                 und füge es in das neue Userscript ein.
@@ -142,7 +151,10 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <Typography variant="body1">
                 - Docker Compose: Für eine schnelle und einfache Installation
-                ist eine Beispiel Docker Compose Datei <Link href="">hier</Link>{" "}
+                ist eine Beispiel Docker Compose Datei{" "}
+                <Link href="https://github.com/ZesNy02/Jupiter/blob/main/Backend/rust-server/example_compose.yml">
+                  hier
+                </Link>{" "}
                 verfügbar.
               </Typography>
             </ListItem>
@@ -187,8 +199,11 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             </ListItem>
             <ListItem>
               <Typography variant="body1">
-                3. Klone das <Link href="">Chaty Repository</Link> auf deinen
-                Server.
+                3. Klone das{" "}
+                <Link href="https://github.com/ZesNy02/Jupiter/tree/main">
+                  Chaty Repository
+                </Link>{" "}
+                auf deinen Server.
               </Typography>
             </ListItem>
             <ListItem>
