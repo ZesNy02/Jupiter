@@ -1,61 +1,60 @@
 import React from 'react';
-import './About.css'
-import mustafa from '../assets/profiles/mustafa.png';
-import noah from '../assets/profiles/noah.png';
-import cedric from '../assets/profiles/cedric.png';
-import lenny from '../assets/profiles/lenny.jpg';
-import cecile from '../assets/profiles/cecile.jpg';
-import paul from '../assets/profiles/paul.png';
-import vincent from '../assets/profiles/vincent.png';
+import { Grid, Card, CardContent, CardMedia, Typography, Container, Box } from '@mui/material';
 
-const About: React.FC = () => {
+const teamMembers = [
+  { name: 'Cedric Herrmann', semester: '5IB', image: '/profiles/cedric.png' },
+  { name: 'Noah Schneymann', semester: '4IB', image: '/profiles/noah.png' },
+  { name: 'Mustafa Dal', semester: '5IB', image: '/profiles/mustafa.png' },
+  { name: 'Cécile Hilsenbek', semester: '7D', image: '/profiles/cecile.jpg' },
+  { name: 'Lenny Zesewitz', semester: '4IB', image: '/profiles/lenny.jpg' },
+  { name: 'Paul Waßmuth', semester: '4IB', image: '/profiles/paul.png' },
+  { name: 'Vincent R.', semester: '4IB', image: '/profiles/vincent.png' }
+];
+
+const AboutUs = () => {
   return (
-    <div className={"content"}>
-      <div className={"white-box"}>
-      <div className='Uberschrift-About'>
-        <h1>Über uns</h1>
-      </div>
-      <div className='profiles-box'>
-        <div className='profile'>
-            <img src={cedric} className='profile-pic' alt="Cedric Herrmann" />
-            <p>Cedric Herrmann</p>
-            <p>Semester: 5IB</p>
-        </div>
-          <div className='profile'>
-            <img src={noah} className='profile-pic' alt="Noah Schneymann" />
-            <p>Noah Schneymann</p>
-            <p>Semester: 4IB</p>
-          </div>
-          <div className='profile'>
-            <img src={mustafa} className='profile-pic' alt="Mustafa Dal" />
-            <p>Mustafa Dal</p>
-            <p>Semester: 5IB</p>
-          </div>
-          <div className='profile'>
-              <img src={cecile} className='profile-pic' alt="Cécile Hilsenbek" style={{'objectPosition': 'top'}}/>
-            <p>Cécile Hilsenbek</p>
-            <p>Semester: 7D</p>
-          </div>
-          <div className='profile'>
-            <img src={lenny} className='profile-pic' alt="Lenny Zesewitz" />
-            <p>Lenny Zesewitz</p>
-            <p>Semester: 4IB</p>
-          </div>
-          <div className='profile'>
-            <img src={paul} className='profile-pic' alt="Paul Waßmuth" />
-            <p>Paul Waßmuth</p>
-            <p>Semester: 4IB</p>
-          </div>
-          <div className='profile'>
-            <img src={vincent} className='profile-pic' alt="Vincent R." />
-            <p>Vincent R.</p>
-            <p>Semester: 4IB</p>
-          </div>
-      </div>
-    </div>
-    </div>
+    <Container maxWidth="lg">
+      <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ my: 4 }}>
+        Über uns
+      </Typography>
+      <Grid container spacing={3}>
+        {teamMembers.map((member, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
+              <Box
+                sx={{
+                  width: '8em',
+                  height: '8em',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  mb: 2
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  image={member.image}
+                  alt={member.name}
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              </Box>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <Typography variant="h5" component="div" gutterBottom>
+                  {member.name}
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary">
+                  {member.semester}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
-}
+};
 
-
-export default About;
+export default AboutUs;

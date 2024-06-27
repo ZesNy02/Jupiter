@@ -1,22 +1,40 @@
 import React from 'react';
-import './Footer.css';
+import { Box, Container, Grid, Typography } from '@mui/material';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-      <div className="footer"> 
-        
-        <div className='anschrift'>
-          <h2>Anschrift</h2>
-          <p>Hochschule Mannheim</p>
-          <p>Paul-Wittsack Straße 10</p>
-          <p>68163 Mannheim</p>
-        </div>
-        <div className='kontakt'>
-            <h2>Kontakt</h2>
-            <p>E-Mail: lenny.zesewitz@gmail.com</p>
-        </div>
-        </div>
-      
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: '#333',
+        color: 'white',
+        py: 3,
+        mt: 'auto',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6" gutterBottom>
+              Anschrift
+            </Typography>
+            <Typography>
+              Hochschule Mannheim<br />
+              Paul-Wittsack Straße 10<br />
+              68163 Mannheim
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
+            <Typography variant="h6" gutterBottom>
+              Kontakt
+            </Typography>
+            <Typography>
+              E-Mail: lenny.zesewitz@gmail.com
+            </Typography>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 
