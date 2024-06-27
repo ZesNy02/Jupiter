@@ -25,7 +25,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={monkey1}
+              src="/installation/monkey1.png"
               alt="tool-image"
             />
             <ul>
@@ -33,7 +33,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={monkey2}
+              src="/installation/monkey2.png"
               alt="tool-image"
             />
             <ul>
@@ -41,7 +41,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={monkey3}
+              src="/installation/monkey3.png"
               alt="tool-image"
             />
             <ul>
@@ -66,7 +66,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={monkey4}
+              src="/installation/monkey4.png"
               alt="tool-image"
             />
           </div>
@@ -85,7 +85,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
             <ul>
@@ -96,7 +96,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -109,7 +109,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
             <h4>Native Installation</h4>
@@ -120,7 +120,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
             <ul>
@@ -128,7 +128,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -138,7 +138,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -151,7 +151,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -166,7 +166,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -179,7 +179,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
 
@@ -190,7 +190,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
             </ul>
             <img
               className={"installation-images"}
-              src={platzhalter}
+              src="/start-header/platzhalter.png"
               alt="tool-image"
             />
           </div>
@@ -202,7 +202,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 <h3 style={{ width: "100%" }}>IDE</h3>
                 <img
                   className={"tool-images solo"}
-                  src={visualStudioCode}
+                  src="/start-header/platzhalter.png"
                   alt="tool-image"
                 />
                 <ul className={"soloText"}>
@@ -214,17 +214,25 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 <h3 style={{ width: "100%" }}>
                   Organinsation und Kommunikation
                 </h3>
-                <img className={"tool-images"} src={github} alt="tool-image" />
+                <img
+                  className={"tool-images"}
+                  src="/icon-pics/github"
+                  alt="tool-image"
+                />
                 <ul>
                   <li>GitHub</li>
                 </ul>
-                <img className={"tool-images"} src={discord} alt="tool-image" />
+                <img
+                  className={"tool-images"}
+                  src="/icon-pics/discord"
+                  alt="tool-image"
+                />
                 <ul>
                   <li>Discord</li>
                 </ul>
                 <img
                   className={"tool-images"}
-                  src={microsoftTeams}
+                  src="/icon-pics/microsoftTeams"
                   alt="tool-image"
                 />
                 <ul>
@@ -232,7 +240,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 </ul>
                 <img
                   className={"tool-images"}
-                  src={clockify}
+                  src="/icon-pics/clockify"
                   alt="tool-image"
                 />
                 <ul>
@@ -244,7 +252,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 <h3 style={{ width: "100%" }}>Dokumente</h3>
                 <img
                   className={"tool-images"}
-                  src={googleDocs}
+                  src="/icon-pics/googleDocs"
                   alt="tool-image"
                 />
                 <ul>
@@ -252,7 +260,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 </ul>
                 <img
                   className={"tool-images"}
-                  src={googleSheets}
+                  src="/icon-pics/googleSheets"
                   alt="tool-image"
                 />
                 <ul>
@@ -260,7 +268,7 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
                 </ul>
                 <img
                   className={"tool-images"}
-                  src={googleSlides}
+                  src="/icon-pics/googleSlides"
                   alt="tool-image"
                 />
                 <ul>
@@ -270,11 +278,19 @@ const InstalltionPage: FC<InstalltionPageProps> = ({}) => {
 
               <div className={"tool-box"}>
                 <h3 style={{ width: "100%" }}>Sonstiges</h3>
-                <img className={"tool-images"} src={figma} alt="tool-image" />
+                <img
+                  className={"tool-images"}
+                  src="/icon-pics/figma"
+                  alt="tool-image"
+                />
                 <ul>
                   <li>Figma</li>
                 </ul>
-                <img className={"tool-images"} src={docker} alt="tool-image" />
+                <img
+                  className={"tool-images"}
+                  src="/icon-pics/docker"
+                  alt="tool-image"
+                />
                 <ul>
                   <li>Docker</li>
                 </ul>
