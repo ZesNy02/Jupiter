@@ -1,14 +1,7 @@
 import { FC } from "react";
-import {
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Container,
-  Box,
-} from "@mui/material";
+import { Grid, Typography, Container } from "@mui/material";
 import "./AboutPage.css";
+import AboutCard from "../../Components/AboutCard/AboutCard";
 
 const teamMembers = [
   { name: "Cedric Herrmann", semester: "5IB", image: "/profiles/cedric.png" },
@@ -36,45 +29,12 @@ const AboutPage: FC<AboutPageProps> = ({}) => {
         </Typography>
         <Grid container spacing={3}>
           {teamMembers.map((member, index) => (
-            <Grid xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  p: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "8em",
-                    height: "8em",
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    mb: 2,
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={member.image}
-                    alt={member.name}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
-                <CardContent sx={{ textAlign: "center" }}>
-                  <Typography variant="h5" component="div" gutterBottom>
-                    {member.name}
-                  </Typography>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    {member.semester}
-                  </Typography>
-                </CardContent>
-              </Card>
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <AboutCard
+                name={member.name}
+                image={member.image}
+                semester={member.semester}
+              />
             </Grid>
           ))}
         </Grid>
