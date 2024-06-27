@@ -14,13 +14,15 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./Navbar.css";
 import { useLocation } from "react-router-dom";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import AccessibilityIcon from '@mui/icons-material/Accessibility'
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface NavbarProps {}
 
 const routes = [
   { route: "/", name: "Home", icon: <HomeRoundedIcon /> },
-  { route: "/about", name: "About" },
-  { route: "/documents", name: "Documents" },
+  { route: "/about", name: "About", Icon: <AccessibilityIcon />},
+  { route: "/documents", name: "Documents", icon: <DownloadIcon />},
   { route: "/installation", name: "Installation" },
 ];
 
