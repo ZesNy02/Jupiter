@@ -10,4 +10,4 @@ Um Chaty über die Browserextention auszuführen muss die Extention installiert 
 Ist dies der Fall reloade die Seite, bis der Button auftaucht. (Dies ist ein bekannter Bug, kann aber nicht durch uns behoben werden)
 
 ### React App
-Um die React App zu starten navigiere in den Ordner /Frontend/React-Komponenten/chaty
+Um die React App zu starten navigiere in den Ordner /Frontend/React-Komponenten/chaty. Hier befindet sich die Applikation. Um alle dependencies zu isntallieren öffne das ein Terminal in diesem Ordner und führe den Befehl __**npm install**__ aus. Nachdem du dies getan hast kannst du mit dem Befehl __**npm run dev**__ die App starten. Wenn du nun noch o in das selbe Terminal eingibst und Enter drückst öffnet sich ein Browserfenster in dem sich das Frontend von Chaty befindet. Dir wird auffallen, dass sich hier nur das Frontend ohne das Prooph-Board befindet. Das liegt daran, dass diese React App für eine einfacherer Implementierung in das Prooph-Board entwickelt wurde nach dem Abbild des Tampermonkey Scripts.
