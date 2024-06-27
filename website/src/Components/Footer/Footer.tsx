@@ -8,11 +8,8 @@ const Footer = () => {
       sx={{
         backgroundColor: "background.dark",
         color: "white",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
         py: "1rem",
+        width: "100%",
       }}
     >
       <Container maxWidth="lg">

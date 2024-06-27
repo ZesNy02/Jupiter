@@ -46,11 +46,17 @@ const Navbar: FC<NavbarProps> = ({}) => {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ padding: "0 0.5rem" }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          padding: "0 0.5rem",
+          backgroundColor: "background.dark",
+        }}
+      >
         <div className="appbar-container">
           <img className="logo" src="/logo_weiss.png" alt="logo" />
           <IconButton
-            sx={{ aspectRatio: 1, height: "3rem" }}
+            sx={{ aspectRatio: 1, height: "3rem", color: "#fff" }}
             onClick={openDrawer}
           >
             <MenuRoundedIcon />

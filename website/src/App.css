@@ -1,10 +1,19 @@
 .content {
-  position: absolute;
-  top: 4rem;
-  left: 0;
-  right: 0;
+  height: 100%;
+  width: 100%;
+  margin-top: 4rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
+}
+
+.page-container {
+  width: 100%;
   min-height: 100vh;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
 }

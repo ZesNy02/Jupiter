@@ -12,7 +12,7 @@ import "./App.css";
 
 const App = () => {
   return (
-    <>
+    <div className="page-container">
       <Navbar />
       <div className="content">
         <Routes>
@@ -23,7 +23,7 @@ const App = () => {
         </Routes>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
