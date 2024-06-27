@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["find_answer","get_connection","insert_answer","update_rating"]};
