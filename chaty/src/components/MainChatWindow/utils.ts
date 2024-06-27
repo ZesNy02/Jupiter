@@ -1,6 +1,6 @@
 import { MessageRatingAction } from "../../types";
 
-const BASE_URL = "http://localhost:3000/";
+const BASE_URL = "https://test.dev-tonka.com";
 export type URL_PATHS =
   | "/ai/prompt"
   | "/ai/eventstorming"
@@ -12,9 +12,13 @@ type ServerResponse =
   | { Success: "ok" }
   | { Error: string };
 
+export type PromptRequest =
+  | { prompt: string }
+  | { id: number; rating: MessageRatingAction };
+
 export const sendRequest = async (
   route: URL_PATHS,
-  data: { prompt: string } | { id: number; rating: MessageRatingAction }
+  data: PromptRequest
 ): Promise<ServerResponse> => {
   const timeoutPromise: Promise<ServerResponse> = new Promise((resolve) => {
     setTimeout(() => resolve({ Error: "Request times out" }), TIMEOUT);

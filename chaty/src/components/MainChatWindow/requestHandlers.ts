@@ -1,43 +1,85 @@
 import { Answer, MessageRatingAction, Prompt } from "../../types";
-import { sendRequest } from "./utils";
+import { PromptRequest, sendRequest } from "./utils";
+
+const enum Route {
+  PROMPT = "/ai/prompt",
+  REGENERATE = "/ai/regenerate",
+  EVENTSTORMING = "/ai/eventstorming",
+}
+
+const requestHandler = (
+  route: Route,
+  dataToSend: PromptRequest,
+  addPrompt: (prompt: string, answer: Answer) => number,
+  addAnswer: (promptIndex: number, answer: Answer) => number,
+  editAnswer: (
+    promptIndex: number,
+    answerIndex: number,
+    answer: Answer
+  ) => void,
+  prompt: string = "",
+  answer: Answer = { id: -1 },
+  promptIndex: number = -1
+) => {
+  let pIndex = promptIndex;
+  let aIndex = 0;
+  if (route === Route.PROMPT || route === Route.EVENTSTORMING) {
+    pIndex = addPrompt(prompt, answer);
+  } else if (route === Route.REGENERATE) {
+    aIndex = addAnswer(promptIndex, answer);
+  }
+  sendRequest(route, dataToSend).then((response) => {
+    if ("Success" in response) {
+      if (route === Route.EVENTSTORMING && response.Success === "ok") {
+        editAnswer(pIndex, aIndex, {
+          message: "Event Storming Successfull!",
+          answer: true,
+          loading: false,
+          eventStorming: true,
+          id: -1,
+        });
+        return;
+      } else if (response.Success === "ok") {
+        return;
+      }
+
+      editAnswer(pIndex, aIndex, {
+        message: response.Success.response,
+        answer: true,
+        loading: false,
+        id: response.Success.id,
+      });
+    } else if ("Error" in response) {
+      editAnswer(pIndex, aIndex, {
+        message: response.Error,
+        answer: true,
+        loading: false,
+        error: true,
+        id: -1,
+      });
+    }
+  });
+};
 
 export const promptRequestHandler = (
   addPrompt: (prompt: string, answer: Answer) => number,
   editAnswer: (promptIndex: number, answerIndex: number, answer: Answer) => void
 ) => {
   return (prompt: string) => {
-    const promptIndex = addPrompt(prompt, {
-      message: "",
-      answer: true,
-      loading: true,
-      id: -1,
-    });
-    const answerIndex = 0;
-
-    sendRequest("/ai/prompt", {
+    requestHandler(
+      Route.PROMPT,
+      { prompt },
+      addPrompt,
+      () => 0,
+      editAnswer,
       prompt,
-    }).then((response) => {
-      if ("Success" in response) {
-        if (response.Success === "ok") {
-          return;
-        }
-
-        editAnswer(promptIndex, answerIndex, {
-          message: response.Success.response,
-          answer: true,
-          loading: false,
-          id: response.Success.id,
-        });
-      } else if ("Error" in response) {
-        editAnswer(promptIndex, answerIndex, {
-          message: response.Error,
-          answer: true,
-          loading: false,
-          error: true,
-          id: -1,
-        });
+      {
+        message: "",
+        answer: true,
+        loading: true,
+        id: -1,
       }
-    });
+    );
   };
 };
 
@@ -46,34 +88,21 @@ export const regenerateRequestHandler = (
   editAnswer: (promptIndex: number, answerIndex: number, answer: Answer) => void
 ) => {
   return (promptIndex: number, prompt: string) => {
-    const answerIndex = addAnswer(promptIndex, {
-      message: "",
-      answer: true,
-      loading: true,
-      id: -1,
-    });
-    sendRequest("/ai/regenerate", { prompt }).then((response) => {
-      if ("Success" in response) {
-        if (response.Success === "ok") {
-          return;
-        }
-
-        editAnswer(promptIndex, answerIndex, {
-          message: response.Success.response,
-          answer: true,
-          loading: false,
-          id: response.Success.id,
-        });
-      } else if ("Error" in response) {
-        editAnswer(promptIndex, answerIndex, {
-          message: response.Error,
-          answer: true,
-          loading: false,
-          error: true,
-          id: -1,
-        });
-      }
-    });
+    requestHandler(
+      Route.REGENERATE,
+      { prompt },
+      () => 0,
+      addAnswer,
+      editAnswer,
+      prompt,
+      {
+        message: "",
+        answer: true,
+        loading: true,
+        id: -1,
+      },
+      promptIndex
+    );
   };
 };
 
@@ -100,43 +129,23 @@ export const ratingRequestHandler = (prompts: Prompt[]) => {
 };
 
 export const eventStormingRequestHandler = (
-  addPrompt: (prompt: string) => number,
-  addAnswer: (promptIndex: number, answer: Answer) => number,
+  addPrompt: (prompt: string, answer: Answer) => number,
   editAnswer: (promptIndex: number, answerIndex: number, answer: Answer) => void
 ) => {
   return (prompt: string) => {
-    const promptIndex = addPrompt(prompt);
-    const answerIndex = addAnswer(promptIndex, {
-      message: "",
-      answer: true,
-      loading: true,
-      eventStorming: true,
-      id: -1,
-    });
-    sendRequest("/ai/prompt", {
+    requestHandler(
+      Route.EVENTSTORMING,
+      { prompt },
+      addPrompt,
+      () => 0,
+      editAnswer,
       prompt,
-    }).then((response) => {
-      if ("Success" in response) {
-        if (response.Success !== "ok") {
-          return;
-        }
-
-        editAnswer(promptIndex, answerIndex, {
-          message: "Event Storming Successfull!",
-          answer: true,
-          loading: false,
-          eventStorming: true,
-          id: -1,
-        });
-      } else if ("Error" in response) {
-        editAnswer(promptIndex, answerIndex, {
-          message: response.Error,
-          answer: true,
-          loading: false,
-          error: true,
-          id: -1,
-        });
+      {
+        message: "",
+        answer: true,
+        loading: true,
+        id: -1,
       }
-    });
+    );
   };
 };
