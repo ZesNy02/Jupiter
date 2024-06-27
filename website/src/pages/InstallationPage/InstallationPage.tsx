@@ -1,5 +1,6 @@
 import { Box, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import { FC } from "react";
+import "./InstallationPage.css";
 
 interface InstallationPageProps {}
 
@@ -26,14 +27,25 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             justifyContent: "center",
             alignItems: "center",
             p: "1rem",
+            px: "5rem",
           }}
         >
           <Typography variant="h4">Client-Installation</Typography>
-          <List>
+          <List
+            sx={{
+              "& li": {
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            }}
+          >
             <ListItem>
               <Typography variant="body1">
-                1. Lade die <Link href="https://www.tampermonkey.net/">Tampermonkey Extension</Link> für
-                deinen Browser herunter und installiere sie.
+                1. Lade die{" "}
+                <Link href="https://www.tampermonkey.net/">
+                  Tampermonkey Extension
+                </Link>{" "}
+                für deinen Browser herunter und installiere sie.
               </Typography>
             </ListItem>
             <ListItem>
@@ -69,16 +81,12 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             </ListItem>
             <ListItem>
               <Typography variant="body1">
-                4. Kopiere das Script von <Link href="https://drive.google.com/uc?export=download&id=18uRDdC-4G_th7kuPquCj1He7ZBjGVj05HwI6jRZLv0k">hier</Link> und füge es
-                in das neue Userscript ein.
+                4. Kopiere das Script von{" "}
+                <Link href="https://drive.google.com/uc?export=download&id=18uRDdC-4G_th7kuPquCj1He7ZBjGVj05HwI6jRZLv0k">
+                  hier
+                </Link>{" "}
+                und füge es in das neue Userscript ein.
               </Typography>
-            </ListItem>
-            <ListItem>
-              <img
-                className="installation-image"
-                src="/installation/monkey4.png"
-                alt=""
-              />
             </ListItem>
             <ListItem>
               <Typography variant="body1">
@@ -123,13 +131,27 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
           <Typography variant="h5">
             Installation mit Docker (empfohlen)
           </Typography>
-          <List>
+          <List
+            sx={{
+              "& li": {
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            }}
+          >
             <ListItem>
               <Typography variant="body1">
                 - Docker Compose: Für eine schnelle und einfache Installation
                 ist eine Beispiel Docker Compose Datei <Link href="">hier</Link>{" "}
                 verfügbar.
               </Typography>
+            </ListItem>
+            <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey5.png"
+                alt=""
+              />
             </ListItem>
             <ListItem>
               <Typography variant="body1">
@@ -141,16 +163,26 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
           <Typography variant="h5">
             Native Installation (nicht empfohlen)
           </Typography>
-          <List>
+          <List
+            sx={{
+              "& li": {
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            }}
+          >
             <ListItem>
               <Typography variant="body1">
-                1. Installiere <Link href="https://www.rust-lang.org/">Rust</Link> auf deinem Server.
+                1. Installiere{" "}
+                <Link href="https://www.rust-lang.org/">Rust</Link> auf deinem
+                Server.
               </Typography>
             </ListItem>
             <ListItem>
               <Typography variant="body1">
-                2. Installiere <Link href="https://www.python.org/">Python</Link> auf deinem Server.
-                (Mindestens Version 3.10.12)
+                2. Installiere{" "}
+                <Link href="https://www.python.org/">Python</Link> auf deinem
+                Server. (Mindestens Version 3.10.12)
               </Typography>
             </ListItem>
             <ListItem>
@@ -173,15 +205,36 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
               </Typography>
             </ListItem>
             <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey5.png"
+                alt=""
+              />
+            </ListItem>
+            <ListItem>
               <Typography variant="body1">
                 6. Erstelle eine <b>.env</b> Datei im <b>rust-server</b> Ordner.
                 (rust-server/.env)
               </Typography>
             </ListItem>
             <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey5.png"
+                alt=""
+              />
+            </ListItem>
+            <ListItem>
               <Typography variant="body1">
                 7. Starte den Server mit <b>cargo run</b>.
               </Typography>
+            </ListItem>
+            <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey5.png"
+                alt=""
+              />
             </ListItem>
           </List>
         </Box>
