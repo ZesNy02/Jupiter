@@ -13,11 +13,12 @@ import { FC, useState } from "react";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./Navbar.css";
 import { useLocation } from "react-router-dom";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 
 interface NavbarProps {}
 
 const routes = [
-  { route: "/", name: "Home" },
+  { route: "/", name: "Home", icon: <HomeRoundedIcon /> },
   { route: "/about", name: "About" },
   { route: "/documents", name: "Documents" },
   { route: "/installation", name: "Installation" },
@@ -66,7 +67,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
                 sx={getSelectedPage(route.route)}
               >
                 <ListItemButton href={route.route}>
-                  <ListItemIcon></ListItemIcon>
+                  <ListItemIcon>{route.icon}</ListItemIcon>
                   <ListItemText>{route.name}</ListItemText>
                 </ListItemButton>
               </ListItem>

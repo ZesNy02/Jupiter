@@ -8,6 +8,11 @@ const darkTheme = createTheme({
 
 export const getDarkTheme = () => {
   return createTheme(darkTheme, {
-    palette: {},
+    palette: {
+      background: {
+        dark: "#1f1f1f",
+        light: "#f2f2f2",
+      },
+    },
   });
 };

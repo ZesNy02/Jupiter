@@ -4,13 +4,15 @@ import AboutPage from "./pages/AboutPage/AboutPage.tsx";
 import DocumentsPage from "./pages/DocumentsPage/DocumentsPage.tsx";
 import InstalltionPage from "./pages/InstallationPage/InstallationPage.tsx";
 import Navbar from "./Components/Navbar/Navbar.tsx";
+import Footer from "./Components/Footer/Footer.tsx";
+import "./App.css";
 
 //todo: Dokumente: Abschlusspräsentation einfügen
 //todo: Installation: Bilder einfügen (Server) und links anpassen
 
 const App = () => {
   return (
-    <div className="App">
+    <>
       <Navbar />
       <div className="content">
         <Routes>
@@ -20,7 +22,8 @@ const App = () => {
           <Route path="/installation" element={<InstalltionPage />} />
         </Routes>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
