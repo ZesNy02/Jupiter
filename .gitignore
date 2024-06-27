@@ -1,6 +1,3 @@
-website
-rust-server
-node_modules
-JupITer-website
-chaty
-.idea
+*
+!Backend/
+!Frontend/
