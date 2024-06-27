@@ -185,3 +185,233 @@ const Installation: React.FC = () => {
 }
 
 export default Installation;
+
+// import React from 'react';
+// import {
+//   Box,
+//   Typography,
+//   List,
+//   ListItem,
+//   ListItemText,
+//   Paper,
+//   Container,
+//   Grid,
+//   Link
+// } from '@mui/material';
+// import './Installation.css';
+
+// // Importieren Sie hier Ihre Bilder
+// import platzhalter from '../assets/platzhalter.png';
+// import monkey1 from '../assets/installation/monkey1.png';
+// import monkey2 from '../assets/installation/monkey2.png';
+// import monkey3 from '../assets/installation/monkey3.png';
+// import monkey4 from '../assets/installation/monkey4.png';
+
+// // Tool-Icons importieren
+// import clockify from '../assets/icon-pics/clockify.png';
+// import discord from '../assets/icon-pics/discord.png';
+// import docker from '../assets/icon-pics/docker.png';
+// import figma from '../assets/icon-pics/figma.png';
+// import github from '../assets/icon-pics/github.png';
+// import googleDocs from '../assets/icon-pics/googledocs.png';
+// import googleSheets from '../assets/icon-pics/sheets.png';
+// import googleSlides from '../assets/icon-pics/slides.png';
+// import microsoftTeams from '../assets/icon-pics/teams.png';
+// import visualStudioCode from '../assets/icon-pics/vscode.png';
+
+// const Installation: React.FC = () => {
+//   const tools = [
+//     { name: 'Visual Studio Code', image: visualStudioCode, category: 'IDE' },
+//     { name: 'GitHub', image: github, category: 'Organisation und Kommunikation' },
+//     { name: 'Discord', image: discord, category: 'Organisation und Kommunikation' },
+//     { name: 'Microsoft Teams', image: microsoftTeams, category: 'Organisation und Kommunikation' },
+//     { name: 'Clockify', image: clockify, category: 'Organisation und Kommunikation' },
+//     { name: 'Google Docs', image: googleDocs, category: 'Dokumente' },
+//     { name: 'Google Sheets', image: googleSheets, category: 'Dokumente' },
+//     { name: 'Google Slides', image: googleSlides, category: 'Dokumente' },
+//     { name: 'Figma', image: figma, category: 'Sonstiges' },
+//     { name: 'Docker', image: docker, category: 'Sonstiges' },
+//   ];
+
+//   return (
+//     <Container maxWidth="lg" className="content">
+//       <Box className="installationsbox">
+//         <Paper elevation={3} className="white-box">
+//           <Typography variant="h4" gutterBottom>
+//             Installation von Chaty für die Prooph-Board App
+//           </Typography>
+//           <Typography variant="body1" paragraph>
+//             Willkommen zur Installationsanleitung für Chaty, 
+//             deinem neuen Chatbot für die Prooph-Board App.
+//             Bitte folge den unten stehenden Schritten, 
+//             um Chaty erfolgreich zu installieren und in Betrieb zu nehmen.
+//             Client-Installation
+//           </Typography>
+//           <Typography variant="h5" gutterBottom>
+//             Tampermonkey Extension installieren und einrichten
+//           </Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Lade die Tampermonkey Extension für deinen Browser herunter und installiere sie." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={monkey1} alt="Tampermonkey Installation" className="installation-images" />
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Öffne das Tampermonkey Dashboard in deinem Browser." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={monkey2} alt="Tampermonkey Dashboard" className="installation-images" />
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Neues Userscript erstellen" />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={monkey3} alt="Neues Userscript" className="installation-images" />
+//           <List>
+//             <ListItem>
+//               <ListItemText 
+//                 primary={
+//                   <React.Fragment>
+//                     Kopiere das Script von <Link href="https://drive.google.com/drive/folders/12Jz4mWS9Vl1yOrUG-nNRAwqlPH9hTTLu" target="_blank" rel="noopener noreferrer">hier</Link> und füge es in das neue Userscript ein.
+//                   </React.Fragment>
+//                 } 
+//               />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="Im Script findest du ganz oben eine Konstante namens BASE_SERVER_URL." />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="Ersetze diesen Wert durch die URL deines Servers:" />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="const BASE_SERVER_URL = 'https://dein-server-url.com';" />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={monkey4} alt="Script Anpassung" className="installation-images" />
+//         </Paper>
+
+//         <Paper elevation={3} className="grey-box">
+//           <Typography variant="h5" gutterBottom>
+//             Server installation
+//           </Typography>
+//           <Typography variant="body1">Benötigte Voraussetzungen (können auch über Docker erfüllt werden):</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Stelle sicher, dass dein Server Ollama und LLaMA3 unterstützt." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Platzhalter" className="installation-images" />
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Ein Server mit einer installierten Postgres-Datenbank ist erforderlich." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Platzhalter" className="installation-images" />
+
+//           <Typography variant="body1">Installation mit Docker:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Ein Beispiel für die Einrichtung mit Docker Compose findest du hier." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Docker Setup" className="installation-images" />
+
+//           <Typography variant="h6" gutterBottom>Native Installation</Typography>
+
+//           <Typography variant="body1">Python und Rust installieren:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Installiere Python 3.10 oder höher von hier." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Python Installation" className="installation-images" />
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Installiere Rust von hier." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Rust Installation" className="installation-images" />
+          
+//           <Typography variant="body1">Repository klonen:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Klone das Chaty Repository auf deinen Server." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Repository Klonen" className="installation-images" />
+
+//           <Typography variant="body1">In den rust-server Ordner wechseln:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary='Wechsle in den "rust-server" Ordner innerhalb des geklonten Repositories.' />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Ordner Wechseln" className="installation-images" />
+
+//           <Typography variant="body1">Dependencies installieren:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Führe das passende Setup-Script aus, um die Abhängigkeiten zu installieren:" />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="Für Linux: linux_setup.sh" />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="Für Windows: windows_setup.bat" />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Dependencies Installation" className="installation-images" />
+        
+//           <Typography variant="body1">rust-server/.env Datei erstellen:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="Erstelle eine rust-server/.env Datei mit den notwendigen Konfigurationsparametern. Ein Beispiel findest du hier." />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="ENV Datei Erstellung" className="installation-images" />
+
+//           <Typography variant="body1">Server starten mit den folgenden Befehlen:</Typography>
+//           <List>
+//             <ListItem>
+//               <ListItemText primary="bash" />
+//             </ListItem>
+//             <ListItem>
+//               <ListItemText primary="cargo run" />
+//             </ListItem>
+//           </List>
+//           <Box component="img" src={platzhalter} alt="Server Start" className="installation-images" />
+//         </Paper>
+
+//         <Paper elevation={3} className="white-box">
+//           <Typography variant="h5" gutterBottom>Tools</Typography>
+//           <Grid container spacing={2}>
+//             {['IDE', 'Organisation und Kommunikation', 'Dokumente', 'Sonstiges'].map((category) => (
+//               <Grid item xs={12} key={category}>
+//                 <Typography variant="h6" gutterBottom>{category}</Typography>
+//                 <List>
+//                   {tools
+//                     .filter(tool => tool.category === category)
+//                     .map((tool, index) => (
+//                       <ListItem key={index} sx={{ py: 1 }}>
+//                         <Box
+//                           component="img"
+//                           src={tool.image}
+//                           alt={tool.name}
+//                           sx={{ width: 24, height: 24, mr: 2 }}
+//                         />
+//                         <ListItemText primary={tool.name} />
+//                       </ListItem>
+//                     ))
+//                   }
+//                 </List>
+//               </Grid>
+//             ))}
+//           </Grid>
+//         </Paper>
+//       </Box>
+//     </Container>
+//   );
+// }
+
+// export default Installation;
