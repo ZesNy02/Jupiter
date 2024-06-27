@@ -149,7 +149,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey5.png"
+                src="/installation/example_compose.jpg"
                 alt=""
               />
             </ListItem>
@@ -207,7 +207,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey5.png"
+                src="/installation/setupscript_example.jpg"
                 alt=""
               />
             </ListItem>
@@ -220,7 +220,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey5.png"
+                src="/installation/dotenv_example.jpg"
                 alt=""
               />
             </ListItem>
@@ -232,7 +232,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey5.png"
+                src="/installation/cargo_run.jpg"
                 alt=""
               />
             </ListItem>
