@@ -144,12 +144,12 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
           <List>
             <ListItem>
               <Typography variant="body1">
-                1. Installiere <Link href="">Rust</Link> auf deinem Server.
+                1. Installiere <Link href="https://www.rust-lang.org/">Rust</Link> auf deinem Server.
               </Typography>
             </ListItem>
             <ListItem>
               <Typography variant="body1">
-                2. Installiere <Link href="">Python</Link> auf deinem Server.
+                2. Installiere <Link href="https://www.python.org/">Python</Link> auf deinem Server.
                 (Mindestens Version 3.10.12)
               </Typography>
             </ListItem>
