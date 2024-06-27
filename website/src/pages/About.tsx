@@ -1,6 +1,5 @@
 import React from 'react';
 import './About.css'
-import platzhalter from '../assets/platzhalter.png';
 import mustafa from '../assets/profiles/mustafa.png';
 import noah from '../assets/profiles/noah.png';
 import cedric from '../assets/profiles/cedric.png';
