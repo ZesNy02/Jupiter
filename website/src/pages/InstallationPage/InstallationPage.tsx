@@ -32,14 +32,14 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
           <List>
             <ListItem>
               <Typography variant="body1">
-                1. Lade die <Link href="">Tampermonkey Extension</Link> für
+                1. Lade die <Link href="https://www.tampermonkey.net/">Tampermonkey Extension</Link> für
                 deinen Browser herunter und installiere sie.
               </Typography>
             </ListItem>
             <ListItem>
               <img
                 className="installation-image"
-                src="/start-header/platzhalter.png"
+                src="/installation/monkey1.png"
                 alt=""
               />
             </ListItem>
@@ -49,15 +49,36 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
               </Typography>
             </ListItem>
             <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey2.png"
+                alt=""
+              />
+            </ListItem>
+            <ListItem>
               <Typography variant="body1">
                 3. Erstelle ein neues Userscript im Tampermonkey Dashboard.
               </Typography>
             </ListItem>
             <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey3.png"
+                alt=""
+              />
+            </ListItem>
+            <ListItem>
               <Typography variant="body1">
-                4. Kopiere das Script von <Link href="">hier</Link> und füge es
+                4. Kopiere das Script von <Link href="https://drive.google.com/uc?export=download&id=18uRDdC-4G_th7kuPquCj1He7ZBjGVj05HwI6jRZLv0k">hier</Link> und füge es
                 in das neue Userscript ein.
               </Typography>
+            </ListItem>
+            <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey4.png"
+                alt=""
+              />
             </ListItem>
             <ListItem>
               <Typography variant="body1">
@@ -65,6 +86,13 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
                 BASE_SERVER_URL. Ersetze diesen Wert durch die URL deines
                 Servers.
               </Typography>
+            </ListItem>
+            <ListItem>
+              <img
+                className="installation-image"
+                src="/installation/monkey5.png"
+                alt=""
+              />
             </ListItem>
           </List>
         </Box>
