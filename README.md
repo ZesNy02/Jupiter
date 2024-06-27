@@ -10,8 +10,56 @@ Um Chaty über die Browserextention auszuführen muss die Extention installiert 
 Ist dies der Fall reloade die Seite, bis der Button auftaucht. (Dies ist ein bekannter Bug, kann aber nicht durch uns behoben werden)
 
 ### React App
-Um die React App zu starten navigiere in den Ordner /Frontend/React-Komponenten/chaty. Hier befindet sich die Applikation. Um alle dependencies zu isntallieren öffne das ein Terminal in diesem Ordner und führe den Befehl __**npm install**__ aus. Nachdem du dies getan hast kannst du mit dem Befehl __**npm run dev**__ die App starten. Wenn du nun noch o in das selbe Terminal eingibst und Enter drückst öffnet sich ein Browserfenster in dem sich das Frontend von Chaty befindet. Dir wird auffallen, dass sich hier nur das Frontend ohne das Prooph-Board befindet. Das liegt daran, dass diese React App für eine einfacherer Implementierung in das Prooph-Board entwickelt wurde nach dem Abbild des Tampermonkey Scripts.
 
-## Backend
+Um die React App zu starten navigiere in den Ordner /Frontend/React-Komponenten/chaty. Hier befindet sich die Applikation. Um alle dependencies zu isntallieren öffne das ein Terminal in diesem Ordner und führe den Befehl \***\*npm install\*\*** aus. Nachdem du dies getan hast kannst du mit dem Befehl \***\*npm run dev\*\*** die App starten. Wenn du nun noch o in das selbe Terminal eingibst und Enter drückst öffnet sich ein Browserfenster in dem sich das Frontend von Chaty befindet. Dir wird auffallen, dass sich hier nur das Frontend ohne das Prooph-Board befindet. Das liegt daran, dass diese React App für eine einfacherer Implementierung in das Prooph-Board entwickelt wurde nach dem Abbild des Tampermonkey Scripts.
 
-Unter der Ordner Struktur /Backend/rust-server/* befindet sich die gesamte Backend Logik.
+# Backend
+
+## Vorbereitung
+
+### Python
+
+- Installiere **Python** (mindestens Version 3.10.12) und **pip** von der offiziellen Seite.
+
+### Rust
+
+- Installiere **rustup** von `rust-lang.org` and folge deren Anweisungen dort.
+- Der Befehl **cargo** muss problemlos funktionieren.
+
+## Den Server einrichten
+
+### Docker
+
+- Eine Beispiel Docker Compose Datei ist im `rust-server` Verzeichnis zu finden mit dem Namen **example_compose.yml**.
+
+### Native
+
+#### Packete Installieren
+
+- Um die benötigten Packete zu installieren führe entweder das **linux_setup.sh** oder das **windows_setup.bat** Skript aus dem `rust-server` Verzeichnis aus, je nachdem welches Betriebssystem Sie verwenden.
+
+#### Environment Variablen hinzufügen
+
+- Erstelle eine **.env** Datei unter `rust-server/.env`.
+- Füge mindestens die **benötigten** Variablen hinzu:
+  - **`DB_HOST`**: Die Adresse des Datenbank Servers. Beispiel: **127.0.0.1**
+  - **`DB_NAME`**: Der Name der Datenbank. Beispiel: **postgres**
+  - **`DB_USER`**: Der Benutzername der Datenbank. Beispiel: **postgres**
+  - **`DB_PASSWORD`**: Das Password der Datenbank. Beispiel: **password**
+  - **`LLM_SERVER`**: Die Adresse des LLM Servers auf dem Ollama läuft mit LLaMA3 und mxbai-embed-large. Zum Beispiel: `http://localhost:3000`, nicht mehr.
+  - **`LLM_TOKEN`**: Der Authentifizierungstoken des LLM Servers (Ollama).
+  - **`CLIENT_SECRET`**: Das Client Secret von der Prooph-Board API.
+  - **`CLIENT_ID`**: Die Client ID von der Prooph-Board API.
+    Sieht wiefolgt aus: `_board_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+  - `IP`: Die IP Adresse, auf der der Server laufen soll. Standardwert: `0.0.0.0`.
+  - `PORT`: Der Port, auf den der Server laufen soll. Standardwert: `3000`.
+  - `DB_PORT`: Der Port des Datenbankservers. Standardwert: `5432`.
+
+#### Run the Server
+
+- Um den Server zu starten gehe in das `rust-server` Verzeichnis.
+- Führe `cargo run` in der Konsole aus.
+
+### See the Rust Documentation
+
+- Um die Dokumentation des Rust Servers zu sehen, gehe in das `rust-server/target/doc/rust_server` Verzeichnis und öffne die `index.html` Datei.
