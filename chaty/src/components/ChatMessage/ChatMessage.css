@@ -46,3 +46,9 @@
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+
+.chat-message-count {
+  font-size: small;
+  text-align: right;
+  color: #1d1d1d;
+}
