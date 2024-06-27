@@ -51,7 +51,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey1.png"
+                src="/installation/monkey_extension.jpg"
                 alt=""
               />
             </ListItem>
@@ -63,7 +63,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey2.png"
+                src="/installation/monkey_menu.jpg"
                 alt=""
               />
             </ListItem>
@@ -75,7 +75,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey3.png"
+                src="/installation/monkey_dashboard.jpg"
                 alt=""
               />
             </ListItem>
@@ -98,7 +98,7 @@ const InstallationPage: FC<InstallationPageProps> = ({}) => {
             <ListItem>
               <img
                 className="installation-image"
-                src="/installation/monkey5.png"
+                src="/installation/monkey_change-url.jpg"
                 alt=""
               />
             </ListItem>
