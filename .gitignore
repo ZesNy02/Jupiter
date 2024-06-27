@@ -12,3 +12,7 @@ value.txt
 
 # Other git ignores
 *.db
+.vite
+dist
+node_modules
+compose.yml
