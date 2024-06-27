@@ -1,0 +1,54 @@
+.chaty-message {
+  text-overflow: wrap;
+  align-self: flex-start;
+  border: 1px solid;
+  border-radius: 10px;
+  border-color: transparent;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.chaty-message .error-message {
+  background-color: #e37e8a;
+  color: black;
+  text-overflow: wrap;
+  align-self: flex-start;
+  border: 1px solid;
+  border-radius: 10px;
+  border-color: transparent;
+  padding: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.chaty-message .chat-message {
+  background-color: #a4a4ac;
+  color: black;
+  text-overflow: wrap;
+  align-self: flex-start;
+  border: 1px solid;
+  border-radius: 10px;
+  border-color: transparent;
+  padding: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.user-message {
+  background-color: #a4a4ac;
+  color: rgb(26, 26, 26);
+  text-overflow: wrap;
+  align-self: flex-end;
+  border: 1px solid black;
+  border-radius: 10px;
+  border-color: transparent;
+  padding: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.chat-message-count {
+  font-size: small;
+  text-align: right;
+  color: #1d1d1d;
+}

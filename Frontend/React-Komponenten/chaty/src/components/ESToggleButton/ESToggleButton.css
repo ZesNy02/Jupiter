@@ -1,0 +1,75 @@
+.eventstorming-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 1rem;
+}
+
+.eventstorming-title {
+  line-height: 1;
+}
+
+.toggle-button-wrapper {
+  width: 4rem;
+  height: 2rem;
+  position: relative;
+  border-radius: 100rem;
+  overflow: hidden;
+  background-color: #d3d3d3;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  outline: none;
+  border: none;
+}
+
+.toggle-button-wrapper:focus {
+  outline: none;
+  border: none;
+}
+.toggle-button-wrapper:hover {
+  outline: 1px solid rgba(0, 0, 0, 0.5);
+  border: none;
+}
+.toggle-button-wrapper:active {
+  outline: 1px solid rgba(0, 0, 0, 0.5);
+  border: none;
+}
+
+.toggle-button-wrapper.active {
+  background-color: #a6a6a6;
+}
+
+.toggle-button-background {
+  width: 100%;
+  height: 100%;
+  background-color: #a6a6a6;
+  border-radius: 100rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.toggle-button-background.active {
+  background-color: #d3d3d3;
+}
+
+.toggle-button-point {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #434343;
+  border-radius: 100%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease, background-color 0.3s ease;
+  position: absolute;
+  right: calc(100% - 1.5rem);
+}
+
+.toggle-button-point.active {
+  right: 0px;
+  background-color: #ffa500;
+}

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["handle_eventstorming_post","testable_handle_eventstorming_post"]};
