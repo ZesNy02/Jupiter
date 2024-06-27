@@ -30,3 +30,4 @@ target
 .env
 Cargo.lock
 compose.yml
+Backend
