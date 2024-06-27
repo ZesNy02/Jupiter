@@ -28,7 +28,7 @@ const ESToggleButton: FC<ESToggleButtonProps> = ({
           </div>
         </button>
         <h2 className="eventstorming-title">
-          {eventStorming ? "Event Storming" : "Chat"}
+          {eventStorming ? "Event Storming" : "Event Storming"}
         </h2>
       </div>
     </>

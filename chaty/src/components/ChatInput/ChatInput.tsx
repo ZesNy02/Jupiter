@@ -39,7 +39,7 @@ const ChatInput: FC<ChatInputProps> = ({ eventStorming, onSend }) => {
           onKeyUp={handlePressEnter}
           onChange={handleTextChange}
         />
-        <button className="chat-input-send.button" onClick={handleSend}>
+        <button className="chat-input-send-button" onClick={handleSend}>
           <img
             src="/ChatInputIcon.svg"
             className="chat-input-send-button-icon"

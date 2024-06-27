@@ -7,6 +7,7 @@ import ESToggleButton from "../ESToggleButton";
 import { useEventStorming } from "../../hooks/useEventStorming";
 import ResizeHandle from "../ResizeHandle";
 import {
+  eventStormingRequestHandler,
   promptRequestHandler,
   ratingRequestHandler,
   regenerateRequestHandler,
@@ -47,6 +48,14 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
     console.log(prompts);
   }, [prompts]);
 
+  const handleInputSend = () => {
+    if (eventStormingState) {
+      return eventStormingRequestHandler(addPrompt, editAnswer);
+    } else {
+      return promptRequestHandler(addPrompt, editAnswer);
+    }
+  };
+
   return (
     <div
       className={`main-chat-window${eventStormingState ? " active" : ""}`}
@@ -55,8 +64,14 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
         height: size.height,
       }}
     >
-      <ResizeHandle onMouseDown={resizeHandler} />
-      <ChatHeader onClick={onClose} />
+      <ResizeHandle
+       onMouseDown={resizeHandler}
+       eventStorming={eventStormingState}
+       />
+      <ChatHeader 
+      onClick={onClose}
+      eventStorming={eventStormingState}
+       />
       <RequestContext.Provider value={requestHandlers}>
         <ChatWrapper prompts={prompts} />
       </RequestContext.Provider>
@@ -64,7 +79,7 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
         onClick={handleToggleEventStorming}
         eventStorming={eventStormingState}
       />
-      <ChatInput onSend={promptRequestHandler(addPrompt, editAnswer)} />
+      <ChatInput onSend={handleInputSend()} />
     </div>
   );
 };
