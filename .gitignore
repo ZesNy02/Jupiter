@@ -1,0 +1,18 @@
+# Rust git ignores
+**/target/*
+!doc/
+Cargo.lock
+**/*.rs.bk
+.env
+
+# Python git ignores
+__pycache__/
+chroma/
+value.txt
+
+# Other git ignores
+*.db
+.vite
+dist
+node_modules
+compose.yml

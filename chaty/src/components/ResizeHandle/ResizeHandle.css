@@ -1,0 +1,19 @@
+.chat-window-resize-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: nesw-resize;
+  transition: filter 0.3s ease;
+}
+
+.chat-window-resize-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.chat-window-resize-button.active {
+  filter: invert(1);
+}
