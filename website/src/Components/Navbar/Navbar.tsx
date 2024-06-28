@@ -69,7 +69,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
         </div>
       </AppBar>
       <Drawer open={drawerState} onClose={closeDrawer} anchor="right">
-        <Box sx={{ width: "25rem" }}>
+        <Box sx={{ width: "20rem" }}>
           <List>
             {routes.map((route, index) => (
               <ListItem

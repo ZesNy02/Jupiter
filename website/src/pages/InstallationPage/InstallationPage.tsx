@@ -7,17 +7,19 @@ interface InstallationPageProps {}
 const InstallationPage: FC<InstallationPageProps> = ({}) => {
   return (
     <>
-      <Typography variant="h2" sx={{ textAlign: "center" }}>
-        Installations Anleitung
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{ fontSize: "1.5rem", px: "10%", textAlign: "center" }}
-      >
-        Willkommen zur Installationsanleitung für Chaty, deinem neuen Chatbot
-        für die Prooph-Board App. Bitte folge den unten stehenden Schritten, um
-        Chaty erfolgreich zu installieren und in Betrieb zu nehmen.
-      </Typography>
+      <Box sx={{ p: "2rem" }}>
+        <Typography variant="h2" sx={{ textAlign: "center" }}>
+          Installations Anleitung
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ fontSize: "1.5rem", px: "10%", textAlign: "center" }}
+        >
+          Willkommen zur Installationsanleitung für Chaty, deinem neuen Chatbot
+          für die Prooph-Board App. Bitte folge den unten stehenden Schritten,
+          um Chaty erfolgreich zu installieren und in Betrieb zu nehmen.
+        </Typography>
+      </Box>
       <Paper
         sx={{
           backgroundColor: "background.light",
