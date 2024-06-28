@@ -6,6 +6,7 @@ import Navbar from "./Components/Navbar/Navbar.tsx";
 import Footer from "./Components/Footer/Footer.tsx";
 import "./App.css";
 import InstallationPage from "./pages/InstallationPage/InstallationPage.tsx";
+import ToolsPage from "./pages/ToolsPage/ToolsPage.tsx";
 
 //todo: Dokumente: Abschlusspräsentation einfügen
 //todo: Installation: Bilder einfügen (Server) und links anpassen
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/install" element={<InstallationPage />} />
+          <Route path="/tools" element={<ToolsPage />} />
         </Routes>
       </div>
       <Footer />

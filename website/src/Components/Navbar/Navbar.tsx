@@ -17,6 +17,7 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
+import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
 
 interface NavbarProps {}
 
@@ -25,6 +26,7 @@ const routes = [
   { route: "/about", name: "About", icon: <AccountBoxRoundedIcon /> },
   { route: "/documents", name: "Documents", icon: <ArticleRoundedIcon /> },
   { route: "/install", name: "Installation", icon: <DownloadRoundedIcon /> },
+  { route: "/tools", name: "Tools", icon: <ConstructionRoundedIcon /> },
 ];
 
 const Navbar: FC<NavbarProps> = ({}) => {
