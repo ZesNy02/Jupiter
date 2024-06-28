@@ -16,3 +16,6 @@ value.txt
 dist
 node_modules
 compose.yml
+website
+rust-server
+Backend

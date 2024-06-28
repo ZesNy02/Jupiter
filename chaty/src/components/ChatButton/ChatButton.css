@@ -16,3 +16,8 @@
   cursor: pointer;
   padding: 4px;
 }
+
+.chat-button.active {
+  background-color: #eba360;
+  color: black;
+}

@@ -4,7 +4,6 @@ import ChatHeader from "../ChatHeader";
 import ChatWrapper from "../ChatWrapper";
 import ChatInput from "../ChatInput";
 import ESToggleButton from "../ESToggleButton";
-import { useEventStorming } from "../../hooks/useEventStorming";
 import ResizeHandle from "../ResizeHandle";
 import {
   eventStormingRequestHandler,
@@ -18,6 +17,8 @@ import { usePrompts } from "../../hooks/usePrompts";
 
 interface MainChatWindowProps {
   onClose: () => void;
+  eventStorming: boolean;
+  toggleEventStorming: () => void;
 }
 
 export interface RequestContextProps {
@@ -34,9 +35,12 @@ export const RequestContext = createContext<RequestContextProps | undefined>(
   undefined
 );
 
-const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
+const MainChatWindow: FC<MainChatWindowProps> = ({
+  onClose,
+  eventStorming,
+  toggleEventStorming,
+}) => {
   const [prompts, addPrompt, addAnswer, editAnswer] = usePrompts();
-  const [eventStormingState, handleToggleEventStorming] = useEventStorming();
   const [size, resizeHandler] = useResizeHandler();
 
   const requestHandlers: RequestContextProps = {
@@ -49,7 +53,7 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
   }, [prompts]);
 
   const handleInputSend = () => {
-    if (eventStormingState) {
+    if (eventStorming) {
       return eventStormingRequestHandler(addPrompt, editAnswer);
     } else {
       return promptRequestHandler(addPrompt, editAnswer);
@@ -58,26 +62,20 @@ const MainChatWindow: FC<MainChatWindowProps> = ({ onClose }) => {
 
   return (
     <div
-      className={`main-chat-window${eventStormingState ? " active" : ""}`}
+      className={`main-chat-window${eventStorming ? " active" : ""}`}
       style={{
         width: size.width,
         height: size.height,
       }}
     >
-      <ResizeHandle
-       onMouseDown={resizeHandler}
-       eventStorming={eventStormingState}
-       />
-      <ChatHeader 
-      onClick={onClose}
-      eventStorming={eventStormingState}
-       />
+      <ResizeHandle onMouseDown={resizeHandler} eventStorming={eventStorming} />
+      <ChatHeader onClick={onClose} eventStorming={eventStorming} />
       <RequestContext.Provider value={requestHandlers}>
         <ChatWrapper prompts={prompts} />
       </RequestContext.Provider>
       <ESToggleButton
-        onClick={handleToggleEventStorming}
-        eventStorming={eventStormingState}
+        onClick={toggleEventStorming}
+        eventStorming={eventStorming}
       />
       <ChatInput onSend={handleInputSend()} />
     </div>
