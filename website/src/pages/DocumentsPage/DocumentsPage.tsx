@@ -58,7 +58,7 @@ const DocumentSection = ({
           <Button
             fullWidth
             variant="contained"
-            size="small"
+            size="large"
             startIcon={<DownloadIcon />}
             href={documentLinks[title][version]}
             target="_blank"

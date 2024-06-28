@@ -4,20 +4,20 @@ import "./AboutPage.css";
 import AboutCard from "../../Components/AboutCard/AboutCard";
 
 const teamMembers = [
-  { name: "Cedric Herrmann", semester: "5IB", image: "/profiles/cedric.png" },
-  { name: "Noah Schneymann", semester: "4IB", image: "/profiles/noah.png" },
-  { name: "Mustafa Dal", semester: "5IB", image: "/profiles/mustafa.png" },
+  { name: "Cedric Herrmann", semester: "5IB", image: "/profiles/cedric.jpg" },
+  { name: "Noah Schneymann", semester: "4IB", image: "/profiles/noah.jpg" },
+  { name: "Mustafa Dal", semester: "5IB", image: "/profiles/mustafa.jpg" },
   { name: "Cécile Hilsenbek", semester: "7D", image: "/profiles/cecile.jpg" },
   { name: "Lenny Zesewitz", semester: "4IB", image: "/profiles/lenny.jpg" },
-  { name: "Paul Waßmuth", semester: "4IB", image: "/profiles/paul.png" },
-  { name: "Vincent R.", semester: "4IB", image: "/profiles/vincent.png" },
+  { name: "Paul Waßmuth", semester: "4IB", image: "/profiles/paul.jpg" },
+  { name: "Vincent R.", semester: "4IB", image: "/profiles/vincent.jpg" },
 ];
 interface AboutPageProps {}
 
 const AboutPage: FC<AboutPageProps> = ({}) => {
   return (
     <>
-      <Container maxWidth="lg" sx={{ height: "fit-content" }}>
+      <Container maxWidth="lg" sx={{ height: "fit-content", py: "1rem" }}>
         <Typography
           variant="h2"
           component="h1"
