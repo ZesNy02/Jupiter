@@ -6,11 +6,7 @@ interface HomePageProps {}
 const HomePage: FC<HomePageProps> = ({}) => {
   return (
     <>
-      <img
-        className="komisches-ding"
-        src="/start-header/bg-orange.png"
-        alt="orange"
-      />
+      <div className="css-background" />
       <div className="black-box">
         <h1>Willkommen bei Chaty!</h1>
         <div className={"intro-box"}>

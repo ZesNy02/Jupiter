@@ -14,16 +14,17 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./Navbar.css";
 import { useLocation } from "react-router-dom";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import AccessibilityIcon from "@mui/icons-material/Accessibility";
-import DownloadIcon from "@mui/icons-material/Download";
+import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 
 interface NavbarProps {}
 
 const routes = [
   { route: "/", name: "Home", icon: <HomeRoundedIcon /> },
-  { route: "/about", name: "About", Icon: <AccessibilityIcon /> },
-  { route: "/documents", name: "Documents", icon: <DownloadIcon /> },
-  { route: "/install", name: "Installation" },
+  { route: "/about", name: "About", icon: <AccountBoxRoundedIcon /> },
+  { route: "/documents", name: "Documents", icon: <ArticleRoundedIcon /> },
+  { route: "/install", name: "Installation", icon: <DownloadRoundedIcon /> },
 ];
 
 const Navbar: FC<NavbarProps> = ({}) => {
@@ -75,7 +76,9 @@ const Navbar: FC<NavbarProps> = ({}) => {
                 sx={getSelectedPage(route.route)}
               >
                 <ListItemButton href={route.route}>
-                  <ListItemIcon>{route.icon}</ListItemIcon>
+                  <ListItemIcon sx={{ color: "inherit" }}>
+                    {route.icon}
+                  </ListItemIcon>
                   <ListItemText>{route.name}</ListItemText>
                 </ListItemButton>
               </ListItem>
