@@ -37,7 +37,7 @@ const documentLinks: DocumentLinks = {
     v3: "https://drive.google.com/uc?export=download&id=13ent4YX4ZQgLMDEM5w2v0vFBtM7s4cDP",
   },
   Abschlusspräsentation: {
-    v1: "https://kommtnoch.de/abschlusspraesentation_v1.pdf",
+    v1: "https://drive.google.com/uc?export=download&id=1FbH0vfZouDEjZwH8ZRiDQGXfe7r9GMCe",
   },
 };
 
